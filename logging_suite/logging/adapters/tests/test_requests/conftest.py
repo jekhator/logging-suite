@@ -16,7 +16,14 @@ from logging_suite.logging import clear_correlation_id
 
 @pytest.fixture(autouse=True)
 def reset_correlation() -> Iterator[None]:
-    """Clear correlation context before and after each test for isolation."""
+    """
+    Clear correlation context before and after each test for isolation.
+
+    Used by: TestCorrelationHTTPAdapterAddHeaders, TestCorrelationHTTPAdapterCorrelationSession,
+    TestCorrelationHTTPAdapterRealRequestsIntegration, TestCorrelationHTTPAdapterRegisterOnSession,
+    TestRequestsCorrelationConstruction, TestRequestsCorrelationFromContext, TestRequestsCorrelationHeaderTuple,
+    TestRequestsCorrelationIsSafe.
+    """
     clear_correlation_id()
     yield
     clear_correlation_id()
@@ -24,7 +31,11 @@ def reset_correlation() -> Iterator[None]:
 
 @pytest.fixture
 def make_prepared_request() -> Callable[..., Any]:
-    """Factory fixture for creating a requests.PreparedRequest with method/url defaults."""
+    """
+    Factory fixture for creating a requests.PreparedRequest with method/url defaults.
+
+    Used by: TestCorrelationHTTPAdapterAddHeaders.
+    """
 
     def factory(
         method: str = "GET",
@@ -41,7 +52,11 @@ def make_prepared_request() -> Callable[..., Any]:
 def http_server_with_header_capture() -> Generator[
     tuple[str, dict[str, Any]], None, None
 ]:
-    """Stand up local HTTP server that captures request headers."""
+    """
+    Stand up local HTTP server that captures request headers.
+
+    Used by: TestCorrelationHTTPAdapterRealRequestsIntegration.
+    """
     captured_headers: dict[str, Any] = {}
 
     class CaptureHandler(http.server.BaseHTTPRequestHandler):

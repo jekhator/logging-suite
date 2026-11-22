@@ -26,7 +26,11 @@ class MockService(LoggingMixin):
 
 @pytest.fixture
 def app_with_middleware() -> FastAPI:
-    """Create a FastAPI app with CorrelationIdMiddleware installed."""
+    """
+    Create a FastAPI app with CorrelationIdMiddleware installed.
+
+    Used by: TestCorrelationIdMiddleware.
+    """
     app = FastAPI()
     app.add_middleware(CorrelationIdMiddleware)
 
@@ -52,23 +56,40 @@ def app_with_middleware() -> FastAPI:
 
 @pytest.fixture
 def fastapi_client(app_with_middleware: FastAPI) -> TestClient:
-    """Create a test client for the FastAPI app."""
+    """
+    Create a test client for the FastAPI app.
+
+    Used by: TestCorrelationIdMiddleware.
+    """
     return TestClient(app_with_middleware)
 
 
 @pytest.fixture
 def correlation_id_abc() -> str:
-    """Test correlation ID: abc."""
+    """
+    Test correlation ID: abc.
+
+    Used by: TestCorrelationIdMiddleware, TestFastApiCorrelationFromHeaders, TestFastApiCorrelationIsSafe,
+    TestFastApiCorrelationPostInit, TestGetCorrelationIdDependency.
+    """
     return "abc123"
 
 
 @pytest.fixture
 def correlation_id_custom() -> str:
-    """Test correlation ID: custom."""
+    """
+    Test correlation ID: custom.
+
+    Used by: TestCorrelationIdMiddleware, TestFastApiCorrelationResponseHeader.
+    """
     return "custom-456"
 
 
 @pytest.fixture
 def correlation_id_some() -> str:
-    """Test correlation ID: some."""
+    """
+    Test correlation ID: some.
+
+    Used by: TestCorrelationIdMiddleware.
+    """
     return "some-789"

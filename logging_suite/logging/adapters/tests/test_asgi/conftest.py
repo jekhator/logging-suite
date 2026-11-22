@@ -16,7 +16,12 @@ from logging_suite.logging.tests.helpers import _RecordCollector
 
 @pytest.fixture(autouse=True)
 def reset_correlation() -> Iterator[None]:
-    """Clear correlation context before and after each test for isolation."""
+    """
+    Clear correlation context before and after each test for isolation.
+
+    Used by: TestASGIAppCall, TestAsgiCorrelationFromScope, TestAsgiCorrelationIsSafe, TestAsgiCorrelationPostInit,
+    TestAsgiCorrelationResponseHeader, TestCorrelationIdMiddlewareCall.
+    """
     clear_correlation_id()
     yield
     clear_correlation_id()
@@ -24,7 +29,11 @@ def reset_correlation() -> Iterator[None]:
 
 @pytest.fixture
 def basic_http_scope() -> dict[str, Any]:
-    """ASGI HTTP scope without correlation ID header."""
+    """
+    ASGI HTTP scope without correlation ID header.
+
+    Used by: TestASGIAppCall, TestAsgiCorrelationFromScope, TestCorrelationIdMiddlewareCall.
+    """
     return {
         const.TYPE_KEY: "http",
         "method": "GET",
@@ -36,7 +45,11 @@ def basic_http_scope() -> dict[str, Any]:
 
 @pytest.fixture
 def http_scope_with_correlation() -> dict[str, Any]:
-    """ASGI HTTP scope with X-Correlation-ID header set."""
+    """
+    ASGI HTTP scope with X-Correlation-ID header set.
+
+    Used by: TestAsgiCorrelationFromScope.
+    """
     return {
         const.TYPE_KEY: "http",
         "method": "GET",
@@ -50,7 +63,11 @@ def http_scope_with_correlation() -> dict[str, Any]:
 
 @pytest.fixture
 def http_scope_with_case_insensitive_header() -> dict[str, Any]:
-    """ASGI HTTP scope with mixed-case correlation ID header."""
+    """
+    ASGI HTTP scope with mixed-case correlation ID header.
+
+    Used by: TestAsgiCorrelationFromScope.
+    """
     return {
         const.TYPE_KEY: "http",
         "method": "GET",
@@ -64,7 +81,11 @@ def http_scope_with_case_insensitive_header() -> dict[str, Any]:
 
 @pytest.fixture
 def websocket_scope() -> dict[str, Any]:
-    """ASGI WebSocket scope (non-HTTP) for passthrough testing."""
+    """
+    ASGI WebSocket scope (non-HTTP) for passthrough testing.
+
+    Used by: TestCorrelationIdMiddlewareCall.
+    """
     return {
         const.TYPE_KEY: "websocket",
         "path": "/ws",
@@ -74,7 +95,11 @@ def websocket_scope() -> dict[str, Any]:
 
 @pytest.fixture
 def http_scope_with_carriage_return_header() -> dict[str, Any]:
-    """ASGI HTTP scope with CR-injected correlation ID header."""
+    """
+    ASGI HTTP scope with CR-injected correlation ID header.
+
+    Used by: TestAsgiCorrelationFromScope.
+    """
     return {
         const.TYPE_KEY: "http",
         "method": "GET",
@@ -88,7 +113,11 @@ def http_scope_with_carriage_return_header() -> dict[str, Any]:
 
 @pytest.fixture
 def http_scope_with_newline_header() -> dict[str, Any]:
-    """ASGI HTTP scope with LF-injected correlation ID header."""
+    """
+    ASGI HTTP scope with LF-injected correlation ID header.
+
+    Used by: TestAsgiCorrelationFromScope.
+    """
     return {
         const.TYPE_KEY: "http",
         "method": "GET",
@@ -102,7 +131,11 @@ def http_scope_with_newline_header() -> dict[str, Any]:
 
 @pytest.fixture
 def http_scope_with_null_byte_header() -> dict[str, Any]:
-    """ASGI HTTP scope with null-byte-injected correlation ID header."""
+    """
+    ASGI HTTP scope with null-byte-injected correlation ID header.
+
+    Used by: TestAsgiCorrelationFromScope.
+    """
     return {
         const.TYPE_KEY: "http",
         "method": "GET",
@@ -116,7 +149,11 @@ def http_scope_with_null_byte_header() -> dict[str, Any]:
 
 @pytest.fixture
 def http_scope_with_oversized_header() -> dict[str, Any]:
-    """ASGI HTTP scope with correlation ID exceeding MAX_LENGTH."""
+    """
+    ASGI HTTP scope with correlation ID exceeding MAX_LENGTH.
+
+    Used by: TestAsgiCorrelationFromScope.
+    """
     oversized_id = "a" * (const.CORRELATION_ID_MAX_LENGTH + 1)
     return {
         const.TYPE_KEY: "http",
@@ -131,7 +168,11 @@ def http_scope_with_oversized_header() -> dict[str, Any]:
 
 @pytest.fixture
 def http_scope_with_invalid_utf8_header() -> dict[str, Any]:
-    """ASGI HTTP scope with invalid UTF-8 bytes in correlation ID header."""
+    """
+    ASGI HTTP scope with invalid UTF-8 bytes in correlation ID header.
+
+    Used by: TestAsgiCorrelationFromScope.
+    """
     return {
         const.TYPE_KEY: "http",
         "method": "GET",
@@ -145,7 +186,11 @@ def http_scope_with_invalid_utf8_header() -> dict[str, Any]:
 
 @pytest.fixture
 def http_scope_with_string_header_name() -> dict[str, Any]:
-    """ASGI HTTP scope with string (not bytes) header name (malformed)."""
+    """
+    ASGI HTTP scope with string (not bytes) header name (malformed).
+
+    Used by: TestAsgiCorrelationFromScope.
+    """
     return {
         const.TYPE_KEY: "http",
         "method": "GET",
@@ -159,7 +204,11 @@ def http_scope_with_string_header_name() -> dict[str, Any]:
 
 @pytest.fixture
 def http_scope_with_string_header_value() -> dict[str, Any]:
-    """ASGI HTTP scope with string (not bytes) header value (malformed)."""
+    """
+    ASGI HTTP scope with string (not bytes) header value (malformed).
+
+    Used by: TestAsgiCorrelationFromScope.
+    """
     return {
         const.TYPE_KEY: "http",
         "method": "GET",
@@ -173,7 +222,11 @@ def http_scope_with_string_header_value() -> dict[str, Any]:
 
 @pytest.fixture
 def mock_receive() -> Any:
-    """Mock ASGI receive callable returning an empty http.request message."""
+    """
+    Mock ASGI receive callable returning an empty http.request message.
+
+    Used by: TestASGIAppCall, TestCorrelationIdMiddlewareCall.
+    """
 
     async def receive() -> dict[str, Any]:
         return {"type": test_const.HTTP_EVENT_REQUEST, "body": b""}
@@ -183,7 +236,11 @@ def mock_receive() -> Any:
 
 @pytest.fixture
 def mock_send() -> Any:
-    """Mock ASGI send callable that discards messages."""
+    """
+    Mock ASGI send callable that discards messages.
+
+    Used by: TestASGIAppCall, TestCorrelationIdMiddlewareCall.
+    """
 
     async def send(message: dict[str, Any]) -> None:
         return None
@@ -193,7 +250,11 @@ def mock_send() -> Any:
 
 @pytest.fixture
 def mock_app() -> Any:
-    """Mock ASGI app that does nothing."""
+    """
+    Mock ASGI app that does nothing.
+
+    Used by: TestASGIAppCall, TestCorrelationIdMiddlewareCall.
+    """
 
     async def app(
         scope: dict[str, Any],
@@ -207,7 +268,11 @@ def mock_app() -> Any:
 
 @pytest.fixture
 def http_app_that_sends_response() -> Any:
-    """Mock ASGI app that emits an http.response.start message."""
+    """
+    Mock ASGI app that emits an http.response.start message.
+
+    Used by: TestCorrelationIdMiddlewareCall.
+    """
 
     async def app(
         scope: dict[str, Any],
@@ -229,7 +294,11 @@ def http_app_that_sends_response() -> Any:
 def log_capture(
     service_class: type[LoggingMixin],
 ) -> tuple[LoggingMixin, _RecordCollector]:
-    """Service instance + collector handler attached at DEBUG level."""
+    """
+    Service instance + collector handler attached at DEBUG level.
+
+    Used by: no test class yet.
+    """
     svc = service_class()
     collector = _RecordCollector()
     svc._logger.addHandler(collector)
@@ -239,7 +308,11 @@ def log_capture(
 
 @pytest.fixture
 def service_class() -> type[LoggingMixin]:
-    """Bare LoggingMixin subclass with slots: base for service-class tests."""
+    """
+    Bare LoggingMixin subclass with slots: base for service-class tests.
+
+    Used by: no test class yet.
+    """
 
     class Svc(LoggingMixin):
         """LoggingMixin subclass with slots for service-class fixture tests."""

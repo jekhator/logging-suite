@@ -14,7 +14,12 @@ from logging_suite.logging.common.constants import tests as test_const
 
 @pytest.fixture(autouse=True)
 def reset_correlation() -> Iterator[None]:
-    """Clear correlation context before and after each test for isolation."""
+    """
+    Clear correlation context before and after each test for isolation.
+
+    Used by: TestCorrelationIdMiddlewareCall, TestWebSocketCorrelationFromHeaders, TestWebSocketCorrelationIsSafe,
+    TestWebSocketCorrelationPostInit.
+    """
     clear_correlation_id()
     yield
     clear_correlation_id()
@@ -22,7 +27,11 @@ def reset_correlation() -> Iterator[None]:
 
 @pytest.fixture
 def basic_websocket_scope() -> dict[str, Any]:
-    """ASGI WebSocket scope without correlation ID header."""
+    """
+    ASGI WebSocket scope without correlation ID header.
+
+    Used by: TestCorrelationIdMiddlewareCall, TestWebSocketCorrelationFromHeaders.
+    """
     return {
         "type": "websocket",
         "path": "/ws",
@@ -32,7 +41,11 @@ def basic_websocket_scope() -> dict[str, Any]:
 
 @pytest.fixture
 def websocket_scope_with_correlation() -> dict[str, Any]:
-    """ASGI WebSocket scope with X-Correlation-ID header set."""
+    """
+    ASGI WebSocket scope with X-Correlation-ID header set.
+
+    Used by: TestCorrelationIdMiddlewareCall, TestWebSocketCorrelationFromHeaders.
+    """
     return {
         "type": "websocket",
         "path": "/ws",
@@ -47,7 +60,11 @@ def websocket_scope_with_correlation() -> dict[str, Any]:
 
 @pytest.fixture
 def websocket_scope_with_case_insensitive_header() -> dict[str, Any]:
-    """ASGI WebSocket scope with mixed-case correlation ID header."""
+    """
+    ASGI WebSocket scope with mixed-case correlation ID header.
+
+    Used by: TestWebSocketCorrelationFromHeaders.
+    """
     return {
         "type": "websocket",
         "path": "/ws",
@@ -59,7 +76,11 @@ def websocket_scope_with_case_insensitive_header() -> dict[str, Any]:
 
 @pytest.fixture
 def websocket_scope_with_carriage_return_header() -> dict[str, Any]:
-    """ASGI WebSocket scope with CR-injected correlation ID header."""
+    """
+    ASGI WebSocket scope with CR-injected correlation ID header.
+
+    Used by: TestCorrelationIdMiddlewareCall, TestWebSocketCorrelationFromHeaders.
+    """
     return {
         "type": "websocket",
         "path": "/ws",
@@ -71,7 +92,11 @@ def websocket_scope_with_carriage_return_header() -> dict[str, Any]:
 
 @pytest.fixture
 def websocket_scope_with_newline_header() -> dict[str, Any]:
-    """ASGI WebSocket scope with LF-injected correlation ID header."""
+    """
+    ASGI WebSocket scope with LF-injected correlation ID header.
+
+    Used by: TestWebSocketCorrelationFromHeaders.
+    """
     return {
         "type": "websocket",
         "path": "/ws",
@@ -83,7 +108,11 @@ def websocket_scope_with_newline_header() -> dict[str, Any]:
 
 @pytest.fixture
 def websocket_scope_with_null_byte_header() -> dict[str, Any]:
-    """ASGI WebSocket scope with null-byte-injected correlation ID header."""
+    """
+    ASGI WebSocket scope with null-byte-injected correlation ID header.
+
+    Used by: TestWebSocketCorrelationFromHeaders.
+    """
     return {
         "type": "websocket",
         "path": "/ws",
@@ -95,7 +124,11 @@ def websocket_scope_with_null_byte_header() -> dict[str, Any]:
 
 @pytest.fixture
 def websocket_scope_with_oversized_header() -> dict[str, Any]:
-    """ASGI WebSocket scope with correlation ID exceeding MAX_LENGTH."""
+    """
+    ASGI WebSocket scope with correlation ID exceeding MAX_LENGTH.
+
+    Used by: TestWebSocketCorrelationFromHeaders.
+    """
     oversized_id = "a" * (const.CORRELATION_ID_MAX_LENGTH + 1)
     return {
         "type": "websocket",
@@ -108,7 +141,11 @@ def websocket_scope_with_oversized_header() -> dict[str, Any]:
 
 @pytest.fixture
 def http_scope() -> dict[str, Any]:
-    """ASGI HTTP scope for passthrough testing (non-websocket)."""
+    """
+    ASGI HTTP scope for passthrough testing (non-websocket).
+
+    Used by: TestCorrelationIdMiddlewareCall.
+    """
     return {
         "type": "http",
         "method": "GET",
@@ -120,7 +157,11 @@ def http_scope() -> dict[str, Any]:
 
 @pytest.fixture
 def mock_receive() -> Any:
-    """Mock ASGI receive callable for WebSocket."""
+    """
+    Mock ASGI receive callable for WebSocket.
+
+    Used by: TestCorrelationIdMiddlewareCall.
+    """
 
     async def receive() -> dict[str, Any]:
         return {"type": "websocket.connect"}
@@ -130,7 +171,11 @@ def mock_receive() -> Any:
 
 @pytest.fixture
 def mock_send() -> Any:
-    """Mock ASGI send callable that discards messages."""
+    """
+    Mock ASGI send callable that discards messages.
+
+    Used by: TestCorrelationIdMiddlewareCall.
+    """
 
     async def send(message: dict[str, Any]) -> None:
         return None
@@ -140,7 +185,11 @@ def mock_send() -> Any:
 
 @pytest.fixture
 def mock_app() -> Any:
-    """Mock ASGI app that does nothing."""
+    """
+    Mock ASGI app that does nothing.
+
+    Used by: TestCorrelationIdMiddlewareCall.
+    """
 
     async def app(
         scope: dict[str, Any],

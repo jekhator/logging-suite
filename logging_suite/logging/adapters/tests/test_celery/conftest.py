@@ -13,7 +13,14 @@ from logging_suite.logging import clear_correlation_id
 
 @pytest.fixture(autouse=True)
 def reset_correlation() -> Iterator[None]:
-    """Clear correlation context before and after each test for isolation."""
+    """
+    Clear correlation context before and after each test for isolation.
+
+    Used by: TestCeleryCorrelationConstruction, TestCeleryCorrelationFromContext, TestCeleryCorrelationHeaderPair,
+    TestCeleryCorrelationIsSafe, TestCorrelationSignalsClearOnPostrun, TestCorrelationSignalsConnect,
+    TestCorrelationSignalsInjectOnPublish, TestCorrelationSignalsRealCeleryIntegration,
+    TestCorrelationSignalsRestoreOnPrerun.
+    """
     clear_correlation_id()
     yield
     clear_correlation_id()
@@ -21,7 +28,11 @@ def reset_correlation() -> Iterator[None]:
 
 @pytest.fixture
 def celery_app() -> Callable[..., Any]:
-    """Factory fixture for creating a test Celery app with eager mode."""
+    """
+    Factory fixture for creating a test Celery app with eager mode.
+
+    Used by: TestCorrelationSignalsRealCeleryIntegration.
+    """
 
     def factory() -> Celery:
         """Create a minimal Celery app with task_always_eager=True."""

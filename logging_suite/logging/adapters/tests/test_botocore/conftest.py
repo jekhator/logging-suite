@@ -13,7 +13,13 @@ from logging_suite.logging import clear_correlation_id
 
 @pytest.fixture(autouse=True)
 def reset_correlation() -> Iterator[None]:
-    """Clear correlation context before and after each test for isolation."""
+    """
+    Clear correlation context before and after each test for isolation.
+
+    Used by: TestBotocoreCorrelationConstruction, TestBotocoreCorrelationFromContext,
+    TestBotocoreCorrelationHeaderTuple, TestBotocoreCorrelationIsSafe, TestCorrelationIdInjectorInjectBeforeSign,
+    TestCorrelationIdInjectorRealDispatch, TestCorrelationIdInjectorRegistration.
+    """
     clear_correlation_id()
     yield
     clear_correlation_id()
@@ -21,7 +27,11 @@ def reset_correlation() -> Iterator[None]:
 
 @pytest.fixture
 def make_request() -> Callable[..., Any]:
-    """Factory fixture for creating a botocore AWSRequest with method/url defaults."""
+    """
+    Factory fixture for creating a botocore AWSRequest with method/url defaults.
+
+    Used by: TestCorrelationIdInjectorInjectBeforeSign.
+    """
 
     def factory(
         method: str = "GET",

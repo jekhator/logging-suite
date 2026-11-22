@@ -15,7 +15,11 @@ from logging_suite.logging.tests.helpers import _RecordCollector
 
 @pytest.fixture(autouse=True)
 def reset_correlation() -> Iterator[None]:
-    """Clear correlation context before and after each test for isolation."""
+    """
+    Clear correlation context before and after each test for isolation.
+
+    Used by: TestCorrelationIdMiddleware, TestWsgiApp, TestWsgiCorrelation.
+    """
     clear_correlation_id()
     yield
     clear_correlation_id()
@@ -23,7 +27,11 @@ def reset_correlation() -> Iterator[None]:
 
 @pytest.fixture
 def make_environ() -> Callable[[dict[str, str] | None], dict[str, Any]]:
-    """Factory fixture for creating WSGI environ dicts with optional headers."""
+    """
+    Factory fixture for creating WSGI environ dicts with optional headers.
+
+    Used by: TestCorrelationIdMiddleware, TestWsgiApp, TestWsgiCorrelation.
+    """
 
     def factory(headers: dict[str, str] | None = None) -> dict[str, Any]:
         """Create a minimal WSGI environ dict with optional header mappings."""
@@ -48,7 +56,11 @@ def start_response_capture() -> tuple[
     list[tuple[str, list[tuple[str, str]]]],
     Callable[[str, list[tuple[str, str]], Any], Callable[[bytes], None]],
 ]:
-    """Capture start_response calls and return (captured list, start_response callable) tuple."""
+    """
+    Capture start_response calls and return (captured list, start_response callable) tuple.
+
+    Used by: TestCorrelationIdMiddleware, TestWsgiApp.
+    """
     captured: list[tuple[str, list[tuple[str, str]]]] = []
 
     def start_response(
@@ -64,7 +76,11 @@ def start_response_capture() -> tuple[
 
 @pytest.fixture
 def mock_app() -> Callable[[dict[str, Any], Any], Any]:
-    """Mock WSGI app that returns empty iterator."""
+    """
+    Mock WSGI app that returns empty iterator.
+
+    Used by: no test class yet.
+    """
 
     def app(
         environ: dict[str, Any],
@@ -77,7 +93,11 @@ def mock_app() -> Callable[[dict[str, Any], Any], Any]:
 
 @pytest.fixture
 def mock_app_that_calls_start_response() -> Callable[[dict[str, Any], Any], Any]:
-    """Mock WSGI app that calls start_response with basic response."""
+    """
+    Mock WSGI app that calls start_response with basic response.
+
+    Used by: TestCorrelationIdMiddleware.
+    """
 
     def app(
         environ: dict[str, Any],
@@ -96,7 +116,11 @@ def mock_app_that_calls_start_response() -> Callable[[dict[str, Any], Any], Any]
 def log_capture(
     service_class: type[LoggingMixin],
 ) -> tuple[LoggingMixin, _RecordCollector]:
-    """Service instance + collector handler attached at DEBUG level."""
+    """
+    Service instance + collector handler attached at DEBUG level.
+
+    Used by: no test class yet.
+    """
     svc = service_class()
     collector = _RecordCollector()
     svc._logger.addHandler(collector)
@@ -106,7 +130,11 @@ def log_capture(
 
 @pytest.fixture
 def service_class() -> type[LoggingMixin]:
-    """Bare LoggingMixin subclass with slots: base for service-class tests."""
+    """
+    Bare LoggingMixin subclass with slots: base for service-class tests.
+
+    Used by: no test class yet.
+    """
 
     class Svc(LoggingMixin):
         """Bare LoggingMixin subclass for WSGI adapter tests."""
