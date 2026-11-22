@@ -1,50 +1,50 @@
-# mixin-suite Documentation
+# logging-suite Documentation
 
-This directory contains comprehensive documentation for the two composable mixins that make up mixin-suite:
+This directory contains comprehensive documentation for the two composable mixins that make up logging-suite:
 
-## mixin-logging
+## logging_suite.logging
 
 **End-to-end correlation-ID propagation across 13 adapters for distributed systems.**
 
-- **[Architecture](mixin_logging/architecture/architecture.md)**: System design, correlation context propagation, and integration patterns
-- **[Adapters](mixin_logging/apps/adapters/)**: Instrumentation for ASGI, WSGI, gRPC, GraphQL, Celery, Botocore, Requests, HTTPX, aiohttp, urllib3, WebSocket, Cloud, and Stdlib
-  - [ASGI Adapter](mixin_logging/apps/adapters/asgi.md)
-  - [WSGI Adapter](mixin_logging/apps/adapters/wsgi.md)
-  - [gRPC Adapter](mixin_logging/apps/adapters/grpc.md)
-  - [GraphQL Adapter](mixin_logging/apps/adapters/graphql.md)
-  - [Celery Adapter](mixin_logging/apps/adapters/celery.md)
-  - [Botocore Adapter](mixin_logging/apps/adapters/botocore.md)
-  - [Requests Adapter](mixin_logging/apps/adapters/requests.md)
-  - [HTTPX Adapter](mixin_logging/apps/adapters/httpx.md)
-  - [aiohttp Adapter](mixin_logging/apps/adapters/aiohttp.md)
-  - [urllib3 Adapter](mixin_logging/apps/adapters/urllib3.md)
-  - [WebSocket Adapter](mixin_logging/apps/adapters/websocket.md)
-  - [Cloud Adapter](mixin_logging/apps/adapters/cloud.md)
-  - [Stdlib Adapter](mixin_logging/apps/adapters/stdlib.md)
-- **[Decorators](mixin_logging/apps/decorators/logged.md)**: Class-level and method-level @logged decorators
-- **[Correlation Context](mixin_logging/apps/context/correlation.md)**: ContextVar-based correlation ID propagation
-- **[LoggingMixin](mixin_logging/apps/mixin/mixin.md)**: Base class providing log_info(), log_debug(), and @logged support
-- **[Security Audit](mixin_logging/apps/security-audit.md)**: CRLF injection prevention, sanitization, and adapter safety
-- **[Historical Changelog](mixin_logging/CHANGELOG-history.md)**: Release notes for prior versions of mixin-logging
+- **[Architecture](logging/architecture/architecture.md)**: System design, correlation context propagation, and integration patterns
+- **[Adapters](logging/apps/adapters/)**: Instrumentation for ASGI, WSGI, gRPC, GraphQL, Celery, Botocore, Requests, HTTPX, aiohttp, urllib3, WebSocket, Cloud, and Stdlib
+  - [ASGI Adapter](logging/apps/adapters/asgi.md)
+  - [WSGI Adapter](logging/apps/adapters/wsgi.md)
+  - [gRPC Adapter](logging/apps/adapters/grpc.md)
+  - [GraphQL Adapter](logging/apps/adapters/graphql.md)
+  - [Celery Adapter](logging/apps/adapters/celery.md)
+  - [Botocore Adapter](logging/apps/adapters/botocore.md)
+  - [Requests Adapter](logging/apps/adapters/requests.md)
+  - [HTTPX Adapter](logging/apps/adapters/httpx.md)
+  - [aiohttp Adapter](logging/apps/adapters/aiohttp.md)
+  - [urllib3 Adapter](logging/apps/adapters/urllib3.md)
+  - [WebSocket Adapter](logging/apps/adapters/websocket.md)
+  - [Cloud Adapter](logging/apps/adapters/cloud.md)
+  - [Stdlib Adapter](logging/apps/adapters/stdlib.md)
+- **[Decorators](logging/apps/decorators/logged.md)**: Class-level and method-level @logged decorators
+- **[Correlation Context](logging/apps/context/correlation.md)**: ContextVar-based correlation ID propagation
+- **[LoggingMixin](logging/apps/mixin/mixin.md)**: Base class providing log_info(), log_debug(), and @logged support
+- **[Security Audit](logging/apps/security-audit.md)**: CRLF injection prevention, sanitization, and adapter safety
+- **[Historical Changelog](logging/CHANGELOG-history.md)**: Release notes for prior versions of logging_suite.logging
 
-## mixin-sensitivity
+## logging_suite.sensitivity
 
 **Decorator-based sensitivity classification and masking for frozen dataclasses.**
 
-- **[Architecture](mixin_sensitivity/architecture/architecture.md)**: System design and masking strategy
-- **[Sensitive Decorator](mixin_sensitivity/apps/decorators/sensitive.md)**: Class-level decorator enabling automatic masking
-- **[Compliance Policies](mixin_sensitivity/apps/decorators/compliance.md)**: Taxonomy-driven field classification
-- **[Classification API](mixin_sensitivity/apps/decorators/policies.md)**: Policy enforcement and introspection
-- **[Classify Service](mixin_sensitivity/services/classify.py)**: Field introspection and sensitivity profile generation (PHI, PII, PCI, SECRET)
-- **[Status](mixin_sensitivity/STATUS.md)**: Current feature coverage and known limitations
-- **[Historical Changelog](mixin_sensitivity/CHANGELOG-history.md)**: Release notes for prior versions of mixin-sensitivity
+- **[Architecture](sensitivity/architecture/architecture.md)**: System design and masking strategy
+- **[Sensitive Decorator](sensitivity/apps/decorators/sensitive.md)**: Class-level decorator enabling automatic masking
+- **[Compliance Policies](sensitivity/apps/decorators/compliance.md)**: Taxonomy-driven field classification
+- **[Classification API](sensitivity/apps/decorators/policies.md)**: Policy enforcement and introspection
+- **[Classify Service](sensitivity/services/classify.py)**: Field introspection and sensitivity profile generation (PHI, PII, PCI, SECRET)
+- **[Status](sensitivity/STATUS.md)**: Current feature coverage and known limitations
+- **[Historical Changelog](sensitivity/CHANGELOG-history.md)**: Release notes for prior versions of logging_suite.sensitivity
 
 ## Security & Code Reviews
 
-- [mixin-logging audits](mixin_logging/audits/): Per-adapter and cross-feature security assessments
-- [mixin-logging reviews](mixin_logging/reviews/): Code review findings and resolution
-- [mixin-sensitivity audits](mixin_sensitivity/audits/): Decorator and classification layer security analysis
-- [mixin-sensitivity reviews](mixin_sensitivity/reviews/): Code review findings and resolution
+- [logging_suite.logging audits](logging/audits/): Per-adapter and cross-feature security assessments
+- [logging_suite.logging reviews](logging/reviews/): Code review findings and resolution
+- [logging_suite.sensitivity audits](sensitivity/audits/): Decorator and classification layer security analysis
+- [logging_suite.sensitivity reviews](sensitivity/reviews/): Code review findings and resolution
 
 ## Getting Started
 
