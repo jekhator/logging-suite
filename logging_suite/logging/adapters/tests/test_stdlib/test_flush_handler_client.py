@@ -134,14 +134,18 @@ class TestFlushOnWarningHandlerBuffering:
         assert len(target.records) == 0
 
     def test_warning_triggers_buffer_drain(self) -> None:
-        """WARNING record triggers drain of buffered records for that correlation."""
+        """
+        WARNING record triggers drain of buffered records for that correlation.
+
+        Emit DEBUG record (buffered).
+        Emit WARNING record.
+        """
         target = _RecordCapturingHandler()
         config = FlushOnWarningConfig(target_handler=target)
         handler = FlushOnWarningHandler(config)
 
         set_correlation_id(test_const.CORRELATION_ID_VALID_ID_123)
 
-        # Emit DEBUG record (buffered)
         debug_record = logging.LogRecord(
             name="test",
             level=logging.DEBUG,
@@ -156,7 +160,6 @@ class TestFlushOnWarningHandlerBuffering:
 
         assert len(target.records) == 0
 
-        # Emit WARNING record
         warning_record = logging.LogRecord(
             name="test",
             level=logging.WARNING,
@@ -307,7 +310,15 @@ class TestFlushOnWarningHandlerTTL:
     """Tests for TTL (time-to-live) eviction."""
 
     def test_ttl_evicts_expired_buffers(self) -> None:
-        """Buffers older than ttl_seconds are evicted on next emit."""
+        """
+        Buffers older than ttl_seconds are evicted on next emit.
+
+        Mock time advancement.
+        Emit record at time 0.
+        Advance time past TTL.
+        Emit another record to trigger eviction.
+        Original correlation should be evicted.
+        """
         target = _RecordCapturingHandler()
         config = FlushOnWarningConfig(
             target_handler=target,
@@ -315,13 +326,11 @@ class TestFlushOnWarningHandlerTTL:
         )
         handler = FlushOnWarningHandler(config)
 
-        # Mock time advancement
         original_time = time.time
         mock_time = _MockTime()
         time.time = mock_time.time  # type: ignore
 
         try:
-            # Emit record at time 0
             set_correlation_id(test_const.CORRELATION_ID_VALID_ID_123)
             record_1 = logging.LogRecord(
                 name="test",
@@ -337,10 +346,8 @@ class TestFlushOnWarningHandlerTTL:
 
             assert test_const.CORRELATION_ID_VALID_ID_123 in handler._buffers
 
-            # Advance time past TTL
             mock_time.advance(11)
 
-            # Emit another record to trigger eviction
             set_correlation_id(test_const.CORRELATION_ID_TRACE)
             record_2 = logging.LogRecord(
                 name="test",
@@ -354,7 +361,6 @@ class TestFlushOnWarningHandlerTTL:
             record_2.correlation_id = test_const.CORRELATION_ID_TRACE
             handler.emit(record_2)
 
-            # Original correlation should be evicted
             assert test_const.CORRELATION_ID_VALID_ID_123 not in handler._buffers
             assert test_const.CORRELATION_ID_TRACE in handler._buffers
 
@@ -366,7 +372,12 @@ class TestFlushOnWarningHandlerCapacity:
     """Tests for capacity constraints."""
 
     def test_capacity_cap_per_correlation(self) -> None:
-        """Buffers respect per-correlation capacity limit."""
+        """
+        Buffers respect per-correlation capacity limit.
+
+        Emit 5 DEBUG records; only 3 should be buffered.
+        Only last 3 records retained (deque drops oldest when maxlen exceeded).
+        """
         target = _RecordCapturingHandler()
         config = FlushOnWarningConfig(
             target_handler=target,
@@ -376,7 +387,6 @@ class TestFlushOnWarningHandlerCapacity:
 
         set_correlation_id(test_const.CORRELATION_ID_VALID_ID_123)
 
-        # Emit 5 DEBUG records; only 3 should be buffered
         for index in range(5):
             record = logging.LogRecord(
                 name="test",
@@ -390,11 +400,15 @@ class TestFlushOnWarningHandlerCapacity:
             record.correlation_id = test_const.CORRELATION_ID_VALID_ID_123
             handler.emit(record)
 
-        # Only last 3 records retained (deque drops oldest when maxlen exceeded)
         assert len(handler._buffers[test_const.CORRELATION_ID_VALID_ID_123]) == 3
 
     def test_max_correlations_cap_global(self) -> None:
-        """Handler evicts oldest correlation when max_correlations exceeded."""
+        """
+        Handler evicts oldest correlation when max_correlations exceeded.
+
+        Buffer records for 3 correlations.
+        Only 2 correlations should remain (oldest evicted).
+        """
         target = _RecordCapturingHandler()
         config = FlushOnWarningConfig(
             target_handler=target,
@@ -402,7 +416,6 @@ class TestFlushOnWarningHandlerCapacity:
         )
         handler = FlushOnWarningHandler(config)
 
-        # Buffer records for 3 correlations
         correlations = [
             test_const.CORRELATION_ID_VALID_ID_123,
             test_const.CORRELATION_ID_TRACE,
@@ -423,7 +436,6 @@ class TestFlushOnWarningHandlerCapacity:
             record.correlation_id = correlation_id
             handler.emit(record)
 
-        # Only 2 correlations should remain (oldest evicted)
         assert len(handler._buffers) == 2
         assert test_const.CORRELATION_ID_VALID_ID_123 not in handler._buffers
         assert test_const.CORRELATION_ID_TRACE in handler._buffers

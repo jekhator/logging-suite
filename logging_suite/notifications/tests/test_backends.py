@@ -536,7 +536,12 @@ class TestRetryingBackend:
     def test_retrying_backend_raised_exception_with_retry_on_policy(
         self, test_event: NotificationEvent
     ) -> None:
-        """RetryingBackend retries raised exceptions matching policy.retry_on."""
+        """
+        RetryingBackend retries raised exceptions matching policy.retry_on.
+
+        REGRESSION: Must attempt exactly max_attempts times before dead-letter.
+        DLQ accepted.
+        """
         attempt_count = 0
 
         class ConnectionErrorBackend:
@@ -563,15 +568,19 @@ class TestRetryingBackend:
 
         result = backend.send(test_event)
 
-        # REGRESSION: Must attempt exactly max_attempts times before dead-letter
         assert attempt_count == 3, f"Expected 3 attempts, got {attempt_count}"
-        assert result.delivered is True  # DLQ accepted
+        assert result.delivered is True
         assert len(dlq.events) == 1
 
     def test_retrying_backend_raised_exception_with_should_retry_predicate(
         self, test_event: NotificationEvent
     ) -> None:
-        """RetryingBackend retries raised exceptions matching policy.should_retry."""
+        """
+        RetryingBackend retries raised exceptions matching policy.should_retry.
+
+        REGRESSION: Must attempt exactly max_attempts times before dead-letter.
+        DLQ accepted.
+        """
         attempt_count = 0
 
         class TemporaryErrorBackend:
@@ -598,15 +607,20 @@ class TestRetryingBackend:
 
         result = backend.send(test_event)
 
-        # REGRESSION: Must attempt exactly max_attempts times before dead-letter
         assert attempt_count == 3, f"Expected 3 attempts, got {attempt_count}"
-        assert result.delivered is True  # DLQ accepted
+        assert result.delivered is True
         assert len(dlq.events) == 1
 
     def test_retrying_backend_raised_exception_non_retryable(
         self, test_event: NotificationEvent
     ) -> None:
-        """RetryingBackend does not retry raised exceptions policy deems non-retryable."""
+        """
+        RetryingBackend does not retry raised exceptions policy deems non-retryable.
+
+        Does NOT include PermissionError.
+        REGRESSION: Non-retryable exceptions should attempt exactly once.
+        DLQ accepted.
+        """
         attempt_count = 0
 
         class PermanentErrorBackend:
@@ -627,15 +641,14 @@ class TestRetryingBackend:
             backoff_multiplier=1,
             backoff_max_seconds=0.1,
             jitter=False,
-            retry_on=(ConnectionError,),  # Does NOT include PermissionError
+            retry_on=(ConnectionError,),
         )
         backend = RetryingBackend(inner=inner, policy=policy, dead_letter=dlq)
 
         result = backend.send(test_event)
 
-        # REGRESSION: Non-retryable exceptions should attempt exactly once
         assert attempt_count == 1, f"Expected 1 attempt, got {attempt_count}"
-        assert result.delivered is True  # DLQ accepted
+        assert result.delivered is True
         assert (
             "non-retryable exception" in result.detail
             or "non-retryable" in result.detail
