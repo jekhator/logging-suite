@@ -878,6 +878,14 @@ class TestSESBackend:
             from_address="sender@example.com",
         )
 
+        event_attachments = (
+            Attachment(
+                filename="test.txt",
+                content_type="text/plain",
+                content=b"test content",
+                egress_safe=True,
+            ),
+        )
         event_with_attachment = NotificationEvent(
             category="test",
             severity=Severity.INFO,
@@ -886,14 +894,7 @@ class TestSESBackend:
             fingerprint="test-001",
             occurred_at="2026-07-21T10:00:00+00:00",
             correlation_id=None,
-            attachments=(
-                Attachment(
-                    filename="test.txt",
-                    content_type="text/plain",
-                    content=b"test content",
-                    egress_safe=True,
-                ),
-            ),
+            attachments=event_attachments,
         )
 
         result = backend.send(event_with_attachment)

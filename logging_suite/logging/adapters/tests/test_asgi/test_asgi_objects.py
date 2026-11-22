@@ -114,6 +114,7 @@ class TestAsgiCorrelationFromScope:
 
     def test_from_scope_stops_after_first_correlation_header(self) -> None:
         """from_scope() processes only the first correlation ID header and ignores later ones."""
+        encoded_correlation_id_trace = test_const.CORRELATION_ID_TRACE.encode()
         scope = {
             const.TYPE_KEY: "http",
             "method": "GET",
@@ -123,7 +124,7 @@ class TestAsgiCorrelationFromScope:
                 (b"other-header", b"value1"),
                 (
                     const.CORRELATION_ID_HEADER,
-                    test_const.CORRELATION_ID_TRACE.encode(),
+                    encoded_correlation_id_trace,
                 ),
                 (b"another-header", b"value2"),
                 (const.CORRELATION_ID_HEADER, b"should-be-ignored"),

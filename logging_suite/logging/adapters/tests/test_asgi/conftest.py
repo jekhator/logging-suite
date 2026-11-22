@@ -50,13 +50,14 @@ def http_scope_with_correlation() -> dict[str, Any]:
 
     Used by: TestAsgiCorrelationFromScope.
     """
+    encoded_correlation_id_trace = test_const.CORRELATION_ID_TRACE.encode()
     return {
         const.TYPE_KEY: "http",
         "method": "GET",
         "path": "/test",
         "query_string": b"",
         const.HEADERS_KEY: [
-            (const.CORRELATION_ID_HEADER, test_const.CORRELATION_ID_TRACE.encode()),
+            (const.CORRELATION_ID_HEADER, encoded_correlation_id_trace),
         ],
     }
 
@@ -68,13 +69,14 @@ def http_scope_with_case_insensitive_header() -> dict[str, Any]:
 
     Used by: TestAsgiCorrelationFromScope.
     """
+    encoded_correlation_id_custom = test_const.CORRELATION_ID_CUSTOM.encode()
     return {
         const.TYPE_KEY: "http",
         "method": "GET",
         "path": "/test",
         "query_string": b"",
         const.HEADERS_KEY: [
-            (b"X-CORRELATION-ID", test_const.CORRELATION_ID_CUSTOM.encode()),
+            (b"X-CORRELATION-ID", encoded_correlation_id_custom),
         ],
     }
 
@@ -155,13 +157,14 @@ def http_scope_with_oversized_header() -> dict[str, Any]:
     Used by: TestAsgiCorrelationFromScope.
     """
     oversized_id = "a" * (const.CORRELATION_ID_MAX_LENGTH + 1)
+    encoded_oversized_id = oversized_id.encode()
     return {
         const.TYPE_KEY: "http",
         "method": "GET",
         "path": "/test",
         "query_string": b"",
         const.HEADERS_KEY: [
-            (const.CORRELATION_ID_HEADER, oversized_id.encode()),
+            (const.CORRELATION_ID_HEADER, encoded_oversized_id),
         ],
     }
 
@@ -191,13 +194,14 @@ def http_scope_with_string_header_name() -> dict[str, Any]:
 
     Used by: TestAsgiCorrelationFromScope.
     """
+    encoded_correlation_id_trace = test_const.CORRELATION_ID_TRACE.encode()
     return {
         const.TYPE_KEY: "http",
         "method": "GET",
         "path": "/test",
         "query_string": b"",
         const.HEADERS_KEY: [
-            ("x-correlation-id", test_const.CORRELATION_ID_TRACE.encode()),
+            ("x-correlation-id", encoded_correlation_id_trace),
         ],
     }
 
