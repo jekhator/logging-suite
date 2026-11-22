@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-11-22
+
+### Changed
+
+- **Renamed from mixin-suite to logging-suite.** The distribution is now `logging-suite`; the GitHub repository will be `jekhator/logging-suite` (the old URL redirects). The old `mixin-suite` PyPI project stays installable with a moved-to notice.
+- **Imports moved under the single root `logging_suite`** (old prefix dropped): `mixin_logging` -> `logging_suite.logging`, `mixin_retry` -> `logging_suite.retry`, `mixin_latency` -> `logging_suite.latency`, `mixin_sensitivity` -> `logging_suite.sensitivity`, `mixin_notifications` -> `logging_suite.notifications`. The old import names no longer exist; update imports and logger names (`mixin_logging.ambient` is now `logging_suite.logging.ambient`, `mixin_notifications` is now `logging_suite.notifications`).
+- All five roots versioned to 0.7.0 (lockstep).
+- Docs directories moved to `docs/<root>`; CI and release workflows updated to the new package paths.
+
+### Added
+
+- Test proving `import logging` still resolves to the standard library in every `logging_suite` module (the `logging_suite.logging` subpackage name does not shadow it).
+
 ## [0.6.0] - 2026-08-04
 
 ### Added

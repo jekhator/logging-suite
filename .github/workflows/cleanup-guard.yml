@@ -16,9 +16,9 @@ jobs:
 
           echo "Checking that all adapter packages have audit and review documentation..."
 
-          ADAPTERS_DIR="mixin_logging/adapters"
-          AUDITS_DIR="docs/mixin_logging/audits"
-          REVIEWS_DIR="docs/mixin_logging/reviews"
+          ADAPTERS_DIR="logging_suite/logging/adapters"
+          AUDITS_DIR="docs/logging/audits"
+          REVIEWS_DIR="docs/logging/reviews"
 
           if [ ! -d "$ADAPTERS_DIR" ]; then
             echo "ERROR: Adapters directory not found: $ADAPTERS_DIR"
@@ -42,12 +42,12 @@ jobs:
             review_file=$(find "$REVIEWS_DIR" -name "*$adapter_name*review*" 2>/dev/null | head -1)
 
             if [ -z "$audit_file" ]; then
-              echo "FAIL: Adapter '$adapter_name' missing audit doc in docs/mixin_logging/audits"
+              echo "FAIL: Adapter '$adapter_name' missing audit doc in docs/logging/audits"
               MISSING_DOCS=$((MISSING_DOCS + 1))
             fi
 
             if [ -z "$review_file" ]; then
-              echo "FAIL: Adapter '$adapter_name' missing review doc in docs/mixin_logging/reviews"
+              echo "FAIL: Adapter '$adapter_name' missing review doc in docs/logging/reviews"
               MISSING_DOCS=$((MISSING_DOCS + 1))
             fi
           done
@@ -55,9 +55,9 @@ jobs:
           if [ $MISSING_DOCS -gt 0 ]; then
             echo ""
             echo "ERROR: $MISSING_DOCS adapter(s) missing documentation."
-            echo "Each adapter under mixin_logging/adapters/<name>/ must have:"
-            echo "  - docs/mixin_logging/audits/*<name>*audit*.md"
-            echo "  - docs/mixin_logging/reviews/*<name>*review*.md"
+            echo "Each adapter under logging_suite/logging/adapters/<name>/ must have:"
+            echo "  - docs/logging/audits/*<name>*audit*.md"
+            echo "  - docs/logging/reviews/*<name>*review*.md"
             exit 1
           fi
 

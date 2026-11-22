@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "mixin-suite"
+name = "logging-suite"
 dynamic = ["version"]
 description = "Composable mixins for Python services: logging, sensitive data classification, retry logic, latency measurement, and notifications."
 readme = "README.md"
@@ -25,10 +25,10 @@ classifiers = [
 keywords = ["logging", "structured-logging", "correlation-id", "distributed-tracing", "observability", "dataclass", "repr", "serialization", "sensitive-data", "masking"]
 
 [project.urls]
-Homepage = "https://pypi.org/project/mixin-suite/"
-Repository = "https://github.com/jekhator/mixin-suite"
-Issues = "https://github.com/jekhator/mixin-suite/issues"
-Changelog = "https://github.com/jekhator/mixin-suite/blob/main/CHANGELOG.md"
+Homepage = "https://pypi.org/project/logging-suite/"
+Repository = "https://github.com/jekhator/logging-suite"
+Issues = "https://github.com/jekhator/logging-suite/issues"
+Changelog = "https://github.com/jekhator/logging-suite/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 aiohttp = ["aiohttp"]
@@ -64,51 +64,51 @@ dev = [
     "types-requests",
     "grpcio-tools",
     "types-grpcio",
-    "mixin-suite[all]",
+    "logging-suite[all]",
 ]
 
 [tool.hatch.version]
-path = "mixin_logging/config/_version.py"
+path = "logging_suite/logging/config/_version.py"
 
 [tool.hatch.build.targets.wheel]
-packages = ["mixin_latency", "mixin_logging", "mixin_notifications", "mixin_retry", "mixin_sensitivity"]
+packages = ["logging_suite"]
 exclude = [
-    "mixin_latency/**/tests",
-    "mixin_latency/conftest.py",
-    "mixin_logging/**/tests",
-    "mixin_logging/common/constants/tests.py",
-    "mixin_logging/conftest.py",
-    "mixin_sensitivity/**/tests",
-    "mixin_sensitivity/conftest.py",
-    "mixin_retry/**/tests",
-    "mixin_retry/conftest.py",
-    "mixin_notifications/**/tests",
-    "mixin_notifications/conftest.py",
+    "logging_suite/latency/**/tests",
+    "logging_suite/latency/conftest.py",
+    "logging_suite/logging/**/tests",
+    "logging_suite/logging/common/constants/tests.py",
+    "logging_suite/logging/conftest.py",
+    "logging_suite/sensitivity/**/tests",
+    "logging_suite/sensitivity/conftest.py",
+    "logging_suite/retry/**/tests",
+    "logging_suite/retry/conftest.py",
+    "logging_suite/notifications/**/tests",
+    "logging_suite/notifications/conftest.py",
     "conftest.py"
 ]
 
 [tool.pytest.ini_options]
 minversion = "7.0"
-testpaths = ["mixin_latency", "mixin_logging", "mixin_notifications", "mixin_retry", "mixin_sensitivity"]
+testpaths = ["logging_suite"]
 python_files = ["test_*.py"]
 addopts = "-v --tb=short"
 asyncio_mode = "strict"
 
 [tool.coverage.run]
-source = ["mixin_latency", "mixin_logging", "mixin_notifications", "mixin_retry", "mixin_sensitivity"]
+source = ["logging_suite"]
 branch = true
 omit = [
-    "mixin_latency/**/tests/*",
-    "mixin_latency/conftest.py",
-    "mixin_logging/**/tests/*",
-    "mixin_logging/common/constants/tests.py",
-    "mixin_logging/conftest.py",
-    "mixin_notifications/**/tests/*",
-    "mixin_notifications/conftest.py",
-    "mixin_retry/**/tests/*",
-    "mixin_retry/conftest.py",
-    "mixin_sensitivity/**/tests/*",
-    "mixin_sensitivity/conftest.py",
+    "logging_suite/latency/**/tests/*",
+    "logging_suite/latency/conftest.py",
+    "logging_suite/logging/**/tests/*",
+    "logging_suite/logging/common/constants/tests.py",
+    "logging_suite/logging/conftest.py",
+    "logging_suite/notifications/**/tests/*",
+    "logging_suite/notifications/conftest.py",
+    "logging_suite/retry/**/tests/*",
+    "logging_suite/retry/conftest.py",
+    "logging_suite/sensitivity/**/tests/*",
+    "logging_suite/sensitivity/conftest.py",
     "conftest.py"
 ]
 
@@ -135,13 +135,13 @@ extend-select = ["I", "TID252", "PLC0414"]
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
-known-first-party = ["mixin_latency", "mixin_logging", "mixin_notifications", "mixin_retry", "mixin_sensitivity"]
+known-first-party = ["logging_suite"]
 
 [tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"
 
 [tool.strict-module]
-paths = ["mixin_latency/", "mixin_logging/", "mixin_notifications/", "mixin_retry/", "mixin_sensitivity/"]
+paths = ["logging_suite/"]
 exception_tags = ["fixture"]
 
 [tool.strict-module.loc-cap]

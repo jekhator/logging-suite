@@ -1,21 +1,23 @@
-# mixin-suite
+# logging-suite
+
+Formerly mixin-suite (renamed 2026-11-22; imports moved under `logging_suite`). The old PyPI project stays installable with a moved-to notice.
 
 **Composable Python mixins for production services:** structured logging with automatic correlation-ID propagation, sensitive-data masking, retry logic, and latency measurement.
 
-[![PyPI version](https://img.shields.io/pypi/v/mixin-suite.svg)](https://pypi.org/project/mixin-suite/)
-[![CI](https://github.com/jekhator/mixin-suite/actions/workflows/ci.yml/badge.svg)](https://github.com/jekhator/mixin-suite/actions/workflows/ci.yml)
+[![PyPI version](https://img.shields.io/pypi/v/logging-suite.svg)](https://pypi.org/project/logging-suite/)
+[![CI](https://github.com/jekhator/logging-suite/actions/workflows/ci.yml/badge.svg)](https://github.com/jekhator/logging-suite/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Python Versions](https://img.shields.io/pypi/pyversions/mixin-suite.svg)](https://pypi.org/project/mixin-suite/)
+[![Python Versions](https://img.shields.io/pypi/pyversions/logging-suite.svg)](https://pypi.org/project/logging-suite/)
 
 This distribution includes five composable roots:
 
-- **mixin_logging**: End-to-end correlation-ID propagation, LoggingMixin, ambient logging, FlushOnWarningHandler
-- **mixin_sensitivity**: Sensitivity classification and dataclass repr-masking via SensitiveRepr
-- **mixin_retry**: Exponential backoff retry logic via RetryPolicy/RetryExecutor (capability contracts)
-- **mixin_latency**: High-precision elapsed-time measurement via LatencyClock
-- **mixin_notifications**: Event dispatch and suppression across multi-step workflows
+- **logging_suite.logging**: End-to-end correlation-ID propagation, LoggingMixin, ambient logging, FlushOnWarningHandler
+- **logging_suite.sensitivity**: Sensitivity classification and dataclass repr-masking via SensitiveRepr
+- **logging_suite.retry**: Exponential backoff retry logic via RetryPolicy/RetryExecutor (capability contracts)
+- **logging_suite.latency**: High-precision elapsed-time measurement via LatencyClock
+- **logging_suite.notifications**: Event dispatch and suppression across multi-step workflows
 
-All packages retain their original import roots and can be used independently or together.
+All five live under the single import root `logging_suite` and can be used independently or together.
 
 ## What They Do
 
@@ -33,7 +35,7 @@ class OrderService:
 
 **After:**
 ```python
-from mixin_logging import LoggingMixin, set_correlation_id
+from logging_suite.logging import LoggingMixin, set_correlation_id
 
 set_correlation_id("req-123")
 
@@ -64,7 +66,7 @@ logger.info("Creds: %s", creds)  # LEAKED: api_token exposed
 **After:**
 ```python
 from dataclasses import dataclass, field
-from mixin_sensitivity import Sensitivity, SensitiveRepr
+from logging_suite.sensitivity import Sensitivity, SensitiveRepr
 
 @dataclass(frozen=True, slots=True, repr=False)
 class APICredentials(SensitiveRepr):
@@ -80,7 +82,7 @@ logger.info("Creds: %s", creds)  # SAFE: repr shows "api_token=***MASKED***"
 Resilient function execution with configurable backoff and predicate-based retry decisions.
 
 ```python
-from mixin_retry import RetryPolicy, RetryExecutor
+from logging_suite.retry import RetryPolicy, RetryExecutor
 
 policy = RetryPolicy(
     max_attempts=3,
@@ -106,7 +108,7 @@ result = wrapped_call("https://api.example.com")
 Measure elapsed time with perf_counter precision and automatic rounding.
 
 ```python
-from mixin_latency import LatencyClock
+from logging_suite.latency import LatencyClock
 
 clock = LatencyClock.start()
 # ... do work ...
@@ -123,19 +125,19 @@ with LatencyClock.measure() as clock:
 
 **Base installation:**
 ```bash
-pip install mixin-suite
+pip install logging-suite
 ```
 
 or with uv:
 ```bash
-uv add mixin-suite
+uv add logging-suite
 ```
 
 **With optional extras for logging adapters:**
 
-Base package includes `mixin_logging` (stdlib adapter only) and `mixin_sensitivity` (no dependencies).
+Base package includes `logging_suite.logging` (stdlib adapter only) and `logging_suite.sensitivity` (no dependencies).
 
-Optional extras (mixin_logging adapters):
+Optional extras (logging_suite.logging adapters):
 - `[aiohttp]`: aiohttp client instrumentation
 - `[botocore]`: AWS SDK instrumentation
 - `[celery]`: Celery task propagation
@@ -148,8 +150,8 @@ Optional extras (mixin_logging adapters):
 
 Install with extras:
 ```bash
-uv add "mixin-suite[httpx,botocore]"  # Multiple extras
-uv add "mixin-suite[all]"             # All adapters
+uv add "logging-suite[httpx,botocore]"  # Multiple extras
+uv add "logging-suite[all]"             # All adapters
 ```
 
 **Python version:** Requires Python 3.11 or later (3.11 and 3.14 tested).
@@ -162,7 +164,7 @@ uv add "mixin-suite[all]"             # All adapters
 
 ```python
 import logging
-from mixin_logging.adapters.stdlib.stdlib_client import CorrelationLogFilter
+from logging_suite.logging.adapters.stdlib.stdlib_client import CorrelationLogFilter
 
 logging.basicConfig()
 logging.getLogger().addFilter(CorrelationLogFilter())
@@ -174,7 +176,7 @@ For FastAPI applications:
 
 ```python
 from fastapi import FastAPI
-from mixin_logging.adapters.fastapi import CorrelationIdMiddleware
+from logging_suite.logging.adapters.fastapi import CorrelationIdMiddleware
 
 app = FastAPI()
 app.add_middleware(CorrelationIdMiddleware)
@@ -183,7 +185,7 @@ app.add_middleware(CorrelationIdMiddleware)
 Or manually for other frameworks:
 
 ```python
-from mixin_logging import set_correlation_id
+from logging_suite.logging import set_correlation_id
 from fastapi import Request
 
 @app.middleware("http")
@@ -195,7 +197,7 @@ async def correlation_middleware(request: Request, call_next):
 #### 3. Use LoggingMixin in your classes
 
 ```python
-from mixin_logging import LoggingMixin
+from logging_suite.logging import LoggingMixin
 
 class UserService(LoggingMixin):
     def create_user(self, user_name: str):
@@ -209,7 +211,7 @@ class UserService(LoggingMixin):
 
 ```python
 from dataclasses import dataclass, field
-from mixin_sensitivity import SensitiveRepr, Sensitivity
+from logging_suite.sensitivity import SensitiveRepr, Sensitivity
 
 @dataclass(frozen=True, slots=True, repr=False)
 class User(SensitiveRepr):
@@ -236,7 +238,7 @@ logger.info("User created: %s", repr(user))
 # → "User created: User(id=1, api_token=***MASKED***, email=***MASKED***, ssn=***MASKED***, name='Alice')"
 
 # Introspect sensitivity profile
-from mixin_sensitivity import classify
+from logging_suite.sensitivity import classify
 profile = classify(user)
 # → SensitivityProfile(classes=(
 #     ('api_token', Sensitivity.SECRET),
@@ -247,13 +249,13 @@ profile = classify(user)
 
 ## Run-Verified Examples
 
-These examples are executed against the published mixin-suite==0.5.0 distribution.
+These examples are executed against the 0.5.0 release of this suite.
 
 ### Logging Example: Correlation-ID Propagation
 
 ```python
 import logging
-from mixin_logging import LoggingMixin, set_correlation_id
+from logging_suite.logging import LoggingMixin, set_correlation_id
 
 logging.basicConfig(
     level=logging.INFO,
@@ -286,7 +288,7 @@ result = service.upload("report.pdf", 1024000)
 status = service.process("doc-123")
 ```
 
-**Output (Python 3.14, mixin-suite==0.5.0):**
+**Output (Python 3.14, suite 0.5.0):**
 ```
 2026-07-10 03:05:20,405 - __main__.DocumentService - INFO - upload.initiated - correlation_id=req-2026-07-10-001
 2026-07-10 03:05:20,405 - __main__.DocumentService - INFO - upload.complete - correlation_id=req-2026-07-10-001
@@ -298,7 +300,7 @@ status = service.process("doc-123")
 
 ```python
 from dataclasses import dataclass, field
-from mixin_sensitivity import SensitiveRepr, classify, Sensitivity
+from logging_suite.sensitivity import SensitiveRepr, classify, Sensitivity
 
 @dataclass(frozen=True, slots=True, repr=False)
 class HealthRecord(SensitiveRepr):
@@ -324,7 +326,7 @@ profile = classify(record)
 print(f"PHI fields: {[f for f, s in profile.classes if s == Sensitivity.PHI]}")
 ```
 
-**Output (Python 3.14, mixin-suite==0.5.0):**
+**Output (Python 3.14, suite 0.5.0):**
 ```
 HealthRecord(patient_id=42, ssn=***MASKED***, diagnosis=***MASKED***, treatment_notes=***MASKED***, attending_physician='Dr. Smith')
 
@@ -333,13 +335,13 @@ PHI fields: ['ssn', 'diagnosis', 'treatment_notes']
 
 ## Documentation
 
-- **Logging:** See `docs/mixin_logging/` for detailed adapter documentation, architecture, and integration patterns
-- **Sensitivity:** See `docs/mixin_sensitivity/` for classifier API, masking customization, and examples
-- **Historical Changelogs:** See `docs/mixin_logging/CHANGELOG-history.md` and `docs/mixin_sensitivity/CHANGELOG-history.md`
+- **Logging:** See `docs/logging/` for detailed adapter documentation, architecture, and integration patterns
+- **Sensitivity:** See `docs/sensitivity/` for classifier API, masking customization, and examples
+- **Historical Changelogs:** See `docs/logging/CHANGELOG-history.md` and `docs/sensitivity/CHANGELOG-history.md`
 
 ## Public API
 
-### mixin_logging (v0.5.0)
+### logging_suite.logging (v0.5.0)
 
 Core classes and functions:
 - `LoggingMixin`: Base class providing `log_info()`, `log_debug()`, `log_warning()`, `log_error()`, and `log_exception()` methods
@@ -353,7 +355,7 @@ Core classes and functions:
 - `AmbientLogger`: Namespace for ambient logging functions (log_info, log_debug, log_warning, log_error)
 - `PUBLIC_API`: Frozenset of all public names
 
-### mixin_sensitivity (v0.5.0)
+### logging_suite.sensitivity (v0.5.0)
 
 Core classes and functions:
 - `SensitiveRepr`: Base class for dataclasses that masks sensitive fields in repr output
@@ -362,7 +364,7 @@ Core classes and functions:
 - `SensitivityProfile`: Data class containing field-to-sensitivity mappings
 - `SensitiveDeclarationError`: Exception raised for invalid sensitivity declarations
 
-### mixin_retry (v0.5.0)
+### logging_suite.retry (v0.5.0)
 
 Core classes and functions:
 - `RetryPolicy`: Configuration object for retry behavior (max_attempts, backoff, jitter, predicates)
@@ -374,28 +376,26 @@ All packages maintain their original import roots:
 
 ```python
 # Logging
-from mixin_logging import LoggingMixin, set_correlation_id, get_correlation_id
+from logging_suite.logging import LoggingMixin, set_correlation_id, get_correlation_id
 
 # Sensitivity
-from mixin_sensitivity import SensitiveRepr, classify, Sensitivity
+from logging_suite.sensitivity import SensitiveRepr, classify, Sensitivity
 
 # Retry
-from mixin_retry import RetryPolicy, RetryExecutor
+from logging_suite.retry import RetryPolicy, RetryExecutor
 
 # Latency
-from mixin_latency import LatencyClock
+from logging_suite.latency import LatencyClock
 
 # Notifications
-from mixin_notifications import Dispatcher, SuppressionPolicy
+from logging_suite.notifications import Dispatcher, SuppressionPolicy
 ```
 
 ## Contributing
 
 This is a consolidation of independently-maintained packages. Bug reports and feature requests should be filed in this repository or the respective upstream repositories:
 
-- mixin-logging historical issues: https://github.com/jekhator/mixin-logging/issues
-- mixin-sensitivity historical issues: https://github.com/jekhator/mixin-sensitivity/issues
-- mixin-retry and suite issues: https://github.com/jekhator/mixin-suite/issues
+- Issues for the suite and all five import roots: https://github.com/jekhator/logging-suite/issues
 
 ## License
 

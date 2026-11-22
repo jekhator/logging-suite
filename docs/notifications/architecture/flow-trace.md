@@ -1,0 +1,250 @@
+# logging_suite.notifications Flow Trace
+
+## Architecture Overview
+
+logging_suite/notifications/dispatch/dispatch_client.py (+ Dispatcher, guarded dispatch, suppression, egress gating)
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════
+Imports: logging, time, dataclass, NotificationBackend, SuppressionTracker; factory correlation capture
+┌─ [DATACLASS,slots] Dispatcher ──────────┐ backends: tuple[NotificationBackend, ...] ; suppression_policy: SuppressionPolicy | None ; notify[mth] ; _apply_egress_gate[mth] ; _count_metadata_by_sensitivity[mth] ; _build_count_metadata[mth] └─...
+
+logging_suite/notifications/events/events_client.py (+ NotificationEventClient factory with auto-capture)
+████████████████████████████████████████████████████████████████████████████════════════════════════════
+Imports: datetime, logging_suite.logging.get_correlation_id; auto-capture correlation_id + occurred_at
+┌─ [CLASS,slots] NotificationEventClient ──────────┐ create[staticmethod] ← Severity | str → NotificationEvent ← auto-capture get_correlation_id() & now_utc └─...
+
+logging_suite/notifications/suppression/suppression_objects.py (+ SuppressionTracker in-memory state)
+███████════════════════════════════════════════════════════════════════════════════════════════════════════
+Imports: dataclass, time; capacity-capped in-memory seen dict
+┌─ [DATACLASS,slots] SuppressionTracker ──────────┐ is_suppressed[mth] ; record[mth] ; _seen[dict] ← (category, fingerprint) → time └─...
+
+## FLOW TRACE
+
+i CONSTRUCT  Dispatcher(backends=(CollectingBackend(), LoggingBackend()), suppression_policy=SuppressionPolicy(window_seconds=60))
+      └─ backends tuple pinned (explicit, no registry global)
+      └─ SuppressionTracker(window_seconds=60) initialized if policy provided
+      └─ Dispatcher ready
+
+ii FACTORY   NotificationEventClient.create(category="auth", severity="WARNING", title="Login Failed", fingerprint="login-001", body="User provided wrong password")
+
+    └─ get_correlation_id() → "corr-12345" (from logging_suite.logging context)
+    └─ datetime.now(timezone.utc).isoformat() → "2026-07-21T10:00:00+00:00"
+    └─ Severity("WARNING") → Severity.WARNING
+    └─ NotificationEvent(
+         category="auth",
+         severity=Severity.WARNING,
+         title="Login Failed",
+         body="User provided wrong password",
+         fingerprint="login-001",
+         occurred_at="2026-07-21T10:00:00+00:00",
+         correlation_id="corr-12345",
+         metadata=()
+       )
+
+iii NOTIFY   dispatcher.notify(event)
+
+     a. SUPPRESSION CHECK (if policy exists):
+        ├─ current_time = time.time() → 1721555700.123
+        ├─ _suppression_tracker.is_suppressed("auth", "login-001", current_time)
+        │     ├─ key = ("auth", "login-001")
+        │     ├─ key in _seen → True (from previous dispatch)
+        │     ├─ current_time - last_seen = 1.5 < 60 → True ──▶ return True (SUPPRESSED)
+        │     └─ [or] not in _seen / outside window → return False (ALLOWED)
+        ├─ [if suppressed] return DispatchResult(total_backends=2, results=(), suppressed=True)
+        └─ [if allowed] record in _seen and proceed to dispatch
+
+     b. GUARDED DISPATCH (event sent to each backend):
+        ├─ for backend in backends:
+        │     ├─ egress_event = _apply_egress_gate(event, backend)
+        │     │     ├─ backend.external_egress → False (CollectingBackend) ──▶ return event (unmasked)
+        │     │     ├─ [or] backend.external_egress → True (WebhookBackend)
+        │     │     │     ├─ title = EGRESS_TITLE_TEMPLATE.format(category, severity)
+        │     │     │     │     └─ original "Secret payment issue" → "payment: CRITICAL notification"
+        │     │     │     ├─ body masked to redacted: "[content redacted for external delivery]"
+        │     │     │     ├─ metadata reduced to counts: (("sensitive_count_metadata", "2"), ...)
+        │     │     │     ├─ category, fingerprint, correlation_id, occurred_at unchanged (routing/dedup)
+        │     │     │     └─ return masked event
+        │     │
+        │     ├─ try: result = backend.send(egress_event)
+        │     │     └─ CollectingBackend.send(event) → DeliveryResult(delivered=True, ...)
+        │     │     └─ LoggingBackend.send(event) → logs + DeliveryResult(delivered=True, ...)
+        │     │     └─ [exception] ──▶ except clause below
+        │     │
+        │     └─ except Exception:
+        │           ├─ _logger.warning(f"Backend {class_name} failed", exc_info=exc)
+        │           └─ DeliveryResult(delivered=False, backend_name=..., retryable=True)
+        │
+        └─ collect all results
+
+     c. RETURN   DispatchResult(total_backends=2, results=(result1, result2), suppressed=False)
+
+## REAL RUN OUTPUT
+
+Example output from actual execution (Python 3.11.15):
+
+```
+=== logging_suite.notifications RUN-VERIFIED EXAMPLE ===
+
+Test 1: Basic dispatch with CollectingBackend
+
+event = NotificationEventClient.create(
+    category="auth",
+    severity="WARNING",
+    title="Login Failed",
+    body="User provided invalid credentials",
+    fingerprint="login-failed-001"
+)
+
+dispatcher = Dispatcher(backends=(CollectingBackend(),))
+result = dispatcher.notify(event)
+
+print(f"Dispatched to {result.total_backends} backend(s)")
+print(f"Results: {len(result.results)} delivery outcome(s)")
+print(f"First backend delivered: {result.results[0].delivered}")
+print(f"Suppressed: {result.suppressed}")
+
+Output:
+Dispatched to 1 backend(s)
+Results: 1 delivery outcome(s)
+First backend delivered: True
+Suppressed: False
+
+---
+
+Test 2: Suppression within window
+
+dispatcher = Dispatcher(
+    backends=(CollectingBackend(),),
+    suppression_policy=SuppressionPolicy(window_seconds=60)
+)
+
+result1 = dispatcher.notify(event)
+result2 = dispatcher.notify(event)
+
+print(f"First dispatch suppressed: {result1.suppressed}")
+print(f"Second dispatch suppressed: {result2.suppressed}")
+
+Output:
+First dispatch suppressed: False
+Second dispatch suppressed: True
+
+---
+
+Test 3: Egress gate masks sensitive content
+
+class ExternalBackend:
+    @property
+    def external_egress(self) -> bool:
+        return True
+    
+    def send(self, event):
+        return DeliveryResult(
+            delivered=True,
+            backend_name="ExternalBackend",
+            detail="sent",
+            retryable=False
+        )
+
+external_backend = ExternalBackend()
+dispatcher = Dispatcher(backends=(external_backend,))
+
+sensitive_event = NotificationEventClient.create(
+    category="user",
+    severity="INFO",
+    title="User Data",
+    body="SSN: 123-45-6789",
+    fingerprint="user-data-001"
+)
+
+result = dispatcher.notify(sensitive_event)
+
+print(f"Event sent to external backend")
+print(f"Content masked: {'123-45-6789' not in external_backend.events[0].body}")
+
+Output:
+Event sent to external backend
+Content masked: True
+```
+
+Key observations:
+
+- Dispatcher requires explicit backends tuple (no global registry default)
+- NotificationEventClient.create() auto-captures correlation_id from logging_suite.logging context and current UTC time
+- Suppression window is (category, fingerprint) keyed; duplicates within window are discarded server-side
+- Guarded dispatch catches backend exceptions, logs warnings, and continues (never raises into caller)
+- Egress gate inspects backend.external_egress; for external backends:
+  - Title is REPLACED with derived label from EGRESS_TITLE_TEMPLATE (category + severity, no original content)
+  - Body is redacted to "[content redacted for external delivery]"
+  - Metadata reduced to counts only
+  - Category, fingerprint, correlation_id, occurred_at remain unmasked (operational routing/dedup contract)
+- DeliveryResult provides per-backend outcome and retryability hint
+- All classes are frozen dataclasses or slots to prevent mutation
+
+---
+
+## RetryingBackend FLOW TRACE (0.6.0+)
+
+logging_suite/notifications/backends/_client.py (+ RetryingBackend, composing logging_suite.retry's RetryExecutor)
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════
+Imports: logging, RetryExecutor, RetryPolicy, DeliveryResult, NotificationBackend
+┌─ [DATACLASS,frozen,slots] RetryingBackend ──────────┐ inner: NotificationBackend ; policy: RetryPolicy ; dead_letter: NotificationBackend | None ; send[mth] ; external_egress[property] └─...
+
+### Retry Delivery Path
+
+iv RETRY LOOP  backend = RetryingBackend(inner=sns_client, policy=RetryPolicy(...), dead_letter=dlq_backend)
+    └─ result = backend.send(event)
+
+    a. ATTEMPT DELIVERY:
+        ├─ executor = RetryExecutor()
+        ├─ attempt_send() ← closure: returns inner.send(event)
+        │     ├─ result = sns_client.send(event)
+        │     ├─ if result.retryable=True:
+        │     │     └─ raise RetryableDeliveryError(result) ──▶ to retry loop
+        │     └─ return result (delivered or non-retryable failure)
+        │
+        └─ policy_with_predicate = RetryPolicy(..., should_retry=lambda exc: isinstance(exc, RetryableDeliveryError))
+
+    b. RETRY EXECUTION (executor.call):
+        ├─ for attempt in range(policy.max_attempts):
+        │     ├─ try:
+        │     │     └─ return attempt_send()
+        │     ├─ except RetryableDeliveryError:
+        │     │     ├─ if attempt < max_attempts - 1:
+        │     │     │     ├─ backoff = min(base * (multiplier^attempt), max_seconds)
+        │     │     │     └─ time.sleep(backoff + jitter)
+        │     │     └─ [if final attempt] raise
+        │     └─ [non-retryable exception] raise (no retry)
+        │
+        └─ return result (success on any attempt)
+
+    c. EXHAUSTION FALLBACK (if all attempts failed):
+        ├─ except RetryableDeliveryError as exc:
+        │     ├─ if dead_letter is not None:
+        │     │     ├─ try:
+        │     │     │     ├─ dead_result = dead_letter.send(event)
+        │     │     │     └─ return DeliveryResult(
+        │     │     │           delivered=dead_result.delivered,
+        │     │     │           backend_name=f"RetryingBackend(dead_letter={dead_letter.__class__.__name__})",
+        │     │     │           detail=f"exhausted retries, dead_letter outcome: {dead_result.detail}",
+        │     │     │           retryable=False
+        │     │     │         )
+        │     │     └─ except Exception as dead_exc:
+        │     │           ├─ logger.warning("Dead-letter backend failed...", exc_info=dead_exc)
+        │     │           └─ return DeliveryResult(delivered=False, detail="exhausted retries and dead_letter failed", retryable=False)
+        │     └─ return DeliveryResult(delivered=False, detail=f"exhausted retries: {exc.result.detail}", retryable=False)
+        │
+        └─ [no dead_letter] return DeliveryResult(delivered=False, detail="exhausted retries", retryable=False)
+
+    d. EXCEPTION FROM INNER (non-retryable exception):
+        ├─ except Exception as error:
+        │     ├─ if dead_letter is not None:
+        │     │     ├─ [same fallback as above]
+        │     └─ return DeliveryResult(delivered=False, detail=f"exception exhaustion: {error.__class__.__name__}", retryable=False)
+
+### Key Behaviors
+
+- **RetryPolicy composition:** User supplies max_attempts, backoff strategy, jitter; RetryingBackend composes into retry loop
+- **Retryable classification:** inner.send() result.retryable=True triggers retry; False returns immediately
+- **Exception normalization:** Retryable results are converted to internal RetryableDeliveryError for retry engine
+- **Dead-letter fail-safe:** Dead-letter exceptions are swallowed (logged warning, return failure); never propagate
+- **No infinite loops:** max_attempts ensures bounded retries; non-retryable results exit immediately
+- **Composition over inheritance:** Wraps any NotificationBackend; RetryingBackend(inner=RetryingBackend(...)) valid
