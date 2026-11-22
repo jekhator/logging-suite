@@ -11,7 +11,8 @@ from logging_suite.notifications.events._objects import NotificationEvent
 
 @dataclass(frozen=True, slots=True)
 class SESBackend:
-    """AWS SES notification backend with attachment support.
+    """
+    AWS SES notification backend with attachment support.
 
     Requires: boto3>=1.28.0 (installed via [ses] extra).
     """

@@ -23,14 +23,17 @@ class RetryExecutor:
         /,
         policy: RetryPolicy,
     ) -> Callable[..., OperationReturnType]:
-        """Wrap function with retry logic (rebind once, call many).
+        """
+        Wrap function with retry logic (rebind once, call many).
 
         Returns a wrapper preserving operation's signature via functools.wraps.
         Supports both sync and async functions.
 
         Args:
-            operation: Function to wrap.
-            policy: Retry policy configuration.
+            operation:
+                Function to wrap.
+            policy:
+                Retry policy configuration.
 
         Returns:
             Wrapped function with retry logic.
@@ -99,20 +102,21 @@ class RetryExecutor:
         policy: RetryPolicy | None = None,
         **kwargs: Any,
     ) -> OperationReturnType:
-        """Execute operation with retry (per-call convenience form).
+        """
+        Execute operation with retry (per-call convenience form).
 
         Args:
-            operation: Function to execute.
-            *args: Positional arguments to operation.
-            policy: Retry policy configuration. Required.
-            **kwargs: Keyword arguments to operation.
+            operation:
+                Function to execute.
+            *args:
+                Positional arguments to operation.
+            policy:
+                Retry policy configuration. Required.
+            **kwargs:
+                Keyword arguments to operation.
 
         Returns:
             Function result.
-
-        Raises:
-            ValueError: If policy is None.
-            BaseException: Original exception if all retries exhausted.
         """
         if policy is None:
             raise ValueError(const.ERR_RETRY_POLICY_REQUIRED)
@@ -124,7 +128,8 @@ class RetryExecutor:
         error: BaseException,
         policy: RetryPolicy,
     ) -> bool:
-        """Determine if exception is retryable.
+        """
+        Determine if exception is retryable.
 
         The predicate receives the caught exception as-is and owns any
         unwrapping of __cause__ chains.

@@ -14,10 +14,12 @@ class RedactionClient:
 
     @classmethod
     def attach_default(cls, logger: logging.Logger) -> None:
-        """Attach redaction filter with default patterns to a logger.
+        """
+        Attach redaction filter with default patterns to a logger.
 
         Args:
-            logger: Logger to attach the filter to.
+            logger:
+                Logger to attach the filter to.
         """
         redaction_filter = RedactionFilter.with_defaults()
         logger.addFilter(redaction_filter)

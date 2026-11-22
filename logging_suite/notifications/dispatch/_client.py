@@ -39,10 +39,12 @@ class Dispatcher:
             )
 
     def notify(self, event: NotificationEvent) -> DispatchResult:
-        """Dispatch event to all backends with suppression and egress gating.
+        """
+        Dispatch event to all backends with suppression and egress gating.
 
         Args:
-            event: The notification event to dispatch.
+            event:
+                The notification event to dispatch.
 
         Returns:
             DispatchResult with per-backend outcomes and suppression status.
@@ -99,11 +101,14 @@ class Dispatcher:
         event: NotificationEvent,
         backend: NotificationBackend,
     ) -> NotificationEvent:
-        """Gate sensitive content for external_egress backends.
+        """
+        Gate sensitive content for external_egress backends.
 
         Args:
-            event: Original event.
-            backend: Target backend.
+            event:
+                Original event.
+            backend:
+                Target backend.
 
         Returns:
             Original event if backend is not external_egress; sanitized event otherwise.

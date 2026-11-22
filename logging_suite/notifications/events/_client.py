@@ -19,15 +19,22 @@ class NotificationEventClient:
         fingerprint: str,
         metadata: tuple[tuple[str, str], ...] = (),
     ) -> NotificationEvent:
-        """Create a NotificationEvent with auto-captured correlation context.
+        """
+        Create a NotificationEvent with auto-captured correlation context.
 
         Args:
-            category: Event category (non-empty).
-            severity: Severity level (INFO, WARNING, CRITICAL).
-            title: Event title (non-empty).
-            body: Event body/description.
-            fingerprint: Unique fingerprint for deduplication (non-empty).
-            metadata: Optional tuple of (key, value) pairs.
+            category:
+                Event category (non-empty).
+            severity:
+                Severity level (INFO, WARNING, CRITICAL).
+            title:
+                Event title (non-empty).
+            body:
+                Event body/description.
+            fingerprint:
+                Unique fingerprint for deduplication (non-empty).
+            metadata:
+                Optional tuple of (key, value) pairs.
 
         Returns:
             Configured NotificationEvent with correlation_id and occurred_at populated.

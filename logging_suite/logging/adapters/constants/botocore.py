@@ -1,4 +1,5 @@
-"""botocore outbound adapter constants.
+"""
+botocore outbound adapter constants.
 
 Import alias: `from logging_suite.logging.adapters.constants import botocore as const`
 """

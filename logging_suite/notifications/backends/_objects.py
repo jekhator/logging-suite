@@ -27,10 +27,12 @@ class NotificationBackend(Protocol):
         ...
 
     def send(self, event: NotificationEvent) -> DeliveryResult:
-        """Deliver the notification event.
+        """
+        Deliver the notification event.
 
         Args:
-            event: The notification event to send.
+            event:
+                The notification event to send.
 
         Returns:
             DeliveryResult with outcome and optional retry hint.

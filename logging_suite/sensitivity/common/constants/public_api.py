@@ -1,4 +1,5 @@
-"""Public API export names for logging_suite.sensitivity.
+"""
+Public API export names for logging_suite.sensitivity.
 
 Names exported from logging_suite.sensitivity.__init__: Sensitivity, SensitiveRepr,
 SensitiveDeclarationError, SensitivityProfile, classify(). PUBLIC_API itself

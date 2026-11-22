@@ -19,7 +19,8 @@ class LatencyClock:
 
     @classmethod
     def start(cls) -> LatencyClock:
-        """Start a new clock.
+        """
+        Start a new clock.
 
         Returns:
             LatencyClock instance with current perf_counter timestamp.
@@ -27,7 +28,8 @@ class LatencyClock:
         return cls(time.perf_counter())
 
     def stop(self) -> LatencyMeasurement:
-        """Stop clock and return measurement.
+        """
+        Stop clock and return measurement.
 
         Returns:
             LatencyMeasurement with elapsed duration in milliseconds.
@@ -39,7 +41,8 @@ class LatencyClock:
     @classmethod
     @contextmanager
     def measure(cls) -> Iterator[LatencyClock]:
-        """Context manager for measuring elapsed time.
+        """
+        Context manager for measuring elapsed time.
 
         Yields:
             LatencyClock instance that will measure duration on context exit.

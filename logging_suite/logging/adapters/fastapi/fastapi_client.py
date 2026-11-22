@@ -38,7 +38,8 @@ class CorrelationIdMiddleware(BaseHTTPMiddleware):
 
 
 async def get_correlation_id_dependency() -> str:
-    """FastAPI dependency that returns the current correlation ID from context.
+    """
+    FastAPI dependency that returns the current correlation ID from context.
 
     Raises ValueError if no correlation ID is set in context (should not happen if middleware is installed).
     Use in route handlers: `async def my_handler(corr_id: str = Depends(get_correlation_id_dependency))`

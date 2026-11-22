@@ -200,7 +200,8 @@ class TestRetryExecutor:
         assert call_count == 2
 
     def test_wrap_sync_should_retry_with_cause_chain(self) -> None:
-        """Wrap sync with should_retry predicate unwrapping __cause__.
+        """
+        Wrap sync with should_retry predicate unwrapping __cause__.
 
         Predicate receives the caught (outer) exception and owns unwrapping.
         Probe: fn raises RuntimeError with __cause__=ValueError, predicate

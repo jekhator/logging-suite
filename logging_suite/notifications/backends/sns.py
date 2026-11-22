@@ -11,7 +11,8 @@ from logging_suite.notifications.events._objects import NotificationEvent
 
 @dataclass(frozen=True, slots=True)
 class SNSBackend:
-    """AWS SNS notification backend.
+    """
+    AWS SNS notification backend.
 
     Requires: boto3>=1.28.0 (installed via [sns] extra).
     """

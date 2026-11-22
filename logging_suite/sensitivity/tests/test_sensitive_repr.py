@@ -18,7 +18,8 @@ class TestSensitiveRepr:
     """Test SensitiveRepr adoption mixin masking behavior."""
 
     def test_repr_without_repr_false_raises_error(self) -> None:
-        """Adopter without repr=False raises SensitiveDeclarationError.
+        """
+        Adopter without repr=False raises SensitiveDeclarationError.
 
         Silent shadowing is prevented: dataclass-generated __repr__
         cannot be used without being detected.

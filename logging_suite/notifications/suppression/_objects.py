@@ -23,12 +23,16 @@ class SuppressionTracker:
     def is_suppressed(
         self, category: str, fingerprint: str, current_time: float
     ) -> bool:
-        """Check if (category, fingerprint) is within suppression window.
+        """
+        Check if (category, fingerprint) is within suppression window.
 
         Args:
-            category: Event category.
-            fingerprint: Event fingerprint.
-            current_time: Current time in seconds (from time.time()).
+            category:
+                Event category.
+            fingerprint:
+                Event fingerprint.
+            current_time:
+                Current time in seconds (from time.time()).
 
         Returns:
             True if within window and seen recently; False otherwise.
@@ -41,12 +45,16 @@ class SuppressionTracker:
         return False
 
     def record(self, category: str, fingerprint: str, current_time: float) -> None:
-        """Record a (category, fingerprint) seen at current_time.
+        """
+        Record a (category, fingerprint) seen at current_time.
 
         Args:
-            category: Event category.
-            fingerprint: Event fingerprint.
-            current_time: Current time in seconds.
+            category:
+                Event category.
+            fingerprint:
+                Event fingerprint.
+            current_time:
+                Current time in seconds.
         """
         key = (category, fingerprint)
         self._seen[key] = current_time

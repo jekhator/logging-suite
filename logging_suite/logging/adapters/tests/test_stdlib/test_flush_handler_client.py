@@ -217,7 +217,8 @@ class TestFlushOnWarningHandlerBuffering:
         ]
 
     def test_other_correlations_not_affected_by_flush(self) -> None:
-        """Interleaved correlations: only failing correlation's buffer flushes.
+        """
+        Interleaved correlations: only failing correlation's buffer flushes.
 
         Reproduces exact scenario: flow-A and flow-B interleaved; when A warns,
         only A's trail flushes (not B's); B's buffer remains intact for later warning.

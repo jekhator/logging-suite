@@ -23,7 +23,8 @@ class SensitiveDeclarationError(Exception):
 
 
 class SensitiveRepr:
-    """Adoption mixin: masks sensitive fields in dataclass __repr__.
+    """
+    Adoption mixin: masks sensitive fields in dataclass __repr__.
 
     Inheriting dataclasses MUST use @dataclass(frozen=True, slots=True, repr=False)
     to avoid silent shadowing of the masking __repr__. A __post_init__ guard
@@ -49,7 +50,8 @@ class SensitiveRepr:
     """
 
     def __post_init__(self) -> None:
-        """Guard against silent repr shadowing.
+        """
+        Guard against silent repr shadowing.
 
         Raises SensitiveDeclarationError if the adopter's @dataclass
         generated its own __repr__ instead of using SensitiveRepr's.
@@ -58,7 +60,8 @@ class SensitiveRepr:
             raise SensitiveDeclarationError(ERR_SENSITIVE_REPR_NOT_OVERRIDDEN)
 
     def __repr__(self) -> str:
-        """Repr with sensitive fields masked.
+        """
+        Repr with sensitive fields masked.
 
         Reads field(metadata={"sensitivity": Sensitivity.X}) markers.
         Replaced marked values with ERR_SENSITIVE_MASKED_REPR token.

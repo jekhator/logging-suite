@@ -57,10 +57,12 @@ class LoggingBackend:
     """Emits notifications via stdlib logging."""
 
     def __init__(self, logger_name: str = "logging_suite.notifications"):
-        """Initialize with a logger.
+        """
+        Initialize with a logger.
 
         Args:
-            logger_name: Name of the logger to use.
+            logger_name:
+                Name of the logger to use.
         """
         self.logger = logging.getLogger(logger_name)
 

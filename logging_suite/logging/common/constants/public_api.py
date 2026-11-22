@@ -1,4 +1,5 @@
-"""Public API export names for the logging-mixin top-level package.
+"""
+Public API export names for the logging-mixin top-level package.
 
 Names exported from logging_suite.logging.__init__: ContextVarClient, LoggingMixin,
 correlation-id helpers, ambient functions, FlushOnWarningHandler. PUBLIC_API

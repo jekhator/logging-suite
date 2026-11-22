@@ -10,7 +10,8 @@ from logging_suite.retry.common.constants import errors as const
 
 @dataclass(frozen=True, slots=True)
 class RetryPolicy:
-    """Exponential backoff retry strategy with jitter and predicates.
+    """
+    Exponential backoff retry strategy with jitter and predicates.
 
     Attributes:
         max_attempts: Maximum number of retry attempts (>= 1).

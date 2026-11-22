@@ -13,7 +13,8 @@ from logging_suite.logging.context.correlation.correlation_client import (
 
 @dataclass(frozen=True, slots=True)
 class AmbientLogger:
-    """Logs events with auto-injected correlation_id from ContextVar.
+    """
+    Logs events with auto-injected correlation_id from ContextVar.
 
     Trade-off: logs to a fixed module logger (logging_suite.logging.ambient), not per-class.
     Use LoggingMixin for per-class logging; use AmbientLogger for shared/module-level context.
