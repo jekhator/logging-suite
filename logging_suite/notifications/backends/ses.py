@@ -34,12 +34,12 @@ class SESBackend:
         from email.mime.text import MIMEText
 
         try:
-            msg = MIMEMultipart()
-            msg["Subject"] = event.title
-            msg["From"] = self.from_address
-            msg["To"] = ", ".join(self.to_addresses)
+            message = MIMEMultipart()
+            message["Subject"] = event.title
+            message["From"] = self.from_address
+            message["To"] = ", ".join(self.to_addresses)
 
-            msg.attach(MIMEText(event.body, "plain"))
+            message.attach(MIMEText(event.body, "plain"))
 
             for attachment in event.attachments:
                 part = MIMEBase("application", "octet-stream")
@@ -49,10 +49,10 @@ class SESBackend:
                     "Content-Disposition",
                     f"attachment; filename= {attachment.filename}",
                 )
-                msg.attach(part)
+                message.attach(part)
 
             response = self.ses_client.send_raw_email(
-                RawMessage={"Data": msg.as_string()}
+                RawMessage={"Data": message.as_string()}
             )
 
             message_id = response.get("MessageId", "unknown")

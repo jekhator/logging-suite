@@ -183,7 +183,7 @@ class TestCorrelationIdMiddlewareCall:
         response_msg = messages[0]
         headers = response_msg[const.HEADERS_KEY]
         assert len(headers) == 2
-        header_names = [h[0] for h in headers]
+        header_names = [header[0] for header in headers]
         assert b"content-type" in header_names
         assert const.CORRELATION_ID_HEADER in header_names
 

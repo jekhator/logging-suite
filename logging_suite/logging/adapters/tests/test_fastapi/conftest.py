@@ -39,17 +39,20 @@ def app_with_middleware() -> FastAPI:
         """Test handler that returns a simple response."""
         from logging_suite.logging import get_correlation_id
 
-        corr_id = get_correlation_id()
-        return {"correlation_id": corr_id or "none"}
+        correlation_id = get_correlation_id()
+        return {"correlation_id": correlation_id or "none"}
 
     @app.get("/test-with-request")
     async def test_handler_with_request(request: Request) -> dict[str, str]:
         """Test handler that accesses request headers."""
         from logging_suite.logging import get_correlation_id
 
-        corr_id = get_correlation_id()
+        correlation_id = get_correlation_id()
         header_value = request.headers.get("x-correlation-id", "none")
-        return {"correlation_id": corr_id or "none", "header_value": header_value}
+        return {
+            "correlation_id": correlation_id or "none",
+            "header_value": header_value,
+        }
 
     return app
 

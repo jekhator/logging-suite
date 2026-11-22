@@ -79,7 +79,7 @@ class TestRetryPolicy:
             backoff_multiplier=1.0,
             backoff_max_seconds=0.0,
             jitter=False,
-            should_retry=lambda exc: isinstance(exc, ValueError),
+            should_retry=lambda error: isinstance(error, ValueError),
         )
         assert policy.backoff_base_seconds == 0.0
         assert policy.backoff_max_seconds == 0.0
@@ -179,7 +179,7 @@ class TestRetryExecutor:
             backoff_multiplier=2.0,
             backoff_max_seconds=0.01,
             jitter=False,
-            should_retry=lambda exc: isinstance(exc, ConnectionError),
+            should_retry=lambda error: isinstance(error, ConnectionError),
         )
 
         call_count = 0
@@ -209,8 +209,8 @@ class TestRetryExecutor:
         """
         executor = RetryExecutor()
 
-        def check_cause_for_value_error(exc: BaseException) -> bool:
-            return isinstance(exc.__cause__, ValueError)
+        def check_cause_for_value_error(error: BaseException) -> bool:
+            return isinstance(error.__cause__, ValueError)
 
         policy = RetryPolicy(
             max_attempts=3,
@@ -352,7 +352,7 @@ class TestRetryExecutor:
             backoff_multiplier=1.0,
             backoff_max_seconds=0.0,
             jitter=False,
-            should_retry=lambda exc: isinstance(exc, ValueError),
+            should_retry=lambda error: isinstance(error, ValueError),
         )
 
         call_count = 0
@@ -395,8 +395,8 @@ class TestRetryExecutor:
             retry_on=(ValueError,),
         )
 
-        def add(a: int, b: int) -> int:
-            return a + b
+        def add(left: int, right: int) -> int:
+            return left + right
 
         with patch("time.sleep"):
             result = executor.call(add, 2, 3, policy=policy)
@@ -492,7 +492,7 @@ class TestRetryExecutor:
         """should_retry predicate takes precedence over retry_on."""
         executor = RetryExecutor()
 
-        def predicate_rejects_all(exc: BaseException) -> bool:
+        def predicate_rejects_all(error: BaseException) -> bool:
             return False
 
         policy = RetryPolicy(

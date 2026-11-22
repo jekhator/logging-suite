@@ -46,7 +46,7 @@ async def get_correlation_id_dependency() -> str:
     """
     from logging_suite.logging import get_correlation_id
 
-    corr_id = get_correlation_id()
-    if corr_id is None:
+    correlation_id = get_correlation_id()
+    if correlation_id is None:
         raise ValueError(const.ERR_FASTAPI_NO_CORRELATION_ID)
-    return corr_id
+    return correlation_id

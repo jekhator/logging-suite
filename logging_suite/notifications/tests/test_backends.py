@@ -124,13 +124,13 @@ class TestAttachment:
 
     def test_attachment_frozen(self) -> None:
         """Attachment is frozen."""
-        att = Attachment(
+        attachment = Attachment(
             filename="test.txt",
             content_type="text/plain",
             content=b"test data",
         )
         with pytest.raises(AttributeError):
-            att.filename = "other.txt"  # type: ignore
+            attachment.filename = "other.txt"  # type: ignore
 
     def test_attachment_validation_empty_filename(self) -> None:
         """Attachment rejects empty filename."""
@@ -154,22 +154,22 @@ class TestAttachment:
 
     def test_attachment_egress_safe_default(self) -> None:
         """Attachment egress_safe defaults to False."""
-        att = Attachment(
+        attachment = Attachment(
             filename="test.txt",
             content_type="text/plain",
             content=b"test",
         )
-        assert att.egress_safe is False
+        assert attachment.egress_safe is False
 
     def test_attachment_egress_safe_true(self) -> None:
         """Attachment can be marked egress_safe."""
-        att = Attachment(
+        attachment = Attachment(
             filename="test.txt",
             content_type="text/plain",
             content=b"test",
             egress_safe=True,
         )
-        assert att.egress_safe is True
+        assert attachment.egress_safe is True
 
 
 class TestRetryingBackend:

@@ -182,13 +182,13 @@ class TestFlushOnWarningHandlerBuffering:
         set_correlation_id(test_const.CORRELATION_ID_VALID_ID_123)
 
         records = []
-        for i in range(3):
+        for index in range(3):
             record = logging.LogRecord(
                 name="test",
                 level=logging.DEBUG,
                 pathname="test.py",
-                lineno=42 + i,
-                msg=f"message {i}",
+                lineno=42 + index,
+                msg=f"message {index}",
                 args=(),
                 exc_info=None,
             )
@@ -209,7 +209,7 @@ class TestFlushOnWarningHandlerBuffering:
         handler.emit(warning_record)
 
         assert len(target.records) == 4
-        assert [r.msg for r in target.records] == [
+        assert [flushed_record.msg for flushed_record in target.records] == [
             "message 0",
             "message 1",
             "message 2",
@@ -278,7 +278,10 @@ class TestFlushOnWarningHandlerBuffering:
         assert target.records[0].getMessage() == "A step 1"
         assert target.records[1].getMessage() == "A step 2"
         assert target.records[2].getMessage() == "A failed"
-        assert all(r.getMessage() != "B step 1" for r in target.records)
+        assert all(
+            flushed_record.getMessage() != "B step 1"
+            for flushed_record in target.records
+        )
 
         assert test_const.CORRELATION_ID_TRACE in handler._buffers
         assert len(handler._buffers[test_const.CORRELATION_ID_TRACE]) == 1
@@ -374,13 +377,13 @@ class TestFlushOnWarningHandlerCapacity:
         set_correlation_id(test_const.CORRELATION_ID_VALID_ID_123)
 
         # Emit 5 DEBUG records; only 3 should be buffered
-        for i in range(5):
+        for index in range(5):
             record = logging.LogRecord(
                 name="test",
                 level=logging.DEBUG,
                 pathname="test.py",
-                lineno=42 + i,
-                msg=f"message {i}",
+                lineno=42 + index,
+                msg=f"message {index}",
                 args=(),
                 exc_info=None,
             )
@@ -406,8 +409,8 @@ class TestFlushOnWarningHandlerCapacity:
             test_const.CORRELATION_ID_ABC_123,
         ]
 
-        for corr_id in correlations:
-            set_correlation_id(corr_id)
+        for correlation_id in correlations:
+            set_correlation_id(correlation_id)
             record = logging.LogRecord(
                 name="test",
                 level=logging.DEBUG,
@@ -417,7 +420,7 @@ class TestFlushOnWarningHandlerCapacity:
                 args=(),
                 exc_info=None,
             )
-            record.correlation_id = corr_id
+            record.correlation_id = correlation_id
             handler.emit(record)
 
         # Only 2 correlations should remain (oldest evicted)

@@ -119,7 +119,7 @@ class Dispatcher:
             severity=event.severity.value,
         )
 
-        safe_attachments = tuple(att for att in event.attachments if att.egress_safe)
+        safe_attachments = tuple(attachment for attachment in event.attachments if attachment.egress_safe)
 
         return event_objs.NotificationEvent(
             category=event.category,

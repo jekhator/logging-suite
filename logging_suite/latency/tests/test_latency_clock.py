@@ -75,8 +75,8 @@ class TestLatencyClock:
     def test_context_manager_captures_duration(self) -> None:
         """Context manager can capture duration after exit."""
         clock = None
-        with LatencyClock.measure() as c:
-            clock = c
+        with LatencyClock.measure() as measuring_clock:
+            clock = measuring_clock
             time.sleep(0.02)
 
         measurement = clock.stop()

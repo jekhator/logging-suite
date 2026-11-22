@@ -189,10 +189,10 @@ class TestFrozenProfile:
     def test_profile_is_hashable(self, mixed_type: type[Any]) -> None:
         """SensitivityProfile instances are hashable and can go in a set."""
         profile = SensitivityProfile.from_dataclass(mixed_type)
-        h = hash(profile)
-        assert isinstance(h, int)
-        s = {profile}
-        assert profile in s
+        profile_hash = hash(profile)
+        assert isinstance(profile_hash, int)
+        profile_set = {profile}
+        assert profile in profile_set
 
     def test_two_profiles_with_same_classes_are_equal(
         self, mixed_type: type[Any]

@@ -59,12 +59,12 @@ class FlushOnWarningHandler(logging.Handler):
     def _evict_expired_buffers(self, current_time: float) -> None:
         """Remove buffers older than ttl_seconds."""
         to_remove = []
-        for corr_id, timestamp in self._timestamps.items():
+        for correlation_id, timestamp in self._timestamps.items():
             if current_time - timestamp > self._config.ttl_seconds:
-                to_remove.append(corr_id)
+                to_remove.append(correlation_id)
 
-        for corr_id in to_remove:
-            self._evict_correlation(corr_id)
+        for correlation_id in to_remove:
+            self._evict_correlation(correlation_id)
 
     def _evict_oldest_correlation_if_exceeded(self) -> None:
         """Evict oldest correlation if max_correlations exceeded."""
