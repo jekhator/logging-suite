@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from logging_suite.notifications.events._objects import NotificationEvent, Severity
+from logging_suite.notifications.events import _objects as objs
 
 
 class NotificationEventClient:
@@ -13,12 +13,12 @@ class NotificationEventClient:
     @staticmethod
     def create(
         category: str,
-        severity: str | Severity,
+        severity: str | objs.Severity,
         title: str,
         body: str,
         fingerprint: str,
         metadata: tuple[tuple[str, str], ...] = (),
-    ) -> NotificationEvent:
+    ) -> objs.NotificationEvent:
         """
         Create a NotificationEvent with auto-captured correlation context.
 
@@ -42,12 +42,12 @@ class NotificationEventClient:
         from logging_suite.logging import get_correlation_id
 
         resolved_severity = (
-            Severity(severity) if isinstance(severity, str) else severity
+            objs.Severity(severity) if isinstance(severity, str) else severity
         )
 
         now_utc = datetime.now(timezone.utc).isoformat()
 
-        return NotificationEvent(
+        return objs.NotificationEvent(
             category=category,
             severity=resolved_severity,
             title=title,

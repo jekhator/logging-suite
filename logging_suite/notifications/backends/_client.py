@@ -5,11 +5,8 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 
-from logging_suite.notifications.backends._objects import (
-    DeliveryResult,
-    NotificationBackend,
-)
-from logging_suite.notifications.events._objects import NotificationEvent
+from logging_suite.notifications.backends import _objects as objs
+from logging_suite.notifications.events import _objects as event_objs
 from logging_suite.retry import RetryPolicy
 
 
@@ -21,9 +18,9 @@ class NullBackend:
         """Does not egress data."""
         return False
 
-    def send(self, event: NotificationEvent) -> DeliveryResult:
+    def send(self, event: event_objs.NotificationEvent) -> objs.DeliveryResult:
         """Accept but discard the event."""
-        return DeliveryResult(
+        return objs.DeliveryResult(
             delivered=False,
             backend_name="NullBackend",
             detail="discarded",
@@ -35,17 +32,17 @@ class NullBackend:
 class CollectingBackend:
     """Collects all delivered events for testing and introspection."""
 
-    events: list[NotificationEvent] = field(default_factory=list)
+    events: list[event_objs.NotificationEvent] = field(default_factory=list)
 
     @property
     def external_egress(self) -> bool:
         """Does not egress data."""
         return False
 
-    def send(self, event: NotificationEvent) -> DeliveryResult:
+    def send(self, event: event_objs.NotificationEvent) -> objs.DeliveryResult:
         """Collect the event."""
         self.events.append(event)
-        return DeliveryResult(
+        return objs.DeliveryResult(
             delivered=True,
             backend_name="CollectingBackend",
             detail=f"collected event {event.fingerprint}",
@@ -71,7 +68,7 @@ class LoggingBackend:
         """Does not egress data."""
         return False
 
-    def send(self, event: NotificationEvent) -> DeliveryResult:
+    def send(self, event: event_objs.NotificationEvent) -> objs.DeliveryResult:
         """Emit the event via logging."""
         log_level = {
             "INFO": logging.INFO,
@@ -88,7 +85,7 @@ class LoggingBackend:
                 "correlation_id": event.correlation_id,
             },
         )
-        return DeliveryResult(
+        return objs.DeliveryResult(
             delivered=True,
             backend_name="LoggingBackend",
             detail=f"logged {event.severity.value}",
@@ -100,9 +97,9 @@ class LoggingBackend:
 class RetryingBackend:
     """Wraps a backend with retry logic via logging_suite.retry."""
 
-    inner: NotificationBackend
+    inner: objs.NotificationBackend
     policy: RetryPolicy
-    dead_letter: NotificationBackend | None = None
+    dead_letter: objs.NotificationBackend | None = None
 
     @property
     def external_egress(self) -> bool:
@@ -111,21 +108,21 @@ class RetryingBackend:
             return self.inner.external_egress or self.dead_letter.external_egress
         return self.inner.external_egress
 
-    def send(self, event: NotificationEvent) -> DeliveryResult:
+    def send(self, event: event_objs.NotificationEvent) -> objs.DeliveryResult:
         """Deliver with retry logic, exhaustion → dead_letter fallback."""
         from logging_suite.retry import RetryExecutor
 
         class RetryableDeliveryError(Exception):
             """Exception to signal a retryable delivery failure."""
 
-            def __init__(self, result: DeliveryResult):
+            def __init__(self, result: objs.DeliveryResult):
                 self.result = result
                 super().__init__(result.detail)
 
         logger = logging.getLogger("logging_suite.notifications")
         executor = RetryExecutor()
 
-        def attempt_send() -> DeliveryResult:
+        def attempt_send() -> objs.DeliveryResult:
             result = self.inner.send(event)
             if result.retryable:
                 raise RetryableDeliveryError(result)
@@ -157,7 +154,7 @@ class RetryingBackend:
             if self.dead_letter is not None:
                 try:
                     dead_result = self.dead_letter.send(event)
-                    return DeliveryResult(
+                    return objs.DeliveryResult(
                         delivered=dead_result.delivered,
                         backend_name=f"RetryingBackend(dead_letter={self.dead_letter.__class__.__name__})",
                         detail=f"exhausted retries, dead_letter outcome: {dead_result.detail}",
@@ -168,13 +165,13 @@ class RetryingBackend:
                         "Dead-letter backend failed during exhaustion fallback",
                         exc_info=error,
                     )
-                    return DeliveryResult(
+                    return objs.DeliveryResult(
                         delivered=False,
                         backend_name="RetryingBackend",
                         detail="exhausted retries and dead_letter failed",
                         retryable=False,
                     )
-            return DeliveryResult(
+            return objs.DeliveryResult(
                 delivered=False,
                 backend_name="RetryingBackend",
                 detail=f"exhausted retries: {exhaustion_error.result.detail}",
@@ -192,7 +189,7 @@ class RetryingBackend:
             if self.dead_letter is not None:
                 try:
                     dead_result = self.dead_letter.send(event)
-                    return DeliveryResult(
+                    return objs.DeliveryResult(
                         delivered=dead_result.delivered,
                         backend_name=f"RetryingBackend(dead_letter={self.dead_letter.__class__.__name__})",
                         detail=f"{detail_prefix}, dead_letter outcome: {dead_result.detail}",
@@ -203,14 +200,14 @@ class RetryingBackend:
                         f"Dead-letter backend failed ({detail_prefix})",
                         exc_info=error,
                     )
-                    return DeliveryResult(
+                    return objs.DeliveryResult(
                         delivered=False,
                         backend_name="RetryingBackend",
                         detail=f"{detail_prefix} and dead_letter failed",
                         retryable=False,
                     )
 
-            return DeliveryResult(
+            return objs.DeliveryResult(
                 delivered=False,
                 backend_name="RetryingBackend",
                 detail=f"{detail_prefix}: {outer_error.__class__.__name__}",

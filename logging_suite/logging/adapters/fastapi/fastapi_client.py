@@ -8,9 +8,9 @@ from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from logging_suite.logging import clear_correlation_id, set_correlation_id
-from logging_suite.logging.adapters.fastapi import fastapi_objects as objs
-from logging_suite.logging.adapters.fastapi.constants import (
-    ERR_FASTAPI_NO_CORRELATION_ID,
+from logging_suite.logging.adapters.fastapi import (
+    constants as const,
+    fastapi_objects as objs,
 )
 
 
@@ -48,5 +48,5 @@ async def get_correlation_id_dependency() -> str:
 
     corr_id = get_correlation_id()
     if corr_id is None:
-        raise ValueError(ERR_FASTAPI_NO_CORRELATION_ID)
+        raise ValueError(const.ERR_FASTAPI_NO_CORRELATION_ID)
     return corr_id

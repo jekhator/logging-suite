@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Protocol
 
-from logging_suite.notifications.events._objects import NotificationEvent
+from logging_suite.notifications.events import _objects as event_objs
 
 
 @dataclass(frozen=True, slots=True)
@@ -26,7 +26,7 @@ class NotificationBackend(Protocol):
         """Whether this backend sends data outside the system."""
         ...
 
-    def send(self, event: NotificationEvent) -> DeliveryResult:
+    def send(self, event: event_objs.NotificationEvent) -> DeliveryResult:
         """
         Deliver the notification event.
 

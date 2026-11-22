@@ -6,25 +6,19 @@ import logging
 import time
 from dataclasses import dataclass, field
 
-from logging_suite.notifications.backends._objects import (
-    DeliveryResult,
-    NotificationBackend,
-)
-from logging_suite.notifications.dispatch._objects import DispatchResult
-from logging_suite.notifications.events._objects import NotificationEvent
-from logging_suite.notifications.suppression._objects import (
-    SuppressionPolicy,
-    SuppressionTracker,
-)
+from logging_suite.notifications.backends import _objects as backend_objs
+from logging_suite.notifications.dispatch import _objects as objs
+from logging_suite.notifications.events import _objects as event_objs
+from logging_suite.notifications.suppression import _objects as suppression_objs
 
 
 @dataclass(slots=True)
 class Dispatcher:
     """Guarded dispatcher for notification delivery."""
 
-    backends: tuple[NotificationBackend, ...]
-    suppression_policy: SuppressionPolicy | None = None
-    _suppression_tracker: SuppressionTracker | None = field(default=None, init=False)
+    backends: tuple[backend_objs.NotificationBackend, ...]
+    suppression_policy: suppression_objs.SuppressionPolicy | None = None
+    _suppression_tracker: suppression_objs.SuppressionTracker | None = field(default=None, init=False)
     _logger: logging.Logger = field(
         default_factory=lambda: logging.getLogger("logging_suite.notifications"), init=False
     )
@@ -35,10 +29,10 @@ class Dispatcher:
             object.__setattr__(
                 self,
                 "_suppression_tracker",
-                SuppressionTracker(window_seconds=self.suppression_policy.window_seconds),
+                suppression_objs.SuppressionTracker(window_seconds=self.suppression_policy.window_seconds),
             )
 
-    def notify(self, event: NotificationEvent) -> DispatchResult:
+    def notify(self, event: event_objs.NotificationEvent) -> objs.DispatchResult:
         """
         Dispatch event to all backends with suppression and egress gating.
 
@@ -56,7 +50,7 @@ class Dispatcher:
             event.fingerprint,
             current_time,
         ):
-            return DispatchResult(
+            return objs.DispatchResult(
                 total_backends=len(self.backends),
                 results=(),
                 suppressed=True,
@@ -69,7 +63,7 @@ class Dispatcher:
                 current_time,
             )
 
-        results: list[DeliveryResult] = []
+        results: list[backend_objs.DeliveryResult] = []
 
         for backend in self.backends:
             egress_event = self._apply_egress_gate(event, backend)
@@ -82,7 +76,7 @@ class Dispatcher:
                     exc_info=error,
                 )
                 results.append(
-                    DeliveryResult(
+                    backend_objs.DeliveryResult(
                         delivered=False,
                         backend_name=backend.__class__.__name__,
                         detail=f"exception: {error.__class__.__name__}",
@@ -90,7 +84,7 @@ class Dispatcher:
                     )
                 )
 
-        return DispatchResult(
+        return objs.DispatchResult(
             total_backends=len(self.backends),
             results=tuple(results),
             suppressed=False,
@@ -98,9 +92,9 @@ class Dispatcher:
 
     def _apply_egress_gate(
         self,
-        event: NotificationEvent,
-        backend: NotificationBackend,
-    ) -> NotificationEvent:
+        event: event_objs.NotificationEvent,
+        backend: backend_objs.NotificationBackend,
+    ) -> event_objs.NotificationEvent:
         """
         Gate sensitive content for external_egress backends.
 
@@ -127,7 +121,7 @@ class Dispatcher:
 
         safe_attachments = tuple(att for att in event.attachments if att.egress_safe)
 
-        return NotificationEvent(
+        return event_objs.NotificationEvent(
             category=event.category,
             severity=event.severity,
             title=derived_title,

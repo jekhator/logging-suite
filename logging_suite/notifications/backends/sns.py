@@ -5,8 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from logging_suite.notifications.backends._objects import DeliveryResult
-from logging_suite.notifications.events._objects import NotificationEvent
+from logging_suite.notifications.backends import _objects as objs
+from logging_suite.notifications.events import _objects as event_objs
 
 
 @dataclass(frozen=True, slots=True)
@@ -25,7 +25,7 @@ class SNSBackend:
         """SNS sends data externally to AWS."""
         return True
 
-    def send(self, event: NotificationEvent) -> DeliveryResult:
+    def send(self, event: event_objs.NotificationEvent) -> objs.DeliveryResult:
         """Publish notification to SNS topic."""
         from logging_suite.notifications.common.constants import events as const
 
@@ -68,7 +68,7 @@ class SNSBackend:
             )
 
             message_id = response.get("MessageId", "unknown")
-            return DeliveryResult(
+            return objs.DeliveryResult(
                 delivered=True,
                 backend_name="SNSBackend",
                 detail=f"message_id: {message_id}",
@@ -85,7 +85,7 @@ class SNSBackend:
             }
             is_retryable = error_code in retryable_codes
 
-            return DeliveryResult(
+            return objs.DeliveryResult(
                 delivered=False,
                 backend_name="SNSBackend",
                 detail=f"sns_error: {error_code or error.__class__.__name__}",

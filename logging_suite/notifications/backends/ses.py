@@ -5,8 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from logging_suite.notifications.backends._objects import DeliveryResult
-from logging_suite.notifications.events._objects import NotificationEvent
+from logging_suite.notifications.backends import _objects as objs
+from logging_suite.notifications.events import _objects as event_objs
 
 
 @dataclass(frozen=True, slots=True)
@@ -26,7 +26,7 @@ class SESBackend:
         """SES sends data externally to AWS."""
         return True
 
-    def send(self, event: NotificationEvent) -> DeliveryResult:
+    def send(self, event: event_objs.NotificationEvent) -> objs.DeliveryResult:
         """Send notification email via SES with attachments."""
         from email import encoders
         from email.mime.base import MIMEBase
@@ -56,7 +56,7 @@ class SESBackend:
             )
 
             message_id = response.get("MessageId", "unknown")
-            return DeliveryResult(
+            return objs.DeliveryResult(
                 delivered=True,
                 backend_name="SESBackend",
                 detail=f"message_id: {message_id}",
@@ -73,7 +73,7 @@ class SESBackend:
             }
             is_retryable = error_code in retryable_codes
 
-            return DeliveryResult(
+            return objs.DeliveryResult(
                 delivered=False,
                 backend_name="SESBackend",
                 detail=f"ses_error: {error_code or error.__class__.__name__}",

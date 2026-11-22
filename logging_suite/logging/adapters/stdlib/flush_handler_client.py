@@ -7,9 +7,7 @@ import time
 from collections import deque
 from typing import Final
 
-from logging_suite.logging.adapters.stdlib.flush_handler_objects import (
-    FlushOnWarningConfig,
-)
+from logging_suite.logging.adapters.stdlib import flush_handler_objects as objs
 from logging_suite.logging.context.correlation.correlation_client import (
     get_correlation_id,
 )
@@ -28,7 +26,7 @@ class FlushOnWarningHandler(logging.Handler):
         "_correlation_order",
     )
 
-    def __init__(self, config: FlushOnWarningConfig) -> None:
+    def __init__(self, config: objs.FlushOnWarningConfig) -> None:
         """Initialize handler with config; set up per-correlation buffers."""
         super().__init__()
         self._config = config
