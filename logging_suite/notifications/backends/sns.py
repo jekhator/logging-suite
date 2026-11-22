@@ -6,6 +6,10 @@ from dataclasses import dataclass
 from typing import Any
 
 from logging_suite.notifications.backends import _objects as objs
+from logging_suite.notifications.common.constants import (
+    backends as const,
+    events as event_const,
+)
 from logging_suite.notifications.events import _objects as event_objs
 
 
@@ -27,11 +31,9 @@ class SNSBackend:
 
     def send(self, event: event_objs.NotificationEvent) -> objs.DeliveryResult:
         """Publish notification to SNS topic."""
-        from logging_suite.notifications.common.constants import events as const
-
         topic_arn = self.default_topic_arn
         for key, value in event.metadata:
-            if key == const.METADATA_KEY_TOPIC_ARN:
+            if key == event_const.METADATA_KEY_TOPIC_ARN:
                 topic_arn = value
                 break
 
@@ -39,24 +41,24 @@ class SNSBackend:
         body = event.body
 
         message_attributes = {
-            "category": {
-                "DataType": "String",
-                "StringValue": event.category,
+            const.SNS_ATTRIBUTE_CATEGORY: {
+                **const.SNS_STRING_ATTRIBUTE,
+                const.SNS_STRING_VALUE_KEY: event.category,
             },
-            "severity": {
-                "DataType": "String",
-                "StringValue": event.severity.value,
+            const.SNS_ATTRIBUTE_SEVERITY: {
+                **const.SNS_STRING_ATTRIBUTE,
+                const.SNS_STRING_VALUE_KEY: event.severity.value,
             },
-            "fingerprint": {
-                "DataType": "String",
-                "StringValue": event.fingerprint,
+            const.SNS_ATTRIBUTE_FINGERPRINT: {
+                **const.SNS_STRING_ATTRIBUTE,
+                const.SNS_STRING_VALUE_KEY: event.fingerprint,
             },
         }
 
         if event.correlation_id:
-            message_attributes["correlation_id"] = {
-                "DataType": "String",
-                "StringValue": event.correlation_id,
+            message_attributes[const.SNS_ATTRIBUTE_CORRELATION_ID] = {
+                **const.SNS_STRING_ATTRIBUTE,
+                const.SNS_STRING_VALUE_KEY: event.correlation_id,
             }
 
         try:
@@ -67,27 +69,28 @@ class SNSBackend:
                 MessageAttributes=message_attributes,
             )
 
-            message_id = response.get("MessageId", "unknown")
+            message_id = response.get(
+                const.AWS_MESSAGE_ID_KEY, const.AWS_MESSAGE_ID_UNKNOWN
+            )
+            detail = const.DETAIL_MESSAGE_ID_TEMPLATE.format(message_id=message_id)
             return objs.DeliveryResult(
                 delivered=True,
-                backend_name="SNSBackend",
-                detail=f"message_id: {message_id}",
+                backend_name=const.BACKEND_NAME_SNS,
+                detail=detail,
                 retryable=False,
             )
         except Exception as error:
-            error_code = getattr(error, "response", {}).get("Error", {}).get("Code", "")
-            retryable_codes = {
-                "Throttling",
-                "ThrottledException",
-                "TooManyRequestsException",
-                "ServiceUnavailable",
-                "InternalError",
-            }
-            is_retryable = error_code in retryable_codes
+            error_response = getattr(error, const.AWS_RESPONSE_ATTR, {})
+            error_code = error_response.get(const.AWS_ERROR_KEY, {}).get(
+                const.AWS_ERROR_CODE_KEY, const.AWS_NO_ERROR_CODE
+            )
+            is_retryable = error_code in const.AWS_RETRYABLE_ERROR_CODES
+            reason = error_code or error.__class__.__name__
+            detail = const.DETAIL_SNS_ERROR_TEMPLATE.format(reason=reason)
 
             return objs.DeliveryResult(
                 delivered=False,
-                backend_name="SNSBackend",
-                detail=f"sns_error: {error_code or error.__class__.__name__}",
+                backend_name=const.BACKEND_NAME_SNS,
+                detail=detail,
                 retryable=is_retryable,
             )

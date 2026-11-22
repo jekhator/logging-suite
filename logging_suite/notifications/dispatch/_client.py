@@ -7,6 +7,10 @@ import time
 from dataclasses import dataclass, field
 
 from logging_suite.notifications.backends import _objects as backend_objs
+from logging_suite.notifications.common.constants import (
+    backends as backend_const,
+    events as const,
+)
 from logging_suite.notifications.dispatch import _objects as objs
 from logging_suite.notifications.events import _objects as event_objs
 from logging_suite.notifications.suppression import _objects as suppression_objs
@@ -20,7 +24,7 @@ class Dispatcher:
     suppression_policy: suppression_objs.SuppressionPolicy | None = None
     _suppression_tracker: suppression_objs.SuppressionTracker | None = field(default=None, init=False)
     _logger: logging.Logger = field(
-        default_factory=lambda: logging.getLogger("logging_suite.notifications"), init=False
+        default_factory=lambda: logging.getLogger(backend_const.LOGGER_NAME), init=False
     )
 
     def __post_init__(self) -> None:
@@ -28,7 +32,7 @@ class Dispatcher:
         if self.suppression_policy:
             object.__setattr__(
                 self,
-                "_suppression_tracker",
+                const.SUPPRESSION_TRACKER_ATTR,
                 suppression_objs.SuppressionTracker(window_seconds=self.suppression_policy.window_seconds),
             )
 
@@ -50,8 +54,9 @@ class Dispatcher:
             event.fingerprint,
             current_time,
         ):
+            total_backends = len(self.backends)
             return objs.DispatchResult(
-                total_backends=len(self.backends),
+                total_backends=total_backends,
                 results=(),
                 suppressed=True,
             )
@@ -71,22 +76,31 @@ class Dispatcher:
                 result = backend.send(egress_event)
                 results.append(result)
             except Exception as error:
+                backend_name = backend.__class__.__name__
+                log_message = const.LOG_BACKEND_FAILED_TEMPLATE.format(
+                    backend_name=backend_name
+                )
                 self._logger.warning(
-                    f"Backend {backend.__class__.__name__} failed to deliver notification",
+                    log_message,
                     exc_info=error,
+                )
+                detail = const.DETAIL_EXCEPTION_TEMPLATE.format(
+                    error_name=error.__class__.__name__
                 )
                 results.append(
                     backend_objs.DeliveryResult(
                         delivered=False,
-                        backend_name=backend.__class__.__name__,
-                        detail=f"exception: {error.__class__.__name__}",
+                        backend_name=backend_name,
+                        detail=detail,
                         retryable=True,
                     )
                 )
 
+        total_backends = len(self.backends)
+        delivery_results = tuple(results)
         return objs.DispatchResult(
-            total_backends=len(self.backends),
-            results=tuple(results),
+            total_backends=total_backends,
+            results=delivery_results,
             suppressed=False,
         )
 
@@ -110,16 +124,16 @@ class Dispatcher:
         if not backend.external_egress:
             return event
 
-        from logging_suite.notifications.common.constants import events as const
-
         metadata_counts = len(event.metadata)
-        masked_body = "[content redacted for external delivery]"
+        masked_body = const.EGRESS_MASKED_BODY
         derived_title = const.EGRESS_TITLE_TEMPLATE.format(
             category=event.category,
             severity=event.severity.value,
         )
 
         safe_attachments = tuple(attachment for attachment in event.attachments if attachment.egress_safe)
+
+        egress_metadata = ((const.EGRESS_METADATA_COUNT_KEY, str(metadata_counts)),)
 
         return event_objs.NotificationEvent(
             category=event.category,
@@ -129,6 +143,6 @@ class Dispatcher:
             fingerprint=event.fingerprint,
             occurred_at=event.occurred_at,
             correlation_id=event.correlation_id,
-            metadata=(("sensitive_count_metadata", str(metadata_counts)),),
+            metadata=egress_metadata,
             attachments=safe_attachments,
         )

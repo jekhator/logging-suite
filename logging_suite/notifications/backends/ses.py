@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from logging_suite.notifications.backends import _objects as objs
+from logging_suite.notifications.common.constants import backends as const
 from logging_suite.notifications.events import _objects as event_objs
 
 
@@ -35,47 +36,53 @@ class SESBackend:
 
         try:
             message = MIMEMultipart()
-            message["Subject"] = event.title
-            message["From"] = self.from_address
-            message["To"] = ", ".join(self.to_addresses)
-
-            message.attach(MIMEText(event.body, "plain"))
-
-            for attachment in event.attachments:
-                part = MIMEBase("application", "octet-stream")
-                part.set_payload(attachment.content)
-                encoders.encode_base64(part)
-                part.add_header(
-                    "Content-Disposition",
-                    f"attachment; filename= {attachment.filename}",
-                )
-                message.attach(part)
-
-            response = self.ses_client.send_raw_email(
-                RawMessage={"Data": message.as_string()}
+            message[const.EMAIL_HEADER_SUBJECT] = event.title
+            message[const.EMAIL_HEADER_FROM] = self.from_address
+            message[const.EMAIL_HEADER_TO] = const.EMAIL_ADDRESS_SEPARATOR.join(
+                self.to_addresses
             )
 
-            message_id = response.get("MessageId", "unknown")
+            message.attach(MIMEText(event.body, const.EMAIL_TEXT_SUBTYPE))
+
+            for attachment in event.attachments:
+                part = MIMEBase(
+                    const.EMAIL_ATTACHMENT_MAIN_TYPE, const.EMAIL_ATTACHMENT_SUBTYPE
+                )
+                part.set_payload(attachment.content)
+                encoders.encode_base64(part)
+                disposition = const.EMAIL_ATTACHMENT_DISPOSITION_TEMPLATE.format(
+                    filename=attachment.filename
+                )
+                part.add_header(const.EMAIL_HEADER_CONTENT_DISPOSITION, disposition)
+                message.attach(part)
+
+            raw_data = message.as_string()
+            response = self.ses_client.send_raw_email(
+                RawMessage={const.SES_RAW_MESSAGE_DATA_KEY: raw_data}
+            )
+
+            message_id = response.get(
+                const.AWS_MESSAGE_ID_KEY, const.AWS_MESSAGE_ID_UNKNOWN
+            )
+            detail = const.DETAIL_MESSAGE_ID_TEMPLATE.format(message_id=message_id)
             return objs.DeliveryResult(
                 delivered=True,
-                backend_name="SESBackend",
-                detail=f"message_id: {message_id}",
+                backend_name=const.BACKEND_NAME_SES,
+                detail=detail,
                 retryable=False,
             )
         except Exception as error:
-            error_code = getattr(error, "response", {}).get("Error", {}).get("Code", "")
-            retryable_codes = {
-                "Throttling",
-                "ThrottledException",
-                "TooManyRequestsException",
-                "ServiceUnavailable",
-                "InternalError",
-            }
-            is_retryable = error_code in retryable_codes
+            error_response = getattr(error, const.AWS_RESPONSE_ATTR, {})
+            error_code = error_response.get(const.AWS_ERROR_KEY, {}).get(
+                const.AWS_ERROR_CODE_KEY, const.AWS_NO_ERROR_CODE
+            )
+            is_retryable = error_code in const.AWS_RETRYABLE_ERROR_CODES
+            reason = error_code or error.__class__.__name__
+            detail = const.DETAIL_SES_ERROR_TEMPLATE.format(reason=reason)
 
             return objs.DeliveryResult(
                 delivered=False,
-                backend_name="SESBackend",
-                detail=f"ses_error: {error_code or error.__class__.__name__}",
+                backend_name=const.BACKEND_NAME_SES,
+                detail=detail,
                 retryable=is_retryable,
             )

@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from logging_suite.notifications.common.constants import events as const
+
 
 @dataclass(frozen=True, slots=True)
 class SuppressionPolicy:
@@ -17,7 +19,7 @@ class SuppressionTracker:
     """In-memory tracker of suppressed (category, fingerprint) pairs."""
 
     window_seconds: int
-    max_capacity: int = 10000
+    max_capacity: int = const.SUPPRESSION_MAX_CAPACITY
     _seen: dict[tuple[str, str], float] = field(default_factory=dict)
 
     def is_suppressed(

@@ -47,6 +47,8 @@ class NotificationEventClient:
 
         now_utc = datetime.now(timezone.utc).isoformat()
 
+        correlation_id = get_correlation_id()
+
         return objs.NotificationEvent(
             category=category,
             severity=resolved_severity,
@@ -54,6 +56,6 @@ class NotificationEventClient:
             body=body,
             fingerprint=fingerprint,
             occurred_at=now_utc,
-            correlation_id=get_correlation_id(),
+            correlation_id=correlation_id,
             metadata=metadata,
         )
