@@ -13,6 +13,7 @@ __all__ = [
     "TYPE_KEY",
     "UNSAFE_HEADER_CHARS",
     "WEBSOCKET_SCOPE_TYPE",
+    "DECODE_ERRORS_IGNORE",
 ]
 
 
@@ -44,3 +45,8 @@ UNSAFE_HEADER_CHARS: Final[frozenset[str]] = frozenset({"\r", "\n", "\0"})
 ERR_CORRELATION_ID_UNSAFE: Final[str] = (
     "correlation_id must be non-empty, within length cap, free of unsafe chars"
 )
+
+
+"""Header decoding: undecodable bytes are dropped."""
+
+DECODE_ERRORS_IGNORE: Final[str] = "ignore"

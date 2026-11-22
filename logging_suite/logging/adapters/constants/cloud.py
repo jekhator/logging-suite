@@ -19,6 +19,7 @@ __all__ = [
     "MESSAGE_ATTRIBUTE_STRING_VALUE_KEY_SQS",
     "MESSAGE_ATTRIBUTE_VALUE_KEY_SNS",
     "UNSAFE_HEADER_CHARS",
+    "FIRST_RECORD_INDEX",
 ]
 
 
@@ -56,3 +57,8 @@ UNSAFE_HEADER_CHARS: Final[frozenset[str]] = frozenset({"\r", "\n", "\0"})
 ERR_CORRELATION_ID_UNSAFE: Final[str] = (
     "correlation_id must be non-empty, within length cap, free of unsafe chars"
 )
+
+
+"""Position of the record read from a batch event."""
+
+FIRST_RECORD_INDEX: Final[int] = 0

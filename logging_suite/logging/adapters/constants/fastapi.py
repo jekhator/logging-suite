@@ -9,6 +9,7 @@ __all__ = [
     "CORRELATION_ID_MAX_LENGTH",
     "ERR_CORRELATION_ID_EMPTY",
     "UNSAFE_HEADER_CHARS",
+    "GENERATED_ID_LENGTH",
 ]
 
 
@@ -30,3 +31,8 @@ UNSAFE_HEADER_CHARS: Final[frozenset[str]] = frozenset({"\r", "\n", "\0"})
 """Error messages raised at the API surface (source-side; tests match against these via const.ERR_*)."""
 
 ERR_CORRELATION_ID_EMPTY: Final[str] = "correlation_id must not be empty"
+
+
+"""Generated correlation ID length (hex characters of a uuid4)."""
+
+GENERATED_ID_LENGTH: Final[int] = 12

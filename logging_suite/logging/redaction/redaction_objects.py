@@ -22,18 +22,7 @@ class RedactionFilter(logging.Filter):
         Returns:
             RedactionFilter configured with common sensitive field names.
         """
-        patterns = frozenset(
-            [
-                "password",
-                "secret",
-                "api_key",
-                "token",
-                "auth",
-                "credential",
-                "key",
-            ]
-        )
-        return cls(sensitive_patterns=patterns)
+        return cls(sensitive_patterns=const.DEFAULT_SENSITIVE_PATTERNS)
 
     def filter(self, record: logging.LogRecord) -> bool:
         """
@@ -58,7 +47,7 @@ class RedactionFilter(logging.Filter):
                 LogRecord to modify in place.
         """
         for key in list(record.__dict__.keys()):
-            if key.startswith("_"):
+            if key.startswith(const.PRIVATE_ATTRIBUTE_PREFIX):
                 continue
 
             if self._is_sensitive_field_name(key):

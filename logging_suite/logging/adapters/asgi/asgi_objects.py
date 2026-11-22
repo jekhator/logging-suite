@@ -49,7 +49,7 @@ class AsgiCorrelation:
                 continue
             if header_name.lower() == const.CORRELATION_ID_HEADER:
                 try:
-                    decoded_id = header_value.decode("utf-8")
+                    decoded_id = header_value.decode(const.HEADER_ENCODING)
                 except UnicodeDecodeError:
                     break
                 if cls._is_safe(decoded_id):
@@ -58,8 +58,9 @@ class AsgiCorrelation:
                         from_header=True,
                     )
                 break
+        generated_id = uuid4().hex[: const.GENERATED_ID_LENGTH]
         return cls(
-            correlation_id=uuid4().hex[:12],
+            correlation_id=generated_id,
             from_header=False,
         )
 

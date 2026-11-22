@@ -37,8 +37,10 @@ class CloudCorrelation:
             records = event.get(const.EVENT_KEY_RECORDS) or []
             if records:
                 attributes = (
-                    records[0].get(const.EVENT_KEY_MESSAGE_ATTRIBUTES_SQS)
-                    or records[0]
+                    records[const.FIRST_RECORD_INDEX].get(
+                        const.EVENT_KEY_MESSAGE_ATTRIBUTES_SQS
+                    )
+                    or records[const.FIRST_RECORD_INDEX]
                     .get(const.EVENT_KEY_SNS, {})
                     .get(const.EVENT_KEY_MESSAGE_ATTRIBUTES_SNS)
                     or {}
@@ -55,8 +57,9 @@ class CloudCorrelation:
             candidate = event.get(const.CORRELATION_ID_KEY)
         if isinstance(candidate, str) and cls._is_safe(candidate):
             return cls(correlation_id=candidate, extracted=True)
+        generated_id = uuid4().hex[: const.GENERATED_ID_LENGTH]
         return cls(
-            correlation_id=uuid4().hex[: const.GENERATED_ID_LENGTH],
+            correlation_id=generated_id,
             extracted=False,
         )
 

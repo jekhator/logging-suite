@@ -10,7 +10,6 @@ import pytest
 from logging_suite.logging import clear_correlation_id, set_correlation_id
 from logging_suite.logging.adapters.constants import stdlib as const
 from logging_suite.logging.adapters.stdlib.flush_handler_client import (
-    NULL_CORRELATION_ID,
     FlushOnWarningHandler,
 )
 from logging_suite.logging.adapters.stdlib.flush_handler_objects import (
@@ -465,7 +464,7 @@ class TestFlushOnWarningHandlerNullCorrelation:
         record.correlation_id = const.UNSET_CORRELATION_ID
         handler.emit(record)
 
-        assert NULL_CORRELATION_ID in handler._buffers
+        assert const.NULL_CORRELATION_ID in handler._buffers
         assert test_const.CORRELATION_ID_VALID_ID_123 not in handler._buffers
 
 

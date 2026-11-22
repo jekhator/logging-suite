@@ -44,7 +44,8 @@ class WsgiCorrelation:
         raw = environ.get(const.CORRELATION_ID_ENVIRON_KEY)
         if isinstance(raw, str) and cls._is_safe(raw):
             return cls(correlation_id=raw, from_header=True)
-        return cls(correlation_id=uuid4().hex[:12], from_header=False)
+        generated_id = uuid4().hex[: const.GENERATED_ID_LENGTH]
+        return cls(correlation_id=generated_id, from_header=False)
 
     @property
     def response_header(self) -> tuple[str, str]:

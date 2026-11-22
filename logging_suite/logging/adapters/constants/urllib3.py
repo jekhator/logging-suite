@@ -9,6 +9,7 @@ __all__ = [
     "CORRELATION_ID_MAX_LENGTH",
     "ERR_CORRELATION_ID_UNSAFE",
     "UNSAFE_HEADER_CHARS",
+    "HEADERS_KWARG",
 ]
 
 
@@ -32,3 +33,8 @@ UNSAFE_HEADER_CHARS: Final[frozenset[str]] = frozenset({"\r", "\n", "\0"})
 ERR_CORRELATION_ID_UNSAFE: Final[str] = (
     "correlation_id must be non-empty, within length cap, free of unsafe chars"
 )
+
+
+"""urlopen keyword argument that carries the request headers."""
+
+HEADERS_KWARG: Final[str] = "headers"

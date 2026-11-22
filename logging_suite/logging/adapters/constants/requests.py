@@ -9,6 +9,8 @@ __all__ = [
     "CORRELATION_ID_MAX_LENGTH",
     "ERR_CORRELATION_ID_UNSAFE",
     "UNSAFE_HEADER_CHARS",
+    "MOUNT_PREFIX_HTTP",
+    "MOUNT_PREFIX_HTTPS",
 ]
 
 
@@ -32,3 +34,9 @@ UNSAFE_HEADER_CHARS: Final[frozenset[str]] = frozenset({"\r", "\n", "\0"})
 ERR_CORRELATION_ID_UNSAFE: Final[str] = (
     "correlation_id must be non-empty, within length cap, free of unsafe chars"
 )
+
+
+"""Session mount prefixes."""
+
+MOUNT_PREFIX_HTTP: Final[str] = "http://"
+MOUNT_PREFIX_HTTPS: Final[str] = "https://"

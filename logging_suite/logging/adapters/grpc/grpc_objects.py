@@ -29,8 +29,9 @@ class GRPCCorrelation:
         candidate = dict(metadata).get(const.CORRELATION_ID_KEY)
         if isinstance(candidate, str) and cls._is_safe(candidate):
             return cls(correlation_id=candidate, extracted=True)
+        generated_id = uuid4().hex[: const.GENERATED_ID_LENGTH]
         return cls(
-            correlation_id=uuid4().hex[: const.GENERATED_ID_LENGTH],
+            correlation_id=generated_id,
             extracted=False,
         )
 

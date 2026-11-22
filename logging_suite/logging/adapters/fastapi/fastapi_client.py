@@ -29,9 +29,8 @@ class CorrelationIdMiddleware(BaseHTTPMiddleware):
         set_correlation_id(correlation.correlation_id)
         try:
             response = await call_next(request)
-            response.headers[correlation.response_header[0]] = (
-                correlation.response_header[1]
-            )
+            header_name, header_value = correlation.response_header
+            response.headers[header_name] = header_value
             return response
         finally:
             clear_correlation_id()

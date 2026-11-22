@@ -5,15 +5,12 @@ from __future__ import annotations
 import logging
 import time
 from collections import deque
-from typing import Final
 
+from logging_suite.logging.adapters.constants import stdlib as const
 from logging_suite.logging.adapters.stdlib import flush_handler_objects as objs
 from logging_suite.logging.context.correlation.correlation_client import (
     get_correlation_id,
 )
-
-# Null correlation ID for records with no correlation_id set
-NULL_CORRELATION_ID: Final[str] = "-buffered-"
 
 
 class FlushOnWarningHandler(logging.Handler):
@@ -53,7 +50,7 @@ class FlushOnWarningHandler(logging.Handler):
         """Resolve correlation_id from ContextVar at emit time."""
         current_id = get_correlation_id()
         if current_id is None:
-            return NULL_CORRELATION_ID
+            return const.NULL_CORRELATION_ID
         return current_id
 
     def _evict_expired_buffers(self, current_time: float) -> None:

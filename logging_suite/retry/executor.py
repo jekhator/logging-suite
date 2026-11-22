@@ -10,7 +10,10 @@ import time
 from collections.abc import Callable
 from typing import Any
 
-from logging_suite.retry.common.constants import errors as const
+from logging_suite.retry.common.constants import (
+    backoff as backoff_const,
+    errors as const,
+)
 from logging_suite.retry.policy import RetryPolicy
 
 
@@ -57,7 +60,10 @@ class RetryExecutor:
                     return operation(*args, **kwargs)
                 except BaseException as error:
                     last_error = error
-                    if attempt == policy.max_attempts - 1:
+                    if (
+                        attempt
+                        == policy.max_attempts - backoff_const.LAST_ATTEMPT_OFFSET
+                    ):
                         raise
                     if not self._should_retry(error, policy):
                         raise
@@ -83,7 +89,10 @@ class RetryExecutor:
                     return await operation(*args, **kwargs)
                 except BaseException as error:
                     last_error = error
-                    if attempt == policy.max_attempts - 1:
+                    if (
+                        attempt
+                        == policy.max_attempts - backoff_const.LAST_ATTEMPT_OFFSET
+                    ):
                         raise
                     if not self._should_retry(error, policy):
                         raise
@@ -151,6 +160,8 @@ class RetryExecutor:
             policy.backoff_max_seconds,
         )
         if policy.jitter:
-            jitter_factor = random.uniform(0.9, 1.1)
+            jitter_factor = random.uniform(
+                backoff_const.JITTER_LOWER_FACTOR, backoff_const.JITTER_UPPER_FACTOR
+            )
             backoff *= jitter_factor
         return backoff

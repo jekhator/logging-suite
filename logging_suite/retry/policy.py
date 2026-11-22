@@ -5,7 +5,10 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass
 
-from logging_suite.retry.common.constants import errors as const
+from logging_suite.retry.common.constants import (
+    backoff as backoff_const,
+    errors as const,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -36,11 +39,11 @@ class RetryPolicy:
 
     def __post_init__(self) -> None:
         """Validate policy constraints."""
-        if self.max_attempts < 1:
+        if self.max_attempts < backoff_const.MIN_ATTEMPTS:
             raise ValueError(const.ERR_RETRY_MAX_ATTEMPTS)
-        if self.backoff_base_seconds < 0:
+        if self.backoff_base_seconds < backoff_const.MIN_BACKOFF_SECONDS:
             raise ValueError(const.ERR_RETRY_BACKOFF_BASE)
-        if self.backoff_multiplier <= 0:
+        if self.backoff_multiplier <= backoff_const.MIN_BACKOFF_MULTIPLIER_EXCLUSIVE:
             raise ValueError(const.ERR_RETRY_BACKOFF_MULTIPLIER)
-        if self.backoff_max_seconds < 0:
+        if self.backoff_max_seconds < backoff_const.MIN_BACKOFF_SECONDS:
             raise ValueError(const.ERR_RETRY_BACKOFF_MAX)
