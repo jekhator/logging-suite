@@ -15,7 +15,7 @@ from logging_suite.logging.context.correlation.correlation_client import (
 )
 
 # Null correlation ID for records with no correlation_id set
-NULL_CORRELATION_ID: Final = "-buffered-"
+NULL_CORRELATION_ID: Final[str] = "-buffered-"
 
 
 class FlushOnWarningHandler(logging.Handler):

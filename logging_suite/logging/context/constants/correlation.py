@@ -13,10 +13,10 @@ __all__ = [
 
 """Correlation ID log-record key and unset sentinel."""
 
-CORRELATION_ID_KEY: Final = "correlation_id"
-UNSET_CORRELATION_ID: Final = "-"
+CORRELATION_ID_KEY: Final[str] = "correlation_id"
+UNSET_CORRELATION_ID: Final[str] = "-"
 
 
 """ContextVar name for correlation context."""
 
-CORRELATION_CONTEXT_VAR_NAME: Final = "correlation_ctx"
+CORRELATION_CONTEXT_VAR_NAME: Final[str] = "correlation_ctx"

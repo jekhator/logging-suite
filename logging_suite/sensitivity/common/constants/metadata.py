@@ -6,4 +6,4 @@ from typing import Final
 
 """Field metadata keys."""
 
-SENSITIVITY_KEY: Final = "sensitivity"
+SENSITIVITY_KEY: Final[str] = "sensitivity"

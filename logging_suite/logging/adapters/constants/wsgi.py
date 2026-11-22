@@ -15,20 +15,20 @@ __all__ = [
 
 """WSGI environ and header names."""
 
-CORRELATION_ID_ENVIRON_KEY: Final = "HTTP_X_CORRELATION_ID"
-CORRELATION_ID_HEADER: Final = "X-Correlation-ID"
+CORRELATION_ID_ENVIRON_KEY: Final[str] = "HTTP_X_CORRELATION_ID"
+CORRELATION_ID_HEADER: Final[str] = "X-Correlation-ID"
 
 
 """Correlation ID validation."""
 
-CORRELATION_ID_MAX_LENGTH: Final = 128
+CORRELATION_ID_MAX_LENGTH: Final[int] = 128
 
 
 """Unsafe header characters: rejected to prevent CRLF injection / null-byte attacks."""
 
-UNSAFE_HEADER_CHARS: Final = frozenset({"\r", "\n", "\0"})
+UNSAFE_HEADER_CHARS: Final[frozenset[str]] = frozenset({"\r", "\n", "\0"})
 
 
 """Error messages raised at the API surface (source-side; tests match against these via const.ERR_*)."""
 
-ERR_CORRELATION_ID_EMPTY: Final = "correlation_id must not be empty"
+ERR_CORRELATION_ID_EMPTY: Final[str] = "correlation_id must not be empty"

@@ -7,8 +7,8 @@ from typing import Final
 
 from logging_suite.sensitivity.services.classify import Sensitivity
 
-ERR_SENSITIVE_MASKED_REPR: Final = "***MASKED***"
-ERR_SENSITIVE_REPR_NOT_OVERRIDDEN: Final = (
+ERR_SENSITIVE_MASKED_REPR: Final[str] = "***MASKED***"
+ERR_SENSITIVE_REPR_NOT_OVERRIDDEN: Final[str] = (
     "SensitiveRepr adopter must use @dataclass(..., repr=False) "
     "to avoid silent repr shadowing. "
     "If the adopter has __post_init__, call SensitiveRepr.__post_init__(self) "

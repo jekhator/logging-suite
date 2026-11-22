@@ -8,7 +8,7 @@ itself is exported and self-included in this frozenset.
 
 from typing import Final
 
-PUBLIC_API: Final = frozenset(
+PUBLIC_API: Final[frozenset[str]] = frozenset(
     {
         "AmbientLogger",
         "ContextVarClient",

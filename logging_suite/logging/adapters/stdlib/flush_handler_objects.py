@@ -7,17 +7,17 @@ from dataclasses import dataclass
 from typing import Final
 
 # Error message constants
-ERR_TARGET_HANDLER_REQUIRED: Final = "target_handler must not be None"
-ERR_FLUSH_LEVEL_INVALID: Final = "flush_level must be >= logging.WARNING"
-ERR_TTL_POSITIVE: Final = "ttl_seconds must be > 0"
-ERR_CAPACITY_POSITIVE: Final = "capacity must be > 0"
-ERR_MAX_CORRELATIONS_POSITIVE: Final = "max_correlations must be > 0"
+ERR_TARGET_HANDLER_REQUIRED: Final[str] = "target_handler must not be None"
+ERR_FLUSH_LEVEL_INVALID: Final[str] = "flush_level must be >= logging.WARNING"
+ERR_TTL_POSITIVE: Final[str] = "ttl_seconds must be > 0"
+ERR_CAPACITY_POSITIVE: Final[str] = "capacity must be > 0"
+ERR_MAX_CORRELATIONS_POSITIVE: Final[str] = "max_correlations must be > 0"
 
 # Default configuration constants
-DEFAULT_FLUSH_LEVEL: Final = logging.WARNING
-DEFAULT_TTL_SECONDS: Final = 300
-DEFAULT_CAPACITY: Final = 1000
-DEFAULT_MAX_CORRELATIONS: Final = 100
+DEFAULT_FLUSH_LEVEL: Final[int] = logging.WARNING
+DEFAULT_TTL_SECONDS: Final[int] = 300
+DEFAULT_CAPACITY: Final[int] = 1000
+DEFAULT_MAX_CORRELATIONS: Final[int] = 100
 
 
 @dataclass(frozen=True, slots=True)

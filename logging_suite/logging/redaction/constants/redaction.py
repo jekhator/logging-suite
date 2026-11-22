@@ -11,5 +11,5 @@ __all__ = [
 
 """Redaction masking parameters."""
 
-MASK_TOKEN: Final = "***REDACTED***"
+MASK_TOKEN: Final[str] = "***REDACTED***"
 """Token used to replace sensitive field values."""
