@@ -124,7 +124,8 @@ class TestFlushOnWarningHandlerBuffering:
         set_correlation_id(test_const.CORRELATION_ID_VALID_ID_123)
 
         debug_record = logging.LogRecord(
-            name="test", level=logging.DEBUG, pathname="test.py", lineno=42, msg="debug message", args=(), exc_info=None
+            name="test", level=logging.DEBUG, pathname="test.py", lineno=42,
+            msg="debug message", args=(), exc_info=None
         )
         debug_record.correlation_id = test_const.CORRELATION_ID_VALID_ID_123
         handler.emit(debug_record)
@@ -161,7 +162,8 @@ class TestFlushOnWarningHandlerBuffering:
             handler.emit(record)
 
         warning_record = logging.LogRecord(
-            name="test", level=logging.WARNING, pathname="test.py", lineno=50, msg="warning", args=(), exc_info=None
+            name="test", level=logging.WARNING, pathname="test.py", lineno=50,
+            msg="warning", args=(), exc_info=None
         )
         warning_record.correlation_id = test_const.CORRELATION_ID_VALID_ID_123
         handler.emit(warning_record)

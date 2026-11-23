@@ -206,7 +206,8 @@ class TestRetryingBackend:
                         detail="temporary failure", retryable=True
                     )
                 return DeliveryResult(
-                    delivered=True, backend_name="FailThenSuccessBackend", detail="success", retryable=False
+                    delivered=True, backend_name="FailThenSuccessBackend",
+                    detail="success", retryable=False
                 )
 
         inner = FailThenSuccessBackend()
