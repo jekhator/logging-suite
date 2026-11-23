@@ -11,16 +11,10 @@ class TestVersionLockstep:
     def test_all_mixin_roots_version_match(self) -> None:
         """All 5 mixin roots must have same version."""
         from logging_suite.latency.config._version import __version__ as latency_version
-        from logging_suite.logging.config._version import (
-            __version__ as logging_version,
-        )
-        from logging_suite.notifications.config._version import (
-            __version__ as notifications_version,
-        )
+        from logging_suite.logging.config._version import __version__ as logging_version
+        from logging_suite.notifications.config._version import __version__ as notifications_version
         from logging_suite.retry.config._version import __version__ as retry_version
-        from logging_suite.sensitivity.config._version import (
-            __version__ as sensitivity_version,
-        )
+        from logging_suite.sensitivity.config._version import __version__ as sensitivity_version
 
         versions = {
             "logging_suite.logging": logging_version, "logging_suite.sensitivity": sensitivity_version,

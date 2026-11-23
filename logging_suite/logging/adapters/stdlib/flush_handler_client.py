@@ -8,9 +8,7 @@ from collections import deque
 
 from logging_suite.logging.adapters.constants import stdlib as const
 from logging_suite.logging.adapters.stdlib import flush_handler_objects as objs
-from logging_suite.logging.context.correlation.correlation_client import (
-    get_correlation_id,
-)
+from logging_suite.logging.context.correlation.correlation_client import get_correlation_id
 
 
 class FlushOnWarningHandler(logging.Handler):

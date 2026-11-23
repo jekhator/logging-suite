@@ -7,10 +7,7 @@ import time
 from dataclasses import dataclass, field
 
 from logging_suite.notifications.backends import _objects as backend_objs
-from logging_suite.notifications.common.constants import (
-    backends as backend_const,
-    events as const,
-)
+from logging_suite.notifications.common.constants import backends as backend_const, events as const
 from logging_suite.notifications.dispatch import _objects as objs
 from logging_suite.notifications.events import _objects as event_objs
 from logging_suite.notifications.suppression import _objects as suppression_objs

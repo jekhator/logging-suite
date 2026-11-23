@@ -128,6 +128,7 @@ ignore_missing_imports = true
 
 [tool.ruff]
 target-version = "py312"
+line-length = 120
 
 [tool.ruff.lint]
 extend-select = ["I", "TID252", "PLC0414"]

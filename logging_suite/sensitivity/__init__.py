@@ -21,15 +21,8 @@ Key features:
 
 from logging_suite.sensitivity.common.constants.public_api import PUBLIC_API
 from logging_suite.sensitivity.config._version import __version__
-from logging_suite.sensitivity.repr._objects import (
-    SensitiveDeclarationError,
-    SensitiveRepr,
-)
-from logging_suite.sensitivity.services.classify import (
-    Sensitivity,
-    SensitivityProfile,
-    classify,
-)
+from logging_suite.sensitivity.repr._objects import SensitiveDeclarationError, SensitiveRepr
+from logging_suite.sensitivity.services.classify import Sensitivity, SensitivityProfile, classify
 
 __all__ = [
     "PUBLIC_API", "Sensitivity", "SensitiveDeclarationError", "SensitiveRepr", "SensitivityProfile", "__version__",

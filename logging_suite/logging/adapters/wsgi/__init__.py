@@ -1,9 +1,6 @@
 """logging-mixin WSGI adapter: correlation ID propagation for WSGI app servers (Django, Flask, Pyramid)."""
 
-from logging_suite.logging.adapters.wsgi.wsgi_client import (
-    CorrelationIdMiddleware,
-    WsgiApp,
-)
+from logging_suite.logging.adapters.wsgi.wsgi_client import CorrelationIdMiddleware, WsgiApp
 from logging_suite.logging.adapters.wsgi.wsgi_objects import (
     App,
     Environ,

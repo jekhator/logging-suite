@@ -6,12 +6,7 @@ from dataclasses import dataclass, field
 
 import pytest
 
-from logging_suite.sensitivity import (
-    SensitiveDeclarationError,
-    SensitiveRepr,
-    Sensitivity,
-    classify,
-)
+from logging_suite.sensitivity import SensitiveDeclarationError, SensitiveRepr, Sensitivity, classify
 
 
 class TestSensitiveRepr:

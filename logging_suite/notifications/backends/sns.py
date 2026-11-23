@@ -6,10 +6,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from logging_suite.notifications.backends import _objects as objs
-from logging_suite.notifications.common.constants import (
-    backends as const,
-    events as event_const,
-)
+from logging_suite.notifications.common.constants import backends as const, events as event_const
 from logging_suite.notifications.events import _objects as event_objs
 
 

@@ -12,10 +12,7 @@ class CloudSetup:
     """Entry surface for resolving correlation-ID from cloud events."""
 
     @staticmethod
-    def setup_correlation_id(
-        event: dict[str, Any],
-        context: Any = None,  # noqa: ARG004, ANN401
-    ) -> str:
+    def setup_correlation_id(event: dict[str, Any], context: Any = None) -> str:  # noqa: ARG004, ANN401
         """Extract and set the correlation ID from a cloud event."""
         correlation = objs.CloudCorrelation.from_event(event)
         set_correlation_id(correlation.correlation_id)

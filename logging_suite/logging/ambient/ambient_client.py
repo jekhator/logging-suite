@@ -7,9 +7,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from logging_suite.logging.context.constants import correlation as const
-from logging_suite.logging.context.correlation.correlation_client import (
-    get_correlation_id,
-)
+from logging_suite.logging.context.correlation.correlation_client import get_correlation_id
 
 
 @dataclass(frozen=True, slots=True)

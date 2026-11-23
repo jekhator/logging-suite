@@ -13,12 +13,7 @@ from logging_suite.logging.adapters.urllib3 import urllib3_objects as objs
 class CorrelationIdPoolManager(urllib3.PoolManager):
     """PoolManager that injects correlation-ID header into outbound requests."""
 
-    def urlopen(  # type: ignore[override]
-        self,
-        method: str,
-        url: str,
-        **kwargs: Any,
-    ) -> urllib3.BaseHTTPResponse:
+    def urlopen(self, method: str, url: str, **kwargs: Any) -> urllib3.BaseHTTPResponse:  # type: ignore[override]
         """Inject X-Correlation-ID header from context before send."""
         correlation = objs.Urllib3Correlation.from_context()
         if correlation is not None:

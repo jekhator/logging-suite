@@ -5,11 +5,7 @@ from __future__ import annotations
 import pytest
 
 from logging_suite.logging import clear_correlation_id, set_correlation_id
-from logging_suite.notifications import (
-    NotificationEvent,
-    NotificationEventClient,
-    Severity,
-)
+from logging_suite.notifications import NotificationEvent, NotificationEventClient, Severity
 
 
 class TestNotificationEvent:

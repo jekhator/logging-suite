@@ -6,11 +6,7 @@ from typing import Any
 
 import pytest
 
-from logging_suite.logging import (
-    clear_correlation_id,
-    get_correlation_id,
-    set_correlation_id,
-)
+from logging_suite.logging import clear_correlation_id, get_correlation_id, set_correlation_id
 from logging_suite.logging.adapters.asgi import asgi_client, asgi_objects as asgi_objs
 from logging_suite.logging.adapters.constants import asgi as const
 from logging_suite.logging.common.constants import tests as test_const

@@ -10,10 +10,7 @@ import time
 from collections.abc import Callable
 from typing import Any
 
-from logging_suite.retry.common.constants import (
-    backoff as backoff_const,
-    errors as const,
-)
+from logging_suite.retry.common.constants import backoff as backoff_const, errors as const
 from logging_suite.retry.policy import RetryPolicy
 
 

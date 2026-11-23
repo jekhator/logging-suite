@@ -1,9 +1,6 @@
 """logging-mixin: class-bound structured logging with correlation-ID context."""
 
-from logging_suite.logging.adapters.stdlib import (
-    FlushOnWarningConfig,
-    FlushOnWarningHandler,
-)
+from logging_suite.logging.adapters.stdlib import FlushOnWarningConfig, FlushOnWarningHandler
 from logging_suite.logging.ambient.ambient_client import (
     AmbientLogger,
     log_debug,
@@ -20,9 +17,7 @@ from logging_suite.logging.context.correlation.correlation_client import (
     get_correlation_id,
     set_correlation_id,
 )
-from logging_suite.logging.context.correlation.correlation_objects import (
-    CorrelationContext,
-)
+from logging_suite.logging.context.correlation.correlation_objects import CorrelationContext
 from logging_suite.logging.mixin.mixin import LoggingMixin
 
 __all__ = [

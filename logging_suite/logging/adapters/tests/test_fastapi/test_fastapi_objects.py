@@ -6,9 +6,7 @@ from __future__ import annotations
 import pytest
 
 from logging_suite.logging.adapters.constants import fastapi as const
-from logging_suite.logging.adapters.fastapi.fastapi_objects import (
-    FastApiCorrelation,
-)
+from logging_suite.logging.adapters.fastapi.fastapi_objects import FastApiCorrelation
 
 
 class TestFastApiCorrelationFromHeaders:

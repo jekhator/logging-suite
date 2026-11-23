@@ -2,12 +2,7 @@
 
 from __future__ import annotations
 
-from logging_suite.notifications import (
-    Attachment,
-    Dispatcher,
-    NotificationEvent,
-    Severity,
-)
+from logging_suite.notifications import Attachment, Dispatcher, NotificationEvent, Severity
 
 
 class TestEgressGate:

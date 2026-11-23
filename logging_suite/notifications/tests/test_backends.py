@@ -15,9 +15,7 @@ from logging_suite.notifications import (
     Severity,
     SNSBackend,
 )
-from logging_suite.retry import (
-    RetryPolicy,
-)
+from logging_suite.retry import RetryPolicy
 
 
 class TestNullBackend:

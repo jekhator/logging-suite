@@ -8,10 +8,7 @@ from typing import Any
 import pytest
 
 from logging_suite.sensitivity import classify
-from logging_suite.sensitivity.services.classify.classify_objects import (
-    Sensitivity,
-    SensitivityProfile,
-)
+from logging_suite.sensitivity.services.classify.classify_objects import Sensitivity, SensitivityProfile
 
 
 class TestSensitivity:
