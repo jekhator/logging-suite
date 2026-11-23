@@ -55,17 +55,14 @@ If you already have custom event hooks, merge them:
 ```python
 from logging_suite.logging.adapters.httpx import CorrelationIdInjector
 
-my_hooks = {
-    "request": [my_custom_hook],
-    "response": [my_logging_hook],
-}
+my_hooks = {"request": [my_custom_hook], "response": [my_logging_hook]}
 
 correlation_hooks = CorrelationIdInjector.event_hooks()
 
 # Merge request hooks
 merged_hooks = {
     "request": my_hooks.get("request", []) + correlation_hooks["request"],
-    "response": my_hooks.get("response", []) + correlation_hooks.get("response", []),
+    "response": my_hooks.get("response", []) + correlation_hooks.get("response", [])
 }
 
 client = httpx.Client(event_hooks=merged_hooks)
@@ -80,9 +77,7 @@ client = httpx.Client(event_hooks=merged_hooks)
 Returns a dict of event hooks ready for `httpx.Client(..., event_hooks=...)`:
 
 ```python
-{
-    "request": [inject_sync, inject_async]
-}
+{"request": [inject_sync, inject_async]}
 ```
 
 The hooks read the current correlation ID from context and inject it as the `X-Correlation-ID` header.

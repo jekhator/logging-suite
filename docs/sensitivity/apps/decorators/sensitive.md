@@ -116,19 +116,13 @@ cred = Credential(user_id="u-123", api_key="sk-abc123xyz")
 
 ```python
 from dataclasses import dataclass, field
-from sensitivity_mixin import (
-    sensitive,
-    Sensitivity,
-    SensitiveDecorator,
-)
+from sensitivity_mixin import sensitive, Sensitivity, SensitiveDecorator
 from sensitivity_mixin.decorators.classes.secret_aware import SecretPolicyAware
 from sensitivity_mixin.decorators.classes.compliance import Compliance
 
 # Create a custom policy for SECRET fields:
 secret_policy = SecretPolicyAware(
-    compliance=Compliance.NONE,
-    detection_hints=("secret", "token", "key", "password"),
-    placeholder="[REDACTED]"
+    compliance=Compliance.NONE, detection_hints=("secret", "token", "key", "password"), placeholder="[REDACTED]"
 )
 
 # Wire the policy into the decorator:
@@ -150,34 +144,21 @@ cred = Credential(user_id="u-123", api_key="sk-abc123xyz")
 ### Example 3: Multi-Class Policies
 
 ```python
-from sensitivity_mixin import (
-    sensitive,
-    Sensitivity,
-    SensitiveDecorator,
-)
+from sensitivity_mixin import sensitive, Sensitivity, SensitiveDecorator
 from sensitivity_mixin.decorators.classes.secret_aware import SecretPolicyAware
 from sensitivity_mixin.decorators.classes.pii_aware import PiiPolicyAware
 from sensitivity_mixin.decorators.classes.compliance import Compliance
 
 secret_policy = SecretPolicyAware(
-    compliance=Compliance.NONE,
-    detection_hints=("secret", "token", "key"),
-    placeholder="***SECRET***"
+    compliance=Compliance.NONE, detection_hints=("secret", "token", "key"), placeholder="***SECRET***"
 )
 
 pii_policy = PiiPolicyAware(
-    compliance=Compliance.GDPR,
-    detection_hints=("email", "name", "ssn"),
-    placeholder="***PII***"
+    compliance=Compliance.GDPR, detection_hints=("email", "name", "ssn"), placeholder="***PII***"
 )
 
 # Wire both policies:
-decorator = SensitiveDecorator(
-    policies=(
-        (Sensitivity.SECRET, secret_policy),
-        (Sensitivity.PII, pii_policy),
-    )
-)
+decorator = SensitiveDecorator(policies=((Sensitivity.SECRET, secret_policy), (Sensitivity.PII, pii_policy)))
 
 @decorator
 @dataclass(frozen=True, slots=True)

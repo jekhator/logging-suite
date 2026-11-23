@@ -79,15 +79,8 @@ from logging_suite.logging.common.record_collector import _RecordCollector
 **Public API Surface (from `__init__.py`):**
 ```python
 __all__ = [
-    "ContextVarClient",
-    "CorrelationContext",
-    "LoggedClient",
-    "LoggedContainer",
-    "LoggingMixin",
-    "clear_correlation_id",
-    "get_correlation_id",
-    "logged",
-    "set_correlation_id",
+    "ContextVarClient", "CorrelationContext", "LoggedClient", "LoggedContainer", "LoggingMixin", "clear_correlation_id",
+    "get_correlation_id", "logged", "set_correlation_id"
 ]
 ```
 

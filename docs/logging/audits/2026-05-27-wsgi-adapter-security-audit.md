@@ -187,9 +187,7 @@ Add re-validation in `WsgiApp.__post_init__()`:
 ```python
 def __post_init__(self) -> None:
     if not WsgiCorrelation._is_safe(self.correlation.correlation_id):
-        raise ValueError(
-            f"WsgiApp correlation_id must be safe; got {self.correlation.correlation_id!r}"
-        )
+        raise ValueError(f"WsgiApp correlation_id must be safe; got {self.correlation.correlation_id!r}")
 ```
 
 Or, mark `WsgiApp` as internal-only with a docstring warning against direct instantiation outside the middleware.

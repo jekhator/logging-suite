@@ -180,9 +180,7 @@ from sensitivity_mixin.decorators.classes.compliance import Compliance
 from dataclasses import dataclass, field
 
 secret_policy = SecretPolicyAware(
-    compliance=Compliance.NONE,
-    detection_hints=("secret", "token", "key"),
-    placeholder="***REDACTED***"
+    compliance=Compliance.NONE, detection_hints=("secret", "token", "key"), placeholder="***REDACTED***"
 )
 
 decorator = SensitiveDecorator(policies=((Sensitivity.SECRET, secret_policy),))

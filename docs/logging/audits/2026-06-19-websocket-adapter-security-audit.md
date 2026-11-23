@@ -15,10 +15,7 @@
 
 1. `websocket_objects.py` line 32-36: `from_headers()` uses a simple generator expression:
    ```python
-   candidate = next(
-       (value for key, value in headers if key.lower() == target),
-       None,
-   )
+   candidate = next((value for key, value in headers if key.lower() == target), None)
    ```
 2. The iteration is linear over the headers list provided by the ASGI server (Starlette, etc.).
 3. The ASGI server validates and parses headers before passing to middleware; the adapter receives already-valid (bytes, bytes) tuples.

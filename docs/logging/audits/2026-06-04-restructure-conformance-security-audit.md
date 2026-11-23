@@ -185,10 +185,7 @@ def restore_on_prerun(cls, task: Any = None, **kwargs: Any) -> None:
 ```python
 if isinstance(candidate, str) and cls._is_safe(candidate):
     return cls(correlation_id=candidate, extracted=True)
-return cls(
-    correlation_id=uuid4().hex[: const.GENERATED_ID_LENGTH],
-    extracted=False,
-)
+return cls(correlation_id=uuid4().hex[: const.GENERATED_ID_LENGTH], extracted=False)
 ```
 
 ---
@@ -404,9 +401,7 @@ if candidate is None:
 
 **Implementation** (`correlation_client.py:31-36`):
 ```python
-_correlation_var: ContextVar[objs.CorrelationContext] = ContextVar(
-    const.CORRELATION_CONTEXT_VAR_NAME,
-)
+_correlation_var: ContextVar[objs.CorrelationContext] = ContextVar(const.CORRELATION_CONTEXT_VAR_NAME)
 _correlation_var.set(objs.CorrelationContext(None))
 
 _client: ContextVarClient = ContextVarClient(_correlation_var)

@@ -85,12 +85,7 @@
    ```python
    headers = event.get("headers") or {}
    candidate = next(
-       (
-           value
-           for key, value in headers.items()
-           if key.lower() == const.CORRELATION_ID_HEADER.lower()
-       ),
-       None,
+       (value for key, value in headers.items() if key.lower() == const.CORRELATION_ID_HEADER.lower()), None
    )
    ```
 
@@ -134,11 +129,7 @@
    ```python
    records = event.get("Records") or []
    if records:
-       attributes = (
-           records[0].get("messageAttributes")
-           or records[0].get("Sns", {}).get("MessageAttributes")
-           or {}
-       )
+       attributes = records[0].get("messageAttributes") or records[0].get("Sns", {}).get("MessageAttributes") or {}
        entry = attributes.get(const.CORRELATION_ID_HEADER) or {}
        candidate = entry.get("stringValue") or entry.get("Value")
    ```

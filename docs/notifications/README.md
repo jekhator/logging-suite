@@ -21,28 +21,17 @@ pip install logging-suite
 Run-verified example using Dispatcher + CollectingBackend + suppression:
 
 ```python
-from logging_suite.notifications import (
-    CollectingBackend,
-    Dispatcher,
-    NotificationEventClient,
-    SuppressionPolicy,
-)
+from logging_suite.notifications import CollectingBackend, Dispatcher, NotificationEventClient, SuppressionPolicy
 from logging_suite.logging import set_correlation_id, clear_correlation_id
 
 set_correlation_id("example-correlation-123")
 
 collecting_backend = CollectingBackend()
-dispatcher = Dispatcher(
-    backends=(collecting_backend,),
-    suppression_policy=SuppressionPolicy(window_seconds=60)
-)
+dispatcher = Dispatcher(backends=(collecting_backend,), suppression_policy=SuppressionPolicy(window_seconds=60))
 
 event = NotificationEventClient.create(
-    category="user_auth",
-    severity="WARNING",
-    title="Login Failed",
-    body="User provided invalid credentials",
-    fingerprint="login-failed-user-456"
+    category="user_auth", severity="WARNING", title="Login Failed",
+    body="User provided invalid credentials", fingerprint="login-failed-user-456"
 )
 
 result = dispatcher.notify(event)
@@ -61,11 +50,8 @@ print(f"  Fingerprint: {collecting_backend.events[0].fingerprint}")
 print(f"  Correlation ID: {collecting_backend.events[0].correlation_id}")
 
 event2 = NotificationEventClient.create(
-    category="user_auth",
-    severity="WARNING",
-    title="Login Failed Again",
-    body="Same user provided invalid credentials again",
-    fingerprint="login-failed-user-456"
+    category="user_auth", severity="WARNING", title="Login Failed Again",
+    body="Same user provided invalid credentials again", fingerprint="login-failed-user-456"
 )
 
 result2 = dispatcher.notify(event2)
@@ -111,25 +97,17 @@ collecting_backend = CollectingBackend()
 dispatcher = Dispatcher(backends=(collecting_backend,))
 
 event = NotificationEventClient.create(
-    category="report",
-    severity="INFO",
-    title="Monthly Report Ready",
-    body="Report is attached",
-    fingerprint="monthly-report-2026-07"
+    category="report", severity="INFO", title="Monthly Report Ready",
+    body="Report is attached", fingerprint="monthly-report-2026-07"
 )
 
 event_with_attachment = NotificationEventClient.create(
-    category="report",
-    severity="INFO",
-    title="Monthly Report Ready",
-    body="Report is attached",
-    fingerprint="monthly-report-2026-07",
+    category="report", severity="INFO", title="Monthly Report Ready",
+    body="Report is attached", fingerprint="monthly-report-2026-07",
     attachments=(
         Attachment(
-            filename="report_2026_07.pdf",
-            content_type="application/pdf",
-            content=b"PDF binary data here...",
-            egress_safe=True
+            filename="report_2026_07.pdf", content_type="application/pdf",
+            content=b"PDF binary data here...", egress_safe=True
         ),
     )
 )
@@ -156,12 +134,7 @@ Attachment egress_safe: True
 Wrap any backend with exponential backoff retry logic and optional dead-letter fallback:
 
 ```python
-from logging_suite.notifications import (
-    CollectingBackend,
-    Dispatcher,
-    NotificationEventClient,
-    RetryingBackend,
-)
+from logging_suite.notifications import CollectingBackend, Dispatcher, NotificationEventClient, RetryingBackend
 from logging_suite.retry import RetryPolicy
 
 # This example is illustrative; in production, integrate with SNSBackend or SESBackend
@@ -169,27 +142,16 @@ collecting_backend = CollectingBackend()
 dlq_backend = CollectingBackend()
 
 retry_policy = RetryPolicy(
-    max_attempts=3,
-    backoff_base_seconds=0.5,
-    backoff_multiplier=2,
-    backoff_max_seconds=30,
-    jitter=True
+    max_attempts=3, backoff_base_seconds=0.5, backoff_multiplier=2, backoff_max_seconds=30, jitter=True
 )
 
-retrying_backend = RetryingBackend(
-    inner=collecting_backend,
-    policy=retry_policy,
-    dead_letter=dlq_backend
-)
+retrying_backend = RetryingBackend(inner=collecting_backend, policy=retry_policy, dead_letter=dlq_backend)
 
 dispatcher = Dispatcher(backends=(retrying_backend,))
 
 event = NotificationEventClient.create(
-    category="alert",
-    severity="CRITICAL",
-    title="System Critical",
-    body="System health critical",
-    fingerprint="system-critical-001"
+    category="alert", severity="CRITICAL", title="System Critical",
+    body="System health critical", fingerprint="system-critical-001"
 )
 
 result = dispatcher.notify(event)

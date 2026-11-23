@@ -27,12 +27,7 @@ class PatientRecord(SensitiveRepr):
     email: str = field(metadata={"sensitivity": Sensitivity.PII})
 
 
-patient = PatientRecord(
-    patient_id="P12345",
-    name="Jane Doe",
-    ssn="123-45-6789",
-    email="jane@example.com",
-)
+patient = PatientRecord(patient_id="P12345", name="Jane Doe", ssn="123-45-6789", email="jane@example.com")
 print(repr(patient))
 
 profile = classify(PatientRecord)

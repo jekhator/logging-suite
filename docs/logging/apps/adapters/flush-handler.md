@@ -69,18 +69,12 @@ from logging_suite.logging import set_correlation_id
 
 # Configure target handler (e.g., console output)
 console_handler = logging.StreamHandler()
-console_formatter = logging.Formatter(
-    "%(asctime)s - %(name)s - [%(correlation_id)s] - %(levelname)s - %(message)s"
-)
+console_formatter = logging.Formatter("%(asctime)s - %(name)s - [%(correlation_id)s] - %(levelname)s - %(message)s")
 console_handler.setFormatter(console_formatter)
 
 # Wrap it with flush-on-warning
 config = FlushOnWarningConfig(
-    target_handler=console_handler,
-    flush_level=logging.WARNING,
-    ttl_seconds=300,
-    capacity=1000,
-    max_correlations=100,
+    target_handler=console_handler, flush_level=logging.WARNING, ttl_seconds=300, capacity=1000, max_correlations=100
 )
 flush_handler = FlushOnWarningHandler(config)
 
@@ -224,18 +218,12 @@ from logging_suite.logging.adapters.stdlib import FlushOnWarningHandler, FlushOn
 
 ```python
 import logging
-from logging_suite.logging.adapters.stdlib import (
-    FlushOnWarningConfig,
-    FlushOnWarningHandler,
-    CorrelationLogFilter,
-)
+from logging_suite.logging.adapters.stdlib import FlushOnWarningConfig, FlushOnWarningHandler, CorrelationLogFilter
 from logging_suite.logging import set_correlation_id
 
 # Target handler (where records eventually go)
 file_handler = logging.FileHandler("app.log")
-file_formatter = logging.Formatter(
-    "%(asctime)s - [%(correlation_id)s] - %(levelname)s - %(message)s"
-)
+file_formatter = logging.Formatter("%(asctime)s - [%(correlation_id)s] - %(levelname)s - %(message)s")
 file_handler.setFormatter(file_formatter)
 
 # Wrap with flush-on-warning buffer
@@ -272,23 +260,14 @@ A flow with two correlations: Request-A emits a warning (triggers flush), Reques
 
 ```python
 import logging
-from logging_suite.logging.adapters.stdlib import (
-    FlushOnWarningConfig,
-    FlushOnWarningHandler,
-    CorrelationLogFilter,
-)
+from logging_suite.logging.adapters.stdlib import FlushOnWarningConfig, FlushOnWarningHandler, CorrelationLogFilter
 from logging_suite.logging import set_correlation_id, clear_correlation_id
 
 console_handler = logging.StreamHandler()
-console_formatter = logging.Formatter(
-    "%(name)s - %(levelname)s - [%(correlation_id)s] - %(message)s"
-)
+console_formatter = logging.Formatter("%(name)s - %(levelname)s - [%(correlation_id)s] - %(message)s")
 console_handler.setFormatter(console_formatter)
 
-config = FlushOnWarningConfig(
-    target_handler=console_handler,
-    flush_level=logging.WARNING,
-)
+config = FlushOnWarningConfig(target_handler=console_handler, flush_level=logging.WARNING)
 flush_handler = FlushOnWarningHandler(config)
 
 logger = logging.getLogger("demo")

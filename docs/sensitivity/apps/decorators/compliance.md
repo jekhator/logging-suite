@@ -69,14 +69,10 @@ from sensitivity_mixin.decorators.classes.secret_aware import SecretPolicyAware
 from sensitivity_mixin.decorators.classes.compliance import Compliance
 
 secret_policy = SecretPolicyAware(
-    compliance=Compliance.NONE,
-    detection_hints=("secret", "token", "key", "password"),
-    placeholder="***SECRET***"
+    compliance=Compliance.NONE, detection_hints=("secret", "token", "key", "password"), placeholder="***SECRET***"
 )
 
-decorator = SensitiveDecorator(
-    policies=((Sensitivity.SECRET, secret_policy),)
-)
+decorator = SensitiveDecorator(policies=((Sensitivity.SECRET, secret_policy),))
 
 @decorator
 @dataclass(frozen=True, slots=True)
