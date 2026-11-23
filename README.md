@@ -1,6 +1,6 @@
 # logging-suite
 
-Formerly mixin-suite (renamed 2026-11-22; imports moved under `logging_suite`). The old PyPI project stays installable with a moved-to notice.
+Formerly mixin-suite (renamed 2026-11-22; imports moved under `logging_suite`). The old `mixin-suite` PyPI project stays installable at its last release.
 
 **Composable Python mixins for production services:** structured logging with automatic correlation-ID propagation, sensitive-data masking, retry logic, and latency measurement.
 

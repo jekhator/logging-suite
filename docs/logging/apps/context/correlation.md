@@ -70,25 +70,32 @@ _client: ContextVarClient = ContextVarClient(
 
 ### Public API & Re-exports
 
-Both `CorrelationContext` and `ContextVarClient` are imported in the top-level public API:
+Both `CorrelationContext` and `ContextVarClient` are imported in the top-level public API. The `_client` singleton is private to `correlation_client.py` and is not exported:
 
 ```python
 # logging_suite/logging/__init__.py (curated public API)
-from .correlation.correlation_client import ContextVarClient, _client
-from .correlation.correlation_objects import CorrelationContext
+from logging_suite.logging.context.correlation.correlation_client import (
+    ContextVarClient,
+    clear_correlation_id,
+    get_correlation_id,
+    set_correlation_id,
+)
+from logging_suite.logging.context.correlation.correlation_objects import (
+    CorrelationContext,
+)
 
-__all__ = [..., "ContextVarClient", "CorrelationContext", "_client", ...]
+__all__ = [..., "ContextVarClient", "CorrelationContext", ...]
 ```
 
 The internal subpackage `__init__.py` is now empty (docstring only), with no re-exports. Public integrators import from the top level:
 
 ```python
-from logging_suite.logging import CorrelationContext, ContextVarClient, _client
+from logging_suite.logging import CorrelationContext, ContextVarClient
 ```
 
 ### Access Layer
 
-The public API is provided by module-level functions (or methods on `_client`):
+The public API is provided by module-level functions (they wrap the private `_client` singleton):
 
 ```python
 from logging_suite.logging import set_correlation_id, get_correlation_id, clear_correlation_id

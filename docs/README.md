@@ -21,7 +21,7 @@ This directory contains comprehensive documentation for the two composable mixin
   - [WebSocket Adapter](logging/apps/adapters/websocket.md)
   - [Cloud Adapter](logging/apps/adapters/cloud.md)
   - [Stdlib Adapter](logging/apps/adapters/stdlib.md)
-- **[Decorators](logging/apps/decorators/logged.md)**: Class-level and method-level @logged decorators
+- **[Decorators](logging/apps/decorators/logged.md)**: The @logged decorator was removed in 0.6.0; this page shows the LoggingMixin replacement
 - **[Correlation Context](logging/apps/context/correlation.md)**: ContextVar-based correlation ID propagation
 - **[LoggingMixin](logging/apps/mixin/mixin.md)**: Base class providing log_info(), log_debug(), and @logged support
 - **[Security Audit](logging/apps/security-audit.md)**: CRLF injection prevention, sanitization, and adapter safety
@@ -34,8 +34,8 @@ This directory contains comprehensive documentation for the two composable mixin
 - **[Architecture](sensitivity/architecture/architecture.md)**: System design and masking strategy
 - **[Sensitive Decorator](sensitivity/apps/decorators/sensitive.md)**: Class-level decorator enabling automatic masking
 - **[Compliance Policies](sensitivity/apps/decorators/compliance.md)**: Taxonomy-driven field classification
-- **[Classification API](sensitivity/apps/decorators/policies.md)**: Policy enforcement and introspection
-- **[Classify Service](sensitivity/services/classify.py)**: Field introspection and sensitivity profile generation (PHI, PII, PCI, SECRET)
+- **[Classification API](sensitivity/apps/decorators/policies.md)**: The policy classes were removed in 0.6.0; this page shows field metadata, SensitiveRepr and classify()
+- **[Classify Service](../logging_suite/sensitivity/services/classify/classify_objects.py)**: Field introspection and sensitivity profile generation (PHI, PII, PCI, SECRET)
 - **[Status](sensitivity/STATUS.md)**: Current feature coverage and known limitations
 - **[Historical Changelog](sensitivity/CHANGELOG-history.md)**: Release notes for prior versions of logging_suite.sensitivity
 
