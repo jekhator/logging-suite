@@ -1,111 +1,111 @@
 # logging_suite.retry
 
-Composable decorator for exponential backoff retry with full jitter. Apply @retried to functions, methods, or entire classes to automatically retry on transient failures.
+Exponential backoff retry through two capability contracts: `RetryPolicy` (a frozen configuration object) and `RetryExecutor` (wraps or calls a function under a policy). The `@retried` decorator and `RetryClient` were removed in 0.6.0.
 
 ## Features
 
-- Exponential backoff with configurable base delay and maximum delay cap
-- Full jitter to prevent thundering herd in distributed systems
-- Custom retry predicate to decide which exceptions trigger retry
-- Works on functions, methods, classmethods, staticmethods, and classes
-- Supports both sync and async (coroutines and async methods)
+- Exponential backoff with a configurable base delay, multiplier and maximum delay cap
+- Optional jitter of plus or minus 10 percent on each delay
+- Retry decision by predicate (`should_retry`) or by exception types (`retry_on`)
+- Supports both sync and async functions
 
 ## Installation
 
-Base logging-suite includes logging_suite.retry:
+logging_suite.retry ships inside logging-suite; there is no separate distribution:
 
 ```
 uv add logging-suite
 ```
 
-Or as a standalone:
-
-```
-uv add logging_suite.retry
-```
-
 ## Quick Start
 
-### Decorator on a Service Method
+### Wrap once, call many
 
 ```python
-from logging_suite.retry import retried
+from logging_suite.retry import RetryExecutor, RetryPolicy
 
-class MyService:
-    @retried(max_attempts=4, base_delay_s=1.0, max_delay_s=60.0, jitter=True)
-    def fetch_item(self, item_id: int) -> str:
-        """Fetches an item; automatically retries with exponential backoff."""
-        result = api_call(item_id)  # May raise IOError on network timeout
-        return result
+policy = RetryPolicy(
+    max_attempts=4,
+    backoff_base_seconds=1.0,
+    backoff_multiplier=2.0,
+    backoff_max_seconds=60.0,
+    jitter=True,
+    retry_on=(IOError,),
+)
+
+
+def fetch_item(item_id: int) -> str:
+    return f"Item#{item_id}"
+
+
+fetch_with_retry = RetryExecutor().wrap(fetch_item, policy=policy)
+result = fetch_with_retry(123)
 ```
 
-### Decorator on a Function
+### Per-call form
 
 ```python
-@retried(max_attempts=3, base_delay_s=0.5, retry_on=lambda e: isinstance(e, IOError))
-def unreliable_operation():
-    """Retry only on IOError."""
-    return perform_operation()
+from logging_suite.retry import RetryExecutor, RetryPolicy
+
+policy = RetryPolicy(
+    max_attempts=3,
+    backoff_base_seconds=0.5,
+    backoff_multiplier=2.0,
+    backoff_max_seconds=5.0,
+    jitter=False,
+    should_retry=lambda error: isinstance(error, IOError),
+)
+
+
+def unreliable_operation(name: str) -> str:
+    return name.upper()
+
+
+result = RetryExecutor().call(unreliable_operation, "abc", policy=policy)
 ```
 
-### Decorator on a Class
+`call` raises `ValueError` when `policy` is omitted.
 
-```python
-@retried(max_attempts=5)
-class DataFetcher:
-    """All public methods in the class get automatic retry."""
+## RetryPolicy fields
 
-    def fetch(self, url: str) -> str:
-        return requests.get(url).text
+The first five fields are required; there are no defaults for them.
 
-    def parse(self, data: str) -> dict:
-        return json.loads(data)
+- max_attempts (int): Total number of attempts, including the first (must be >= 1)
+- backoff_base_seconds (float): Delay before the first retry (must be >= 0)
+- backoff_multiplier (float): Growth factor per attempt (must be > 0)
+- backoff_max_seconds (float): Cap on any single delay (must be >= 0)
+- jitter (bool): Multiply each delay by a random factor between 0.9 and 1.1
+- should_retry (callable, optional): Predicate function(exception) -> bool. Takes precedence over retry_on
+- retry_on (tuple of exception types, default empty): Used when should_retry is None
 
-    @staticmethod
-    def validate(obj: dict) -> bool:
-        return "id" in obj
-```
-
-## Parameters
-
-- max_attempts (int, default 3): Maximum number of attempts (must be >= 1)
-- base_delay_s (float, default 1.0): Base delay in seconds for exponential backoff
-- max_delay_s (float, default 60.0): Maximum delay in seconds (capped backoff)
-- jitter (bool, default True): Enable full jitter to randomize backoff
-- retry_on (callable, optional): Predicate function(exception) -> bool. Default retries on any Exception (not BaseException)
+If neither `should_retry` nor `retry_on` is set, nothing is retried: the first exception is raised unchanged.
 
 ## Backoff Strategy
 
-On each failed attempt n (0-indexed):
+After failed attempt n (0-indexed):
 
-- Exponential: base_delay_s * (2 ** n)
-- Capped: min(exponential, max_delay_s)
-- Jittered (if enabled): random.uniform(0, capped)
+- Exponential: backoff_base_seconds * (backoff_multiplier ** n)
+- Capped: min(exponential, backoff_max_seconds)
+- Jittered (if enabled): capped * random.uniform(0.9, 1.1)
 
-Example with base_delay_s=1.0, max_delay_s=60.0, jitter=True:
+Example with backoff_base_seconds=1.0, backoff_multiplier=2.0, backoff_max_seconds=60.0, jitter=False:
 
-- Attempt 0: Fails, delay = random(0, 1s)
-- Attempt 1: Fails, delay = random(0, 2s)
-- Attempt 2: Fails, delay = random(0, 4s)
-- Attempt 3: Succeeds, no further delay
+- Attempt 0: Fails, delay = 1s
+- Attempt 1: Fails, delay = 2s
+- Attempt 2: Fails, delay = 4s
+- Attempt 3: Succeeds, or its exception is raised (max_attempts=4)
 
 ## RUN-VERIFIED Example
 
-This example was executed with Python 3.11.15:
-
-```
-uv run python your_script.py
-```
-
-### Service Class with Retry
+This example was executed with Python 3.12:
 
 ```python
-from logging_suite.retry import retried
+from logging_suite.retry import RetryExecutor, RetryPolicy
+
 
 class MyService:
     attempt_count = 0
 
-    @retried(max_attempts=4, base_delay_s=0.1, max_delay_s=0.5, jitter=True)
     def fetch_item(self, item_id: int) -> str:
         self.attempt_count += 1
         print(f"[Attempt {self.attempt_count}] Fetching item {item_id}...")
@@ -114,6 +114,19 @@ class MyService:
             raise IOError(f"Network timeout (attempt {self.attempt_count})")
 
         return f"Item#{item_id}:data=OK"
+
+
+policy = RetryPolicy(
+    max_attempts=4,
+    backoff_base_seconds=0.1,
+    backoff_multiplier=2.0,
+    backoff_max_seconds=0.5,
+    jitter=True,
+    retry_on=(IOError,),
+)
+service = MyService()
+fetch = RetryExecutor().wrap(service.fetch_item, policy=policy)
+print(f"Result: {fetch(123)}")
 ```
 
 Output:
@@ -125,42 +138,42 @@ Output:
 Result: Item#123:data=OK
 ```
 
-Explanation: The decorator automatically retried twice after network failures before succeeding on the third attempt.
+Explanation: the wrapped call retried twice after the network failures and succeeded on the third attempt.
 
 ## Behavior Details
 
 ### Exceptions Handled
 
-- Retries on Exception and its subclasses
-- Never retries on BaseException-only types: KeyboardInterrupt, SystemExit, asyncio.CancelledError
-- Custom retry_on predicate can narrow or widen retry scope
-
-### Class Decoration
-
-When decorating a class, @retried fans out to all public methods:
-
-- Instance methods: Wrapped with retry logic; called via the instance binding
-- Classmethods: Extracted, wrapped, re-wrapped as classmethod to preserve semantics
-- Staticmethods: Extracted, wrapped, re-wrapped as staticmethod to preserve semantics
-- Methods starting with _ (private): Skipped entirely
-- Properties and nested classes: Skipped
-- Methods already decorated with @retried (identified by marker attribute): Skipped to prevent double wrapping
+- The retry decision is made only by `should_retry` or `retry_on`; with neither set, no exception is retried
+- An exception the policy does not accept is raised at once, unchanged
+- When the attempts are exhausted the last exception is raised unchanged
+- The predicate receives the caught exception as-is and owns any unwrapping of `__cause__` chains
 
 ### Async Support
 
-Both sync and async callables are supported. The decorator detects coroutine functions and wraps them with asyncio.sleep instead of time.sleep.
+`wrap` detects coroutine functions and waits with asyncio.sleep instead of time.sleep.
 
 ```python
 import asyncio
 
-class AsyncService:
-    @retried(max_attempts=3)
-    async def fetch_async(self, url: str) -> str:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as resp:
-                return await resp.text()
+from logging_suite.retry import RetryExecutor, RetryPolicy
 
-await service.fetch_async("https://example.com")
+policy = RetryPolicy(
+    max_attempts=3,
+    backoff_base_seconds=0.1,
+    backoff_multiplier=2.0,
+    backoff_max_seconds=1.0,
+    jitter=True,
+    retry_on=(ConnectionError,),
+)
+
+
+async def fetch_async(url: str) -> str:
+    return f"body of {url}"
+
+
+fetch_with_retry = RetryExecutor().wrap(fetch_async, policy=policy)
+print(asyncio.run(fetch_with_retry("https://example.com")))
 ```
 
 ## See Also
