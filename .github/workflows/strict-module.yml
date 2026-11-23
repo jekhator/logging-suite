@@ -43,6 +43,4 @@ jobs:
           uvx --python 3.14 --from strict-suite==0.4.0 strict-module logging_suite/sensitivity/ --format github
       - name: Check LOC cap
         run: |
-          for dir in logging_suite/latency/clock logging_suite/latency/common/{constants} logging_suite/latency/config logging_suite/logging/adapters/{aiohttp,asgi,botocore,celery,cloud,constants,graphql,grpc,httpx,requests,stdlib,urllib3,websocket,wsgi} logging_suite/logging/common/{constants} logging_suite/logging/config logging_suite/logging/context/{constants,correlation} logging_suite/logging/mixin logging_suite/logging/redaction/{constants} logging_suite/sensitivity/common/{constants} logging_suite/sensitivity/config logging_suite/sensitivity/repr logging_suite/sensitivity/services/{classify} logging_suite/retry/config logging_suite/notifications/common/{constants} logging_suite/notifications/config logging_suite/notifications/events logging_suite/notifications/backends logging_suite/notifications/dispatch logging_suite/notifications/suppression; do
-            uvx --python 3.14 --from strict-suite==0.4.0 strict-module loc-cap "$dir"
-          done
+          uvx --python 3.14 --from strict-suite==0.4.0 strict-module loc-cap logging_suite
