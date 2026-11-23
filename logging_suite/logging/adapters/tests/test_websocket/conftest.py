@@ -32,11 +32,7 @@ def basic_websocket_scope() -> dict[str, Any]:
 
     Used by: TestCorrelationIdMiddlewareCall, TestWebSocketCorrelationFromHeaders.
     """
-    return {
-        "type": "websocket",
-        "path": "/ws",
-        "headers": [],
-    }
+    return {"type": "websocket", "path": "/ws", "headers": []}
 
 
 @pytest.fixture
@@ -49,14 +45,7 @@ def websocket_scope_with_correlation() -> dict[str, Any]:
     encoded_correlation_id_header = const.CORRELATION_ID_HEADER.encode()
     encoded_correlation_id_trace = test_const.CORRELATION_ID_TRACE.encode()
     return {
-        "type": "websocket",
-        "path": "/ws",
-        "headers": [
-            (
-                encoded_correlation_id_header,
-                encoded_correlation_id_trace,
-            ),
-        ],
+        "type": "websocket", "path": "/ws", "headers": [(encoded_correlation_id_header, encoded_correlation_id_trace)]
     }
 
 
@@ -68,13 +57,7 @@ def websocket_scope_with_case_insensitive_header() -> dict[str, Any]:
     Used by: TestWebSocketCorrelationFromHeaders.
     """
     encoded_correlation_id_custom = test_const.CORRELATION_ID_CUSTOM.encode()
-    return {
-        "type": "websocket",
-        "path": "/ws",
-        "headers": [
-            (b"X-CORRELATION-ID", encoded_correlation_id_custom),
-        ],
-    }
+    return {"type": "websocket", "path": "/ws", "headers": [(b"X-CORRELATION-ID", encoded_correlation_id_custom)]}
 
 
 @pytest.fixture
@@ -85,13 +68,7 @@ def websocket_scope_with_carriage_return_header() -> dict[str, Any]:
     Used by: TestCorrelationIdMiddlewareCall, TestWebSocketCorrelationFromHeaders.
     """
     encoded_correlation_id_header = const.CORRELATION_ID_HEADER.encode()
-    return {
-        "type": "websocket",
-        "path": "/ws",
-        "headers": [
-            (encoded_correlation_id_header, b"test-id\r-bad"),
-        ],
-    }
+    return {"type": "websocket", "path": "/ws", "headers": [(encoded_correlation_id_header, b"test-id\r-bad")]}
 
 
 @pytest.fixture
@@ -102,13 +79,7 @@ def websocket_scope_with_newline_header() -> dict[str, Any]:
     Used by: TestWebSocketCorrelationFromHeaders.
     """
     encoded_correlation_id_header = const.CORRELATION_ID_HEADER.encode()
-    return {
-        "type": "websocket",
-        "path": "/ws",
-        "headers": [
-            (encoded_correlation_id_header, b"test-id\n-bad"),
-        ],
-    }
+    return {"type": "websocket", "path": "/ws", "headers": [(encoded_correlation_id_header, b"test-id\n-bad")]}
 
 
 @pytest.fixture
@@ -119,13 +90,7 @@ def websocket_scope_with_null_byte_header() -> dict[str, Any]:
     Used by: TestWebSocketCorrelationFromHeaders.
     """
     encoded_correlation_id_header = const.CORRELATION_ID_HEADER.encode()
-    return {
-        "type": "websocket",
-        "path": "/ws",
-        "headers": [
-            (encoded_correlation_id_header, b"test-id\x00-bad"),
-        ],
-    }
+    return {"type": "websocket", "path": "/ws", "headers": [(encoded_correlation_id_header, b"test-id\x00-bad")]}
 
 
 @pytest.fixture
@@ -138,13 +103,7 @@ def websocket_scope_with_oversized_header() -> dict[str, Any]:
     oversized_id = "a" * (const.CORRELATION_ID_MAX_LENGTH + 1)
     encoded_correlation_id_header = const.CORRELATION_ID_HEADER.encode()
     encoded_oversized_id = oversized_id.encode()
-    return {
-        "type": "websocket",
-        "path": "/ws",
-        "headers": [
-            (encoded_correlation_id_header, encoded_oversized_id),
-        ],
-    }
+    return {"type": "websocket", "path": "/ws", "headers": [(encoded_correlation_id_header, encoded_oversized_id)]}
 
 
 @pytest.fixture
@@ -154,13 +113,7 @@ def http_scope() -> dict[str, Any]:
 
     Used by: TestCorrelationIdMiddlewareCall.
     """
-    return {
-        "type": "http",
-        "method": "GET",
-        "path": "/test",
-        "query_string": b"",
-        "headers": [],
-    }
+    return {"type": "http", "method": "GET", "path": "/test", "query_string": b"", "headers": []}
 
 
 @pytest.fixture

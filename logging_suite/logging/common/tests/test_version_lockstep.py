@@ -23,11 +23,9 @@ class TestVersionLockstep:
         )
 
         versions = {
-            "logging_suite.logging": logging_version,
-            "logging_suite.sensitivity": sensitivity_version,
-            "logging_suite.retry": retry_version,
-            "logging_suite.notifications": notifications_version,
-            "logging_suite.latency": latency_version,
+            "logging_suite.logging": logging_version, "logging_suite.sensitivity": sensitivity_version,
+            "logging_suite.retry": retry_version, "logging_suite.notifications": notifications_version,
+            "logging_suite.latency": latency_version
         }
 
         for name, version in versions.items():

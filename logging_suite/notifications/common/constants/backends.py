@@ -68,13 +68,7 @@ AWS_NO_ERROR_CODE: Final[str] = ""
 AWS_MESSAGE_ID_KEY: Final[str] = "MessageId"
 AWS_MESSAGE_ID_UNKNOWN: Final[str] = "unknown"
 AWS_RETRYABLE_ERROR_CODES: Final[frozenset[str]] = frozenset(
-    {
-        "Throttling",
-        "ThrottledException",
-        "TooManyRequestsException",
-        "ServiceUnavailable",
-        "InternalError",
-    }
+    {"Throttling", "ThrottledException", "TooManyRequestsException", "ServiceUnavailable", "InternalError"}
 )
 
 

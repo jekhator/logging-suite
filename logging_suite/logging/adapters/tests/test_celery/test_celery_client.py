@@ -59,9 +59,7 @@ class TestCorrelationSignalsRestoreOnPrerun:
     def test_restore_on_prerun_with_header_sets_context(self) -> None:
         """restore_on_prerun() sets correlation context from task.request.headers."""
         task = mock.Mock()
-        task.request.headers = {
-            const.CORRELATION_ID_HEADER: test_const.CORRELATION_ID_VALID_ID_123
-        }
+        task.request.headers = {const.CORRELATION_ID_HEADER: test_const.CORRELATION_ID_VALID_ID_123}
         celery_client.CorrelationSignals.restore_on_prerun(task=task)
         assert get_correlation_id() == test_const.CORRELATION_ID_VALID_ID_123
 
@@ -95,9 +93,7 @@ class TestCorrelationSignalsRestoreOnPrerun:
         """restore_on_prerun() overwrites an existing correlation context."""
         set_correlation_id(test_const.CORRELATION_ID_SHOULD_BE_CLEARED)
         task = mock.Mock()
-        task.request.headers = {
-            const.CORRELATION_ID_HEADER: test_const.CORRELATION_ID_VALID_ID_123
-        }
+        task.request.headers = {const.CORRELATION_ID_HEADER: test_const.CORRELATION_ID_VALID_ID_123}
         celery_client.CorrelationSignals.restore_on_prerun(task=task)
         assert get_correlation_id() == test_const.CORRELATION_ID_VALID_ID_123
 

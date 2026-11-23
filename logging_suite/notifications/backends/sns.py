@@ -41,24 +41,18 @@ class SNSBackend:
         body = event.body
 
         message_attributes = {
-            const.SNS_ATTRIBUTE_CATEGORY: {
-                **const.SNS_STRING_ATTRIBUTE,
-                const.SNS_STRING_VALUE_KEY: event.category,
-            },
+            const.SNS_ATTRIBUTE_CATEGORY: {**const.SNS_STRING_ATTRIBUTE, const.SNS_STRING_VALUE_KEY: event.category},
             const.SNS_ATTRIBUTE_SEVERITY: {
-                **const.SNS_STRING_ATTRIBUTE,
-                const.SNS_STRING_VALUE_KEY: event.severity.value,
+                **const.SNS_STRING_ATTRIBUTE, const.SNS_STRING_VALUE_KEY: event.severity.value
             },
             const.SNS_ATTRIBUTE_FINGERPRINT: {
-                **const.SNS_STRING_ATTRIBUTE,
-                const.SNS_STRING_VALUE_KEY: event.fingerprint,
-            },
+                **const.SNS_STRING_ATTRIBUTE, const.SNS_STRING_VALUE_KEY: event.fingerprint
+            }
         }
 
         if event.correlation_id:
             message_attributes[const.SNS_ATTRIBUTE_CORRELATION_ID] = {
-                **const.SNS_STRING_ATTRIBUTE,
-                const.SNS_STRING_VALUE_KEY: event.correlation_id,
+                **const.SNS_STRING_ATTRIBUTE, const.SNS_STRING_VALUE_KEY: event.correlation_id
             }
 
         try:

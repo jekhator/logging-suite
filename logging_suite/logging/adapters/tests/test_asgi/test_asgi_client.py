@@ -153,16 +153,12 @@ class TestCorrelationIdMiddlewareCall:
         async def app_that_sends_body(scope, receive, send) -> None:
             await send(
                 {
-                    const.TYPE_KEY: test_const.HTTP_EVENT_RESPONSE_START,
-                    const.RESPONSE_STATUS_KEY: 200,
-                    const.HEADERS_KEY: [],
+                    const.TYPE_KEY: test_const.HTTP_EVENT_RESPONSE_START, const.RESPONSE_STATUS_KEY: 200,
+                    const.HEADERS_KEY: []
                 }
             )
             await send(
-                {
-                    const.TYPE_KEY: test_const.HTTP_EVENT_RESPONSE_BODY,
-                    "body": b"test",
-                }
+                {const.TYPE_KEY: test_const.HTTP_EVENT_RESPONSE_BODY, "body": b"test"}
             )
 
         async def recording_send(message: Any) -> None:

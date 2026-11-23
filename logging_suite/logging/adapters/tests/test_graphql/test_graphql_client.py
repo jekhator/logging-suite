@@ -40,11 +40,7 @@ class TestCorrelationContextInjectorInject:
     def test_inject_with_multiple_keys_preserves_all(self) -> None:
         """inject() preserves all existing keys in the input dict."""
         set_correlation_id(test_const.CORRELATION_ID_VALID_ID_123)
-        context: dict[str, Any] = {
-            "user_id": "42",
-            "request": "req",
-            "info": "info_obj",
-        }
+        context: dict[str, Any] = {"user_id": "42", "request": "req", "info": "info_obj"}
         result = graphql_client.CorrelationContextInjector.inject(context)
         assert result[const.CONTEXT_KEY] == test_const.CORRELATION_ID_VALID_ID_123
         assert result["user_id"] == "42"

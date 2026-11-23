@@ -36,11 +36,8 @@ def make_environ() -> Callable[[dict[str, str] | None], dict[str, Any]]:
     def factory(headers: dict[str, str] | None = None) -> dict[str, Any]:
         """Create a minimal WSGI environ dict with optional header mappings."""
         environ: dict[str, Any] = {
-            "REQUEST_METHOD": "GET",
-            "PATH_INFO": "/test",
-            "SERVER_NAME": "localhost",
-            "SERVER_PORT": "80",
-            "wsgi.url_scheme": "http",
+            "REQUEST_METHOD": "GET", "PATH_INFO": "/test", "SERVER_NAME": "localhost", "SERVER_PORT": "80",
+            "wsgi.url_scheme": "http"
         }
         if headers:
             for key, value in headers.items():

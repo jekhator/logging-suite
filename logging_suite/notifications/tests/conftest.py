@@ -80,10 +80,7 @@ def _capturing_external_backend():
         def send(self, event: NotificationEvent):
             self.events.append(event)
             return {
-                "delivered": True,
-                "backend_name": "CapturingExternalBackend",
-                "detail": "captured",
-                "retryable": False,
+                "delivered": True, "backend_name": "CapturingExternalBackend", "detail": "captured", "retryable": False
             }
 
     return CapturingExternalBackend()
@@ -108,10 +105,7 @@ def _capturing_internal_backend():
         def send(self, event: NotificationEvent):
             self.events.append(event)
             return {
-                "delivered": True,
-                "backend_name": "CapturingInternalBackend",
-                "detail": "captured",
-                "retryable": False,
+                "delivered": True, "backend_name": "CapturingInternalBackend", "detail": "captured", "retryable": False
             }
 
     return CapturingInternalBackend()

@@ -77,9 +77,8 @@ class LoggingBackend:
             category=event.category, title=event.title
         )
         log_extra = {
-            const.LOG_EXTRA_BODY: event.body,
-            const.LOG_EXTRA_FINGERPRINT: event.fingerprint,
-            const.LOG_EXTRA_CORRELATION_ID: event.correlation_id,
+            const.LOG_EXTRA_BODY: event.body, const.LOG_EXTRA_FINGERPRINT: event.fingerprint,
+            const.LOG_EXTRA_CORRELATION_ID: event.correlation_id
         }
 
         self.logger.log(log_level, log_message, extra=log_extra)

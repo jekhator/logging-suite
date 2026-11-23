@@ -121,10 +121,7 @@ class TestLoggingMixin:
 
         svc.log_debug(
             "test",
-            **{
-                test_const.FIELD_USER_ID: test_const.USER_ID_42,
-                test_const.FIELD_ACTION: test_const.ACTION_CREATE,
-            },
+            **{test_const.FIELD_USER_ID: test_const.USER_ID_42, test_const.FIELD_ACTION: test_const.ACTION_CREATE},
         )
 
         assert len(collector.records) == 1
@@ -165,16 +162,12 @@ class TestLoggingMixin:
 
         svc = service_class()
         result = svc._log_extra(
-            {
-                test_const.FIELD_USER_ID: test_const.USER_ID_GENERIC,
-                test_const.FIELD_ACTION: test_const.ACTION_CREATE,
-            },
+            {test_const.FIELD_USER_ID: test_const.USER_ID_GENERIC, test_const.FIELD_ACTION: test_const.ACTION_CREATE},
         )
 
         assert result == {
             correlation_const.CORRELATION_ID_KEY: test_const.CORRELATION_ID_XYZ_SHORT,
-            test_const.FIELD_USER_ID: test_const.USER_ID_GENERIC,
-            test_const.FIELD_ACTION: test_const.ACTION_CREATE,
+            test_const.FIELD_USER_ID: test_const.USER_ID_GENERIC, test_const.FIELD_ACTION: test_const.ACTION_CREATE
         }
 
     def test_log_extra_returns_dash_when_no_correlation_id(self, service_class: type[LoggingMixin]) -> None:

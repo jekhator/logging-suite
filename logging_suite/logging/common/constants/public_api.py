@@ -10,21 +10,8 @@ from typing import Final
 
 PUBLIC_API: Final[frozenset[str]] = frozenset(
     {
-        "AmbientLogger",
-        "ContextVarClient",
-        "CorrelationContext",
-        "FlushOnWarningConfig",
-        "FlushOnWarningHandler",
-        "LoggingMixin",
-        "PUBLIC_API",
-        "__version__",
-        "clear_correlation_id",
-        "get_correlation_id",
-        "log_debug",
-        "log_error",
-        "log_exception",
-        "log_info",
-        "log_warning",
-        "set_correlation_id",
+        "AmbientLogger", "ContextVarClient", "CorrelationContext", "FlushOnWarningConfig", "FlushOnWarningHandler",
+        "LoggingMixin", "PUBLIC_API", "__version__", "clear_correlation_id", "get_correlation_id", "log_debug",
+        "log_error", "log_exception", "log_info", "log_warning", "set_correlation_id"
     },
 )

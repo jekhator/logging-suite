@@ -100,19 +100,11 @@ class TestAsgiCorrelationFromScope:
         """from_scope() processes only the first correlation ID header and ignores later ones."""
         encoded_correlation_id_trace = test_const.CORRELATION_ID_TRACE.encode()
         scope = {
-            const.TYPE_KEY: "http",
-            "method": "GET",
-            "path": "/test",
-            "query_string": b"",
+            const.TYPE_KEY: "http", "method": "GET", "path": "/test", "query_string": b"",
             const.HEADERS_KEY: [
-                (b"other-header", b"value1"),
-                (
-                    const.CORRELATION_ID_HEADER,
-                    encoded_correlation_id_trace,
-                ),
-                (b"another-header", b"value2"),
-                (const.CORRELATION_ID_HEADER, b"should-be-ignored"),
-            ],
+                (b"other-header", b"value1"), (const.CORRELATION_ID_HEADER, encoded_correlation_id_trace),
+                (b"another-header", b"value2"), (const.CORRELATION_ID_HEADER, b"should-be-ignored")
+            ]
         }
         correlation = asgi_objs.AsgiCorrelation.from_scope(scope)
         assert correlation.correlation_id == test_const.CORRELATION_ID_TRACE

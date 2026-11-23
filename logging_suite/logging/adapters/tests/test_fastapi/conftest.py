@@ -50,10 +50,7 @@ def app_with_middleware() -> FastAPI:
         correlation_id = get_correlation_id()
         header_value = request.headers.get("x-correlation-id", "none")
         reported_correlation_id = correlation_id or "none"
-        return {
-            "correlation_id": reported_correlation_id,
-            "header_value": header_value,
-        }
+        return {"correlation_id": reported_correlation_id, "header_value": header_value}
 
     return app
 

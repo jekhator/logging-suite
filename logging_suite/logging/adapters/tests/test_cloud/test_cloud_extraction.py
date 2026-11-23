@@ -50,15 +50,7 @@ class TestCloudCorrelationFromEventSQS:
 
     def test_from_event_sqs_extracts_correlation_from_message_attributes(self) -> None:
         """from_event() extracts correlation_id from SQS messageAttributes."""
-        event = {
-            "Records": [
-                {
-                    "messageAttributes": {
-                        "X-Correlation-ID": {"stringValue": "sqs-id-456"}
-                    }
-                }
-            ]
-        }
+        event = {"Records": [{"messageAttributes": {"X-Correlation-ID": {"stringValue": "sqs-id-456"}}}]}
         correlation = objs.CloudCorrelation.from_event(event)
         assert correlation.correlation_id == "sqs-id-456"
         assert correlation.extracted is True
@@ -83,17 +75,7 @@ class TestCloudCorrelationFromEventSNS:
 
     def test_from_event_sns_extracts_correlation_from_message_attributes(self) -> None:
         """from_event() extracts correlation_id from SNS MessageAttributes."""
-        event = {
-            "Records": [
-                {
-                    "Sns": {
-                        "MessageAttributes": {
-                            "X-Correlation-ID": {"Value": "sns-id-789"}
-                        }
-                    }
-                }
-            ]
-        }
+        event = {"Records": [{"Sns": {"MessageAttributes": {"X-Correlation-ID": {"Value": "sns-id-789"}}}}]}
         correlation = objs.CloudCorrelation.from_event(event)
         assert correlation.correlation_id == "sns-id-789"
         assert correlation.extracted is True
@@ -163,13 +145,7 @@ class TestCloudCorrelationFromEventPrecedence:
         """from_event() prefers headers over Records."""
         event = {
             "headers": {"X-Correlation-ID": "from-headers"},
-            "Records": [
-                {
-                    "messageAttributes": {
-                        "X-Correlation-ID": {"stringValue": "from-records"}
-                    }
-                }
-            ],
+            "Records": [{"messageAttributes": {"X-Correlation-ID": {"stringValue": "from-records"}}}]
         }
         correlation = objs.CloudCorrelation.from_event(event)
         assert correlation.correlation_id == "from-headers"
@@ -177,10 +153,7 @@ class TestCloudCorrelationFromEventPrecedence:
 
     def test_from_event_headers_takes_precedence_over_detail(self) -> None:
         """from_event() prefers headers over detail."""
-        event = {
-            "headers": {"X-Correlation-ID": "from-headers"},
-            "detail": {"correlation_id": "from-detail"},
-        }
+        event = {"headers": {"X-Correlation-ID": "from-headers"}, "detail": {"correlation_id": "from-detail"}}
         correlation = objs.CloudCorrelation.from_event(event)
         assert correlation.correlation_id == "from-headers"
         assert correlation.extracted is True
@@ -188,14 +161,8 @@ class TestCloudCorrelationFromEventPrecedence:
     def test_from_event_records_takes_precedence_over_detail(self) -> None:
         """from_event() prefers Records over detail."""
         event = {
-            "Records": [
-                {
-                    "messageAttributes": {
-                        "X-Correlation-ID": {"stringValue": "from-records"}
-                    }
-                }
-            ],
-            "detail": {"correlation_id": "from-detail"},
+            "Records": [{"messageAttributes": {"X-Correlation-ID": {"stringValue": "from-records"}}}],
+            "detail": {"correlation_id": "from-detail"}
         }
         correlation = objs.CloudCorrelation.from_event(event)
         assert correlation.correlation_id == "from-records"
@@ -203,10 +170,7 @@ class TestCloudCorrelationFromEventPrecedence:
 
     def test_from_event_detail_takes_precedence_over_toplevel(self) -> None:
         """from_event() prefers detail over top-level correlation_id."""
-        event = {
-            "detail": {"correlation_id": "from-detail"},
-            "correlation_id": "from-toplevel",
-        }
+        event = {"detail": {"correlation_id": "from-detail"}, "correlation_id": "from-toplevel"}
         correlation = objs.CloudCorrelation.from_event(event)
         assert correlation.correlation_id == "from-detail"
         assert correlation.extracted is True

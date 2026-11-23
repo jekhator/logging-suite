@@ -34,13 +34,7 @@ def basic_http_scope() -> dict[str, Any]:
 
     Used by: TestASGIAppCall, TestAsgiCorrelationFromScope, TestCorrelationIdMiddlewareCall.
     """
-    return {
-        const.TYPE_KEY: "http",
-        "method": "GET",
-        "path": "/test",
-        "query_string": b"",
-        const.HEADERS_KEY: [],
-    }
+    return {const.TYPE_KEY: "http", "method": "GET", "path": "/test", "query_string": b"", const.HEADERS_KEY: []}
 
 
 @pytest.fixture
@@ -52,13 +46,8 @@ def http_scope_with_correlation() -> dict[str, Any]:
     """
     encoded_correlation_id_trace = test_const.CORRELATION_ID_TRACE.encode()
     return {
-        const.TYPE_KEY: "http",
-        "method": "GET",
-        "path": "/test",
-        "query_string": b"",
-        const.HEADERS_KEY: [
-            (const.CORRELATION_ID_HEADER, encoded_correlation_id_trace),
-        ],
+        const.TYPE_KEY: "http", "method": "GET", "path": "/test", "query_string": b"",
+        const.HEADERS_KEY: [(const.CORRELATION_ID_HEADER, encoded_correlation_id_trace)]
     }
 
 
@@ -71,13 +60,8 @@ def http_scope_with_case_insensitive_header() -> dict[str, Any]:
     """
     encoded_correlation_id_custom = test_const.CORRELATION_ID_CUSTOM.encode()
     return {
-        const.TYPE_KEY: "http",
-        "method": "GET",
-        "path": "/test",
-        "query_string": b"",
-        const.HEADERS_KEY: [
-            (b"X-CORRELATION-ID", encoded_correlation_id_custom),
-        ],
+        const.TYPE_KEY: "http", "method": "GET", "path": "/test", "query_string": b"",
+        const.HEADERS_KEY: [(b"X-CORRELATION-ID", encoded_correlation_id_custom)]
     }
 
 
@@ -88,11 +72,7 @@ def websocket_scope() -> dict[str, Any]:
 
     Used by: TestCorrelationIdMiddlewareCall.
     """
-    return {
-        const.TYPE_KEY: "websocket",
-        "path": "/ws",
-        const.HEADERS_KEY: [],
-    }
+    return {const.TYPE_KEY: "websocket", "path": "/ws", const.HEADERS_KEY: []}
 
 
 @pytest.fixture
@@ -103,13 +83,8 @@ def http_scope_with_carriage_return_header() -> dict[str, Any]:
     Used by: TestAsgiCorrelationFromScope.
     """
     return {
-        const.TYPE_KEY: "http",
-        "method": "GET",
-        "path": "/test",
-        "query_string": b"",
-        const.HEADERS_KEY: [
-            (const.CORRELATION_ID_HEADER, b"test-id\r-bad"),
-        ],
+        const.TYPE_KEY: "http", "method": "GET", "path": "/test", "query_string": b"",
+        const.HEADERS_KEY: [(const.CORRELATION_ID_HEADER, b"test-id\r-bad")]
     }
 
 
@@ -121,13 +96,8 @@ def http_scope_with_newline_header() -> dict[str, Any]:
     Used by: TestAsgiCorrelationFromScope.
     """
     return {
-        const.TYPE_KEY: "http",
-        "method": "GET",
-        "path": "/test",
-        "query_string": b"",
-        const.HEADERS_KEY: [
-            (const.CORRELATION_ID_HEADER, b"test-id\n-bad"),
-        ],
+        const.TYPE_KEY: "http", "method": "GET", "path": "/test", "query_string": b"",
+        const.HEADERS_KEY: [(const.CORRELATION_ID_HEADER, b"test-id\n-bad")]
     }
 
 
@@ -139,13 +109,8 @@ def http_scope_with_null_byte_header() -> dict[str, Any]:
     Used by: TestAsgiCorrelationFromScope.
     """
     return {
-        const.TYPE_KEY: "http",
-        "method": "GET",
-        "path": "/test",
-        "query_string": b"",
-        const.HEADERS_KEY: [
-            (const.CORRELATION_ID_HEADER, b"test-id\x00-bad"),
-        ],
+        const.TYPE_KEY: "http", "method": "GET", "path": "/test", "query_string": b"",
+        const.HEADERS_KEY: [(const.CORRELATION_ID_HEADER, b"test-id\x00-bad")]
     }
 
 
@@ -159,13 +124,8 @@ def http_scope_with_oversized_header() -> dict[str, Any]:
     oversized_id = "a" * (const.CORRELATION_ID_MAX_LENGTH + 1)
     encoded_oversized_id = oversized_id.encode()
     return {
-        const.TYPE_KEY: "http",
-        "method": "GET",
-        "path": "/test",
-        "query_string": b"",
-        const.HEADERS_KEY: [
-            (const.CORRELATION_ID_HEADER, encoded_oversized_id),
-        ],
+        const.TYPE_KEY: "http", "method": "GET", "path": "/test", "query_string": b"",
+        const.HEADERS_KEY: [(const.CORRELATION_ID_HEADER, encoded_oversized_id)]
     }
 
 
@@ -177,13 +137,8 @@ def http_scope_with_invalid_utf8_header() -> dict[str, Any]:
     Used by: TestAsgiCorrelationFromScope.
     """
     return {
-        const.TYPE_KEY: "http",
-        "method": "GET",
-        "path": "/test",
-        "query_string": b"",
-        const.HEADERS_KEY: [
-            (const.CORRELATION_ID_HEADER, b"\xff\xfe"),
-        ],
+        const.TYPE_KEY: "http", "method": "GET", "path": "/test", "query_string": b"",
+        const.HEADERS_KEY: [(const.CORRELATION_ID_HEADER, b"\xff\xfe")]
     }
 
 
@@ -196,13 +151,8 @@ def http_scope_with_string_header_name() -> dict[str, Any]:
     """
     encoded_correlation_id_trace = test_const.CORRELATION_ID_TRACE.encode()
     return {
-        const.TYPE_KEY: "http",
-        "method": "GET",
-        "path": "/test",
-        "query_string": b"",
-        const.HEADERS_KEY: [
-            ("x-correlation-id", encoded_correlation_id_trace),
-        ],
+        const.TYPE_KEY: "http", "method": "GET", "path": "/test", "query_string": b"",
+        const.HEADERS_KEY: [("x-correlation-id", encoded_correlation_id_trace)]
     }
 
 
@@ -214,13 +164,8 @@ def http_scope_with_string_header_value() -> dict[str, Any]:
     Used by: TestAsgiCorrelationFromScope.
     """
     return {
-        const.TYPE_KEY: "http",
-        "method": "GET",
-        "path": "/test",
-        "query_string": b"",
-        const.HEADERS_KEY: [
-            (const.CORRELATION_ID_HEADER, test_const.CORRELATION_ID_TRACE),
-        ],
+        const.TYPE_KEY: "http", "method": "GET", "path": "/test", "query_string": b"",
+        const.HEADERS_KEY: [(const.CORRELATION_ID_HEADER, test_const.CORRELATION_ID_TRACE)]
     }
 
 
@@ -277,9 +222,8 @@ def http_app_that_sends_response() -> Any:
     async def app(scope: dict[str, Any], receive: Any, send: Any) -> None:
         await send(
             {
-                const.TYPE_KEY: test_const.HTTP_EVENT_RESPONSE_START,
-                const.RESPONSE_STATUS_KEY: 200,
-                const.HEADERS_KEY: [(b"content-type", b"text/plain")],
+                const.TYPE_KEY: test_const.HTTP_EVENT_RESPONSE_START, const.RESPONSE_STATUS_KEY: 200,
+                const.HEADERS_KEY: [(b"content-type", b"text/plain")]
             }
         )
 
