@@ -6,6 +6,7 @@ import logging
 from dataclasses import dataclass
 from typing import Any
 
+from logging_suite.logging.context.constants import correlation as const
 from logging_suite.logging.context.correlation.correlation_client import (
     get_correlation_id,
 )
@@ -13,7 +14,8 @@ from logging_suite.logging.context.correlation.correlation_client import (
 
 @dataclass(frozen=True, slots=True)
 class AmbientLogger:
-    """Logs events with auto-injected correlation_id from ContextVar.
+    """
+    Logs events with auto-injected correlation_id from ContextVar.
 
     Trade-off: logs to a fixed module logger (logging_suite.logging.ambient), not per-class.
     Use LoggingMixin for per-class logging; use AmbientLogger for shared/module-level context.
@@ -23,36 +25,42 @@ class AmbientLogger:
 
     def log_debug(self, event: str, **fields: Any) -> None:
         """Emit DEBUG event with auto-injected correlation_id."""
-        extra = {"correlation_id": get_correlation_id() or "-"}
+        correlation_id = get_correlation_id() or const.UNSET_CORRELATION_ID
+        extra = {const.CORRELATION_ID_KEY: correlation_id}
         extra.update(fields)
         self._logger.debug(event, extra=extra)
 
     def log_info(self, event: str, **fields: Any) -> None:
         """Emit INFO event with auto-injected correlation_id."""
-        extra = {"correlation_id": get_correlation_id() or "-"}
+        correlation_id = get_correlation_id() or const.UNSET_CORRELATION_ID
+        extra = {const.CORRELATION_ID_KEY: correlation_id}
         extra.update(fields)
         self._logger.info(event, extra=extra)
 
     def log_warning(self, event: str, **fields: Any) -> None:
         """Emit WARNING event with auto-injected correlation_id."""
-        extra = {"correlation_id": get_correlation_id() or "-"}
+        correlation_id = get_correlation_id() or const.UNSET_CORRELATION_ID
+        extra = {const.CORRELATION_ID_KEY: correlation_id}
         extra.update(fields)
         self._logger.warning(event, extra=extra)
 
     def log_error(self, event: str, **fields: Any) -> None:
         """Emit ERROR event with auto-injected correlation_id."""
-        extra = {"correlation_id": get_correlation_id() or "-"}
+        correlation_id = get_correlation_id() or const.UNSET_CORRELATION_ID
+        extra = {const.CORRELATION_ID_KEY: correlation_id}
         extra.update(fields)
         self._logger.error(event, extra=extra)
 
     def log_exception(self, event: str, **fields: Any) -> None:
         """Emit ERROR event with exception info and auto-injected correlation_id."""
-        extra = {"correlation_id": get_correlation_id() or "-"}
+        correlation_id = get_correlation_id() or const.UNSET_CORRELATION_ID
+        extra = {const.CORRELATION_ID_KEY: correlation_id}
         extra.update(fields)
         self._logger.exception(event, extra=extra)
 
 
-_ambient = AmbientLogger(_logger=logging.getLogger("logging_suite.logging.ambient"))
+_ambient_logger = logging.getLogger(const.AMBIENT_LOGGER_NAME)
+_ambient = AmbientLogger(_logger=_ambient_logger)
 
 log_debug = _ambient.log_debug
 log_info = _ambient.log_info

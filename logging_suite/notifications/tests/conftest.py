@@ -12,7 +12,13 @@ from logging_suite.notifications import NotificationEvent, Severity
 
 @pytest.fixture(autouse=True)
 def _clear_correlation_context() -> Iterator[None]:
-    """Clear correlation context before and after each test."""
+    """
+    Clear correlation context before and after each test.
+
+    Used by: TestAttachment, TestCollectingBackend, TestDispatcher, TestDispatcherGuardedDispatch,
+    TestDispatcherSuppression, TestEgressGate, TestLoggingBackend, TestNotificationEvent, TestNotificationEventFactory,
+    TestNullBackend, TestRetryingBackend, TestSESBackend, TestSNSBackend.
+    """
     clear_correlation_id()
     yield
     clear_correlation_id()
@@ -20,7 +26,11 @@ def _clear_correlation_context() -> Iterator[None]:
 
 @pytest.fixture
 def _test_event() -> NotificationEvent:
-    """Provide a test notification event."""
+    """
+    Provide a test notification event.
+
+    Used by: no test class yet.
+    """
     return NotificationEvent(
         category="test",
         severity=Severity.INFO,
@@ -34,7 +44,12 @@ def _test_event() -> NotificationEvent:
 
 @pytest.fixture(name="test_event")
 def _test_event_fixture() -> NotificationEvent:
-    """Provide a test notification event."""
+    """
+    Provide a test notification event.
+
+    Used by: TestCollectingBackend, TestDispatcher, TestDispatcherGuardedDispatch, TestDispatcherSuppression,
+    TestLoggingBackend, TestNullBackend, TestRetryingBackend, TestSESBackend, TestSNSBackend.
+    """
     return NotificationEvent(
         category="test",
         severity=Severity.INFO,
@@ -48,7 +63,11 @@ def _test_event_fixture() -> NotificationEvent:
 
 @pytest.fixture(name="capturing_external_backend")
 def _capturing_external_backend():
-    """Provide a backend that captures events and declares external_egress=True."""
+    """
+    Provide a backend that captures events and declares external_egress=True.
+
+    Used by: TestEgressGate.
+    """
 
     class CapturingExternalBackend:
         def __init__(self):
@@ -72,7 +91,11 @@ def _capturing_external_backend():
 
 @pytest.fixture(name="capturing_internal_backend")
 def _capturing_internal_backend():
-    """Provide a backend that captures events and declares external_egress=False."""
+    """
+    Provide a backend that captures events and declares external_egress=False.
+
+    Used by: TestEgressGate.
+    """
 
     class CapturingInternalBackend:
         def __init__(self):

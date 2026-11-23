@@ -18,7 +18,8 @@ class GraphQLCorrelation:
     @classmethod
     def from_context(cls) -> Self:
         """Read correlation_id from ContextVar (set upstream by ASGI/WSGI); may be None."""
-        return cls(correlation_id=get_correlation_id())
+        correlation_id = get_correlation_id()
+        return cls(correlation_id=correlation_id)
 
     def as_context_dict(self) -> dict[str, str | None]:
         """Return a dict suitable for merging into resolver info.context."""

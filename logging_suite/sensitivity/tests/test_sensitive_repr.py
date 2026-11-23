@@ -18,7 +18,8 @@ class TestSensitiveRepr:
     """Test SensitiveRepr adoption mixin masking behavior."""
 
     def test_repr_without_repr_false_raises_error(self) -> None:
-        """Adopter without repr=False raises SensitiveDeclarationError.
+        """
+        Adopter without repr=False raises SensitiveDeclarationError.
 
         Silent shadowing is prevented: dataclass-generated __repr__
         cannot be used without being detected.
@@ -43,8 +44,8 @@ class TestSensitiveRepr:
             name: str
             ssn: str = field(metadata={"sensitivity": Sensitivity.PHI})
 
-        p = Patient(name="Alice", ssn="123-45-6789")
-        repr_str = repr(p)
+        patient = Patient(name="Alice", ssn="123-45-6789")
+        repr_str = repr(patient)
 
         assert "name='Alice'" in repr_str
         assert "***MASKED***" in repr_str
@@ -59,8 +60,8 @@ class TestSensitiveRepr:
             password: str = field(metadata={"sensitivity": Sensitivity.SECRET})
             api_key: str = field(metadata={"sensitivity": Sensitivity.SECRET})
 
-        a = Account(username="alice", password="secret123", api_key="key456")
-        repr_str = repr(a)
+        account = Account(username="alice", password="secret123", api_key="key456")
+        repr_str = repr(account)
 
         assert "username='alice'" in repr_str
         assert repr_str.count("***MASKED***") == 2
@@ -75,8 +76,8 @@ class TestSensitiveRepr:
             name: str
             email: str
 
-        p = PublicData(name="Bob", email="bob@example.com")
-        repr_str = repr(p)
+        public_data = PublicData(name="Bob", email="bob@example.com")
+        repr_str = repr(public_data)
 
         assert "name='Bob'" in repr_str
         assert "email='bob@example.com'" in repr_str
@@ -92,13 +93,13 @@ class TestSensitiveRepr:
             phi_field: str = field(metadata={"sensitivity": Sensitivity.PHI})
             secret_field: str = field(metadata={"sensitivity": Sensitivity.SECRET})
 
-        m = MixedData(
+        mixed_data = MixedData(
             public_field="public",
             pii_field="pii_value",
             phi_field="phi_value",
             secret_field="secret_value",
         )
-        repr_str = repr(m)
+        repr_str = repr(mixed_data)
 
         assert "public_field='public'" in repr_str
         assert "pii_value" not in repr_str
@@ -114,11 +115,11 @@ class TestSensitiveRepr:
             name: str
             ssn: str = field(metadata={"sensitivity": Sensitivity.PHI})
 
-        p = Patient(name="Alice", ssn="123-45-6789")
+        patient = Patient(name="Alice", ssn="123-45-6789")
         profile = classify(Patient)
 
         assert profile.has(Sensitivity.PHI)
-        repr(p)
+        repr(patient)
         profile_after = classify(Patient)
         assert profile_after.has(Sensitivity.PHI)
 
@@ -131,8 +132,8 @@ class TestSensitiveRepr:
             second: str = field(metadata={"sensitivity": Sensitivity.PHI})
             third: str
 
-        o = OrderedData(first="a", second="b", third="c")
-        repr_str = repr(o)
+        ordered_data = OrderedData(first="a", second="b", third="c")
+        repr_str = repr(ordered_data)
 
         first_pos = repr_str.find("first")
         second_pos = repr_str.find("***MASKED***")
@@ -148,8 +149,8 @@ class TestSensitiveRepr:
             id: int
             card_number: int = field(metadata={"sensitivity": Sensitivity.PCI})
 
-        n = NumberData(id=1, card_number=4111111111111111)
-        repr_str = repr(n)
+        number_data = NumberData(id=1, card_number=4111111111111111)
+        repr_str = repr(number_data)
 
         assert "id=1" in repr_str
         assert "4111111111111111" not in repr_str
@@ -162,8 +163,8 @@ class TestSensitiveRepr:
         class CustomClass(SensitiveRepr):
             value: str
 
-        c = CustomClass(value="test")
-        repr_str = repr(c)
+        custom = CustomClass(value="test")
+        repr_str = repr(custom)
 
         assert repr_str.startswith("CustomClass(")
         assert repr_str.endswith(")")
@@ -181,13 +182,13 @@ class TestSensitiveRepr:
                 SensitiveRepr.__post_init__(self)
                 object.__setattr__(self, "_initialized", True)
 
-        p = PatientWithInit(name="Alice", ssn="123-45-6789")
-        repr_str = repr(p)
+        patient = PatientWithInit(name="Alice", ssn="123-45-6789")
+        repr_str = repr(patient)
 
         assert "name='Alice'" in repr_str
         assert "***MASKED***" in repr_str
         assert "123-45-6789" not in repr_str
-        assert p._initialized is True
+        assert patient._initialized is True
 
     def test_adopter_with_own_post_init_without_repr_false_raises(self) -> None:
         """Adopter with __post_init__ still guarded when repr=False omitted."""

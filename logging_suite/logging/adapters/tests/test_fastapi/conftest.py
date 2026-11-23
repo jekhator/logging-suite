@@ -26,7 +26,11 @@ class MockService(LoggingMixin):
 
 @pytest.fixture
 def app_with_middleware() -> FastAPI:
-    """Create a FastAPI app with CorrelationIdMiddleware installed."""
+    """
+    Create a FastAPI app with CorrelationIdMiddleware installed.
+
+    Used by: TestCorrelationIdMiddleware.
+    """
     app = FastAPI()
     app.add_middleware(CorrelationIdMiddleware)
 
@@ -35,40 +39,61 @@ def app_with_middleware() -> FastAPI:
         """Test handler that returns a simple response."""
         from logging_suite.logging import get_correlation_id
 
-        corr_id = get_correlation_id()
-        return {"correlation_id": corr_id or "none"}
+        correlation_id = get_correlation_id()
+        return {"correlation_id": correlation_id or "none"}
 
     @app.get("/test-with-request")
     async def test_handler_with_request(request: Request) -> dict[str, str]:
         """Test handler that accesses request headers."""
         from logging_suite.logging import get_correlation_id
 
-        corr_id = get_correlation_id()
+        correlation_id = get_correlation_id()
         header_value = request.headers.get("x-correlation-id", "none")
-        return {"correlation_id": corr_id or "none", "header_value": header_value}
+        reported_correlation_id = correlation_id or "none"
+        return {
+            "correlation_id": reported_correlation_id,
+            "header_value": header_value,
+        }
 
     return app
 
 
 @pytest.fixture
 def fastapi_client(app_with_middleware: FastAPI) -> TestClient:
-    """Create a test client for the FastAPI app."""
+    """
+    Create a test client for the FastAPI app.
+
+    Used by: TestCorrelationIdMiddleware.
+    """
     return TestClient(app_with_middleware)
 
 
 @pytest.fixture
 def correlation_id_abc() -> str:
-    """Test correlation ID: abc."""
+    """
+    Test correlation ID: abc.
+
+    Used by: TestCorrelationIdMiddleware, TestFastApiCorrelationFromHeaders, TestFastApiCorrelationIsSafe,
+    TestFastApiCorrelationPostInit, TestGetCorrelationIdDependency.
+    """
     return "abc123"
 
 
 @pytest.fixture
 def correlation_id_custom() -> str:
-    """Test correlation ID: custom."""
+    """
+    Test correlation ID: custom.
+
+    Used by: TestCorrelationIdMiddleware, TestFastApiCorrelationResponseHeader.
+    """
     return "custom-456"
 
 
 @pytest.fixture
 def correlation_id_some() -> str:
-    """Test correlation ID: some."""
+    """
+    Test correlation ID: some.
+
+    Used by: TestCorrelationIdMiddleware.
+    """
     return "some-789"

@@ -124,13 +124,13 @@ class TestAttachment:
 
     def test_attachment_frozen(self) -> None:
         """Attachment is frozen."""
-        att = Attachment(
+        attachment = Attachment(
             filename="test.txt",
             content_type="text/plain",
             content=b"test data",
         )
         with pytest.raises(AttributeError):
-            att.filename = "other.txt"  # type: ignore
+            attachment.filename = "other.txt"  # type: ignore
 
     def test_attachment_validation_empty_filename(self) -> None:
         """Attachment rejects empty filename."""
@@ -154,22 +154,22 @@ class TestAttachment:
 
     def test_attachment_egress_safe_default(self) -> None:
         """Attachment egress_safe defaults to False."""
-        att = Attachment(
+        attachment = Attachment(
             filename="test.txt",
             content_type="text/plain",
             content=b"test",
         )
-        assert att.egress_safe is False
+        assert attachment.egress_safe is False
 
     def test_attachment_egress_safe_true(self) -> None:
         """Attachment can be marked egress_safe."""
-        att = Attachment(
+        attachment = Attachment(
             filename="test.txt",
             content_type="text/plain",
             content=b"test",
             egress_safe=True,
         )
-        assert att.egress_safe is True
+        assert attachment.egress_safe is True
 
 
 class TestRetryingBackend:
@@ -536,7 +536,12 @@ class TestRetryingBackend:
     def test_retrying_backend_raised_exception_with_retry_on_policy(
         self, test_event: NotificationEvent
     ) -> None:
-        """RetryingBackend retries raised exceptions matching policy.retry_on."""
+        """
+        RetryingBackend retries raised exceptions matching policy.retry_on.
+
+        REGRESSION: Must attempt exactly max_attempts times before dead-letter.
+        DLQ accepted.
+        """
         attempt_count = 0
 
         class ConnectionErrorBackend:
@@ -563,15 +568,19 @@ class TestRetryingBackend:
 
         result = backend.send(test_event)
 
-        # REGRESSION: Must attempt exactly max_attempts times before dead-letter
         assert attempt_count == 3, f"Expected 3 attempts, got {attempt_count}"
-        assert result.delivered is True  # DLQ accepted
+        assert result.delivered is True
         assert len(dlq.events) == 1
 
     def test_retrying_backend_raised_exception_with_should_retry_predicate(
         self, test_event: NotificationEvent
     ) -> None:
-        """RetryingBackend retries raised exceptions matching policy.should_retry."""
+        """
+        RetryingBackend retries raised exceptions matching policy.should_retry.
+
+        REGRESSION: Must attempt exactly max_attempts times before dead-letter.
+        DLQ accepted.
+        """
         attempt_count = 0
 
         class TemporaryErrorBackend:
@@ -598,15 +607,20 @@ class TestRetryingBackend:
 
         result = backend.send(test_event)
 
-        # REGRESSION: Must attempt exactly max_attempts times before dead-letter
         assert attempt_count == 3, f"Expected 3 attempts, got {attempt_count}"
-        assert result.delivered is True  # DLQ accepted
+        assert result.delivered is True
         assert len(dlq.events) == 1
 
     def test_retrying_backend_raised_exception_non_retryable(
         self, test_event: NotificationEvent
     ) -> None:
-        """RetryingBackend does not retry raised exceptions policy deems non-retryable."""
+        """
+        RetryingBackend does not retry raised exceptions policy deems non-retryable.
+
+        Does NOT include PermissionError.
+        REGRESSION: Non-retryable exceptions should attempt exactly once.
+        DLQ accepted.
+        """
         attempt_count = 0
 
         class PermanentErrorBackend:
@@ -627,15 +641,14 @@ class TestRetryingBackend:
             backoff_multiplier=1,
             backoff_max_seconds=0.1,
             jitter=False,
-            retry_on=(ConnectionError,),  # Does NOT include PermissionError
+            retry_on=(ConnectionError,),
         )
         backend = RetryingBackend(inner=inner, policy=policy, dead_letter=dlq)
 
         result = backend.send(test_event)
 
-        # REGRESSION: Non-retryable exceptions should attempt exactly once
         assert attempt_count == 1, f"Expected 1 attempt, got {attempt_count}"
-        assert result.delivered is True  # DLQ accepted
+        assert result.delivered is True
         assert (
             "non-retryable exception" in result.detail
             or "non-retryable" in result.detail
@@ -865,6 +878,14 @@ class TestSESBackend:
             from_address="sender@example.com",
         )
 
+        event_attachments = (
+            Attachment(
+                filename="test.txt",
+                content_type="text/plain",
+                content=b"test content",
+                egress_safe=True,
+            ),
+        )
         event_with_attachment = NotificationEvent(
             category="test",
             severity=Severity.INFO,
@@ -873,14 +894,7 @@ class TestSESBackend:
             fingerprint="test-001",
             occurred_at="2026-07-21T10:00:00+00:00",
             correlation_id=None,
-            attachments=(
-                Attachment(
-                    filename="test.txt",
-                    content_type="text/plain",
-                    content=b"test content",
-                    egress_safe=True,
-                ),
-            ),
+            attachments=event_attachments,
         )
 
         result = backend.send(event_with_attachment)

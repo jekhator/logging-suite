@@ -11,4 +11,4 @@ __all__ = [
 
 """Key under which correlation_id is exposed in resolver context."""
 
-CONTEXT_KEY: Final = "correlation_id"
+CONTEXT_KEY: Final[str] = "correlation_id"

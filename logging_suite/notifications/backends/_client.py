@@ -5,11 +5,9 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 
-from logging_suite.notifications.backends._objects import (
-    DeliveryResult,
-    NotificationBackend,
-)
-from logging_suite.notifications.events._objects import NotificationEvent
+from logging_suite.notifications.backends import _objects as objs
+from logging_suite.notifications.common.constants import backends as const
+from logging_suite.notifications.events import _objects as event_objs
 from logging_suite.retry import RetryPolicy
 
 
@@ -21,12 +19,12 @@ class NullBackend:
         """Does not egress data."""
         return False
 
-    def send(self, event: NotificationEvent) -> DeliveryResult:
+    def send(self, event: event_objs.NotificationEvent) -> objs.DeliveryResult:
         """Accept but discard the event."""
-        return DeliveryResult(
+        return objs.DeliveryResult(
             delivered=False,
-            backend_name="NullBackend",
-            detail="discarded",
+            backend_name=const.BACKEND_NAME_NULL,
+            detail=const.DETAIL_DISCARDED,
             retryable=False,
         )
 
@@ -35,20 +33,21 @@ class NullBackend:
 class CollectingBackend:
     """Collects all delivered events for testing and introspection."""
 
-    events: list[NotificationEvent] = field(default_factory=list)
+    events: list[event_objs.NotificationEvent] = field(default_factory=list)
 
     @property
     def external_egress(self) -> bool:
         """Does not egress data."""
         return False
 
-    def send(self, event: NotificationEvent) -> DeliveryResult:
+    def send(self, event: event_objs.NotificationEvent) -> objs.DeliveryResult:
         """Collect the event."""
         self.events.append(event)
-        return DeliveryResult(
+        detail = const.DETAIL_COLLECTED_TEMPLATE.format(fingerprint=event.fingerprint)
+        return objs.DeliveryResult(
             delivered=True,
-            backend_name="CollectingBackend",
-            detail=f"collected event {event.fingerprint}",
+            backend_name=const.BACKEND_NAME_COLLECTING,
+            detail=detail,
             retryable=False,
         )
 
@@ -56,11 +55,13 @@ class CollectingBackend:
 class LoggingBackend:
     """Emits notifications via stdlib logging."""
 
-    def __init__(self, logger_name: str = "logging_suite.notifications"):
-        """Initialize with a logger.
+    def __init__(self, logger_name: str = const.LOGGER_NAME):
+        """
+        Initialize with a logger.
 
         Args:
-            logger_name: Name of the logger to use.
+            logger_name:
+                Name of the logger to use.
         """
         self.logger = logging.getLogger(logger_name)
 
@@ -69,27 +70,24 @@ class LoggingBackend:
         """Does not egress data."""
         return False
 
-    def send(self, event: NotificationEvent) -> DeliveryResult:
+    def send(self, event: event_objs.NotificationEvent) -> objs.DeliveryResult:
         """Emit the event via logging."""
-        log_level = {
-            "INFO": logging.INFO,
-            "WARNING": logging.WARNING,
-            "CRITICAL": logging.CRITICAL,
-        }.get(event.severity.value, logging.INFO)
-
-        self.logger.log(
-            log_level,
-            f"[{event.category}] {event.title}",
-            extra={
-                "body": event.body,
-                "fingerprint": event.fingerprint,
-                "correlation_id": event.correlation_id,
-            },
+        log_level = const.SEVERITY_LOG_LEVELS.get(event.severity.value, logging.INFO)
+        log_message = const.LOG_TITLE_TEMPLATE.format(
+            category=event.category, title=event.title
         )
-        return DeliveryResult(
+        log_extra = {
+            const.LOG_EXTRA_BODY: event.body,
+            const.LOG_EXTRA_FINGERPRINT: event.fingerprint,
+            const.LOG_EXTRA_CORRELATION_ID: event.correlation_id,
+        }
+
+        self.logger.log(log_level, log_message, extra=log_extra)
+        detail = const.DETAIL_LOGGED_TEMPLATE.format(severity=event.severity.value)
+        return objs.DeliveryResult(
             delivered=True,
-            backend_name="LoggingBackend",
-            detail=f"logged {event.severity.value}",
+            backend_name=const.BACKEND_NAME_LOGGING,
+            detail=detail,
             retryable=False,
         )
 
@@ -98,9 +96,9 @@ class LoggingBackend:
 class RetryingBackend:
     """Wraps a backend with retry logic via logging_suite.retry."""
 
-    inner: NotificationBackend
+    inner: objs.NotificationBackend
     policy: RetryPolicy
-    dead_letter: NotificationBackend | None = None
+    dead_letter: objs.NotificationBackend | None = None
 
     @property
     def external_egress(self) -> bool:
@@ -109,21 +107,21 @@ class RetryingBackend:
             return self.inner.external_egress or self.dead_letter.external_egress
         return self.inner.external_egress
 
-    def send(self, event: NotificationEvent) -> DeliveryResult:
+    def send(self, event: event_objs.NotificationEvent) -> objs.DeliveryResult:
         """Deliver with retry logic, exhaustion → dead_letter fallback."""
         from logging_suite.retry import RetryExecutor
 
         class RetryableDeliveryError(Exception):
             """Exception to signal a retryable delivery failure."""
 
-            def __init__(self, result: DeliveryResult):
+            def __init__(self, result: objs.DeliveryResult):
                 self.result = result
                 super().__init__(result.detail)
 
-        logger = logging.getLogger("logging_suite.notifications")
+        logger = logging.getLogger(const.LOGGER_NAME)
         executor = RetryExecutor()
 
-        def attempt_send() -> DeliveryResult:
+        def attempt_send() -> objs.DeliveryResult:
             result = self.inner.send(event)
             if result.retryable:
                 raise RetryableDeliveryError(result)
@@ -155,62 +153,89 @@ class RetryingBackend:
             if self.dead_letter is not None:
                 try:
                     dead_result = self.dead_letter.send(event)
-                    return DeliveryResult(
+                    backend_name = const.BACKEND_NAME_DEAD_LETTER_TEMPLATE.format(
+                        dead_letter_name=self.dead_letter.__class__.__name__
+                    )
+                    detail = const.DETAIL_DEAD_LETTER_OUTCOME_TEMPLATE.format(
+                        prefix=const.DETAIL_EXHAUSTED, outcome=dead_result.detail
+                    )
+                    return objs.DeliveryResult(
                         delivered=dead_result.delivered,
-                        backend_name=f"RetryingBackend(dead_letter={self.dead_letter.__class__.__name__})",
-                        detail=f"exhausted retries, dead_letter outcome: {dead_result.detail}",
+                        backend_name=backend_name,
+                        detail=detail,
                         retryable=False,
                     )
                 except Exception as error:
                     logger.warning(
-                        "Dead-letter backend failed during exhaustion fallback",
+                        const.LOG_DEAD_LETTER_FAILED_EXHAUSTION,
                         exc_info=error,
                     )
-                    return DeliveryResult(
+                    detail = const.DETAIL_DEAD_LETTER_FAILED_TEMPLATE.format(
+                        prefix=const.DETAIL_EXHAUSTED
+                    )
+                    return objs.DeliveryResult(
                         delivered=False,
-                        backend_name="RetryingBackend",
-                        detail="exhausted retries and dead_letter failed",
+                        backend_name=const.BACKEND_NAME_RETRYING,
+                        detail=detail,
                         retryable=False,
                     )
-            return DeliveryResult(
+            detail = const.DETAIL_REASON_TEMPLATE.format(
+                prefix=const.DETAIL_EXHAUSTED, reason=exhaustion_error.result.detail
+            )
+            return objs.DeliveryResult(
                 delivered=False,
-                backend_name="RetryingBackend",
-                detail=f"exhausted retries: {exhaustion_error.result.detail}",
+                backend_name=const.BACKEND_NAME_RETRYING,
+                detail=detail,
                 retryable=False,
             )
         except Exception as error:
             outer_error = error
             is_retryable_exception = should_retry(outer_error)
             detail_prefix = (
-                "exhausted retries"
+                const.DETAIL_EXHAUSTED
                 if is_retryable_exception
-                else "non-retryable exception"
+                else const.DETAIL_NON_RETRYABLE
             )
 
             if self.dead_letter is not None:
                 try:
                     dead_result = self.dead_letter.send(event)
-                    return DeliveryResult(
+                    backend_name = const.BACKEND_NAME_DEAD_LETTER_TEMPLATE.format(
+                        dead_letter_name=self.dead_letter.__class__.__name__
+                    )
+                    detail = const.DETAIL_DEAD_LETTER_OUTCOME_TEMPLATE.format(
+                        prefix=detail_prefix, outcome=dead_result.detail
+                    )
+                    return objs.DeliveryResult(
                         delivered=dead_result.delivered,
-                        backend_name=f"RetryingBackend(dead_letter={self.dead_letter.__class__.__name__})",
-                        detail=f"{detail_prefix}, dead_letter outcome: {dead_result.detail}",
+                        backend_name=backend_name,
+                        detail=detail,
                         retryable=False,
                     )
                 except Exception as error:
+                    log_message = const.LOG_DEAD_LETTER_FAILED_TEMPLATE.format(
+                        prefix=detail_prefix
+                    )
                     logger.warning(
-                        f"Dead-letter backend failed ({detail_prefix})",
+                        log_message,
                         exc_info=error,
                     )
-                    return DeliveryResult(
+                    detail = const.DETAIL_DEAD_LETTER_FAILED_TEMPLATE.format(
+                        prefix=detail_prefix
+                    )
+                    return objs.DeliveryResult(
                         delivered=False,
-                        backend_name="RetryingBackend",
-                        detail=f"{detail_prefix} and dead_letter failed",
+                        backend_name=const.BACKEND_NAME_RETRYING,
+                        detail=detail,
                         retryable=False,
                     )
 
-            return DeliveryResult(
+            detail = const.DETAIL_REASON_TEMPLATE.format(
+                prefix=detail_prefix, reason=outer_error.__class__.__name__
+            )
+            return objs.DeliveryResult(
                 delivered=False,
-                backend_name="RetryingBackend",
-                detail=f"{detail_prefix}: {outer_error.__class__.__name__}",
+                backend_name=const.BACKEND_NAME_RETRYING,
+                detail=detail,
                 retryable=False,
             )

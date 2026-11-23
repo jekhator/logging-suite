@@ -1,4 +1,7 @@
-"""logging-mixin WebSocket adapter: websocket_objects (WebSocketCorrelation + types) + websocket_client (CorrelationIdMiddleware)."""
+"""
+logging-mixin WebSocket adapter: websocket_objects (WebSocketCorrelation + types)
++ websocket_client (CorrelationIdMiddleware).
+"""
 
 from logging_suite.logging.adapters.websocket.websocket_client import (
     CorrelationIdMiddleware,

@@ -7,6 +7,7 @@ from typing import Any
 import requests as requests_lib  # type: ignore[import-untyped]
 from requests.adapters import HTTPAdapter  # type: ignore[import-untyped]
 
+from logging_suite.logging.adapters.constants import requests as const
 from logging_suite.logging.adapters.requests import requests_objects as objs
 
 
@@ -25,8 +26,8 @@ class CorrelationHTTPAdapter(HTTPAdapter):
     @classmethod
     def register_on_session(cls, session: requests_lib.Session) -> None:
         """Mount a CorrelationHTTPAdapter on the session for http:// and https://."""
-        session.mount("http://", cls())
-        session.mount("https://", cls())
+        session.mount(const.MOUNT_PREFIX_HTTP, cls())
+        session.mount(const.MOUNT_PREFIX_HTTPS, cls())
 
     @classmethod
     def correlation_session(cls) -> requests_lib.Session:

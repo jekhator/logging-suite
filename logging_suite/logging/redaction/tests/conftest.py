@@ -22,7 +22,11 @@ class TestHandler(logging.Handler):
 
 @pytest.fixture
 def redaction_logger() -> logging.Logger:
-    """Create a fresh logger for each test."""
+    """
+    Create a fresh logger for each test.
+
+    Used by: TestRedactionClient.
+    """
     logger = logging.getLogger("test_redaction")
     logger.handlers.clear()
     logger.setLevel(logging.DEBUG)
@@ -31,11 +35,19 @@ def redaction_logger() -> logging.Logger:
 
 @pytest.fixture
 def redaction_handler() -> TestHandler:
-    """Create a fresh test handler for each test."""
+    """
+    Create a fresh test handler for each test.
+
+    Used by: no test class yet.
+    """
     return TestHandler()
 
 
 @pytest.fixture
 def redaction_filter() -> RedactionFilter:
-    """Create a RedactionFilter with default patterns."""
+    """
+    Create a RedactionFilter with default patterns.
+
+    Used by: TestRedactionFilter.
+    """
     return RedactionFilter.with_defaults()

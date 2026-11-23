@@ -7,7 +7,8 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True, slots=True)
 class LatencyMeasurement:
-    """Measured elapsed time in milliseconds.
+    """
+    Measured elapsed time in milliseconds.
 
     Attributes:
         duration_ms: Elapsed duration in milliseconds, rounded to

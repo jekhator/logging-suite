@@ -10,7 +10,10 @@ import time
 from collections.abc import Callable
 from typing import Any
 
-from logging_suite.retry.common.constants import errors as const
+from logging_suite.retry.common.constants import (
+    backoff as backoff_const,
+    errors as const,
+)
 from logging_suite.retry.policy import RetryPolicy
 
 
@@ -23,14 +26,17 @@ class RetryExecutor:
         /,
         policy: RetryPolicy,
     ) -> Callable[..., OperationReturnType]:
-        """Wrap function with retry logic (rebind once, call many).
+        """
+        Wrap function with retry logic (rebind once, call many).
 
         Returns a wrapper preserving operation's signature via functools.wraps.
         Supports both sync and async functions.
 
         Args:
-            operation: Function to wrap.
-            policy: Retry policy configuration.
+            operation:
+                Function to wrap.
+            policy:
+                Retry policy configuration.
 
         Returns:
             Wrapped function with retry logic.
@@ -54,7 +60,10 @@ class RetryExecutor:
                     return operation(*args, **kwargs)
                 except BaseException as error:
                     last_error = error
-                    if attempt == policy.max_attempts - 1:
+                    if (
+                        attempt
+                        == policy.max_attempts - backoff_const.LAST_ATTEMPT_OFFSET
+                    ):
                         raise
                     if not self._should_retry(error, policy):
                         raise
@@ -80,7 +89,10 @@ class RetryExecutor:
                     return await operation(*args, **kwargs)
                 except BaseException as error:
                     last_error = error
-                    if attempt == policy.max_attempts - 1:
+                    if (
+                        attempt
+                        == policy.max_attempts - backoff_const.LAST_ATTEMPT_OFFSET
+                    ):
                         raise
                     if not self._should_retry(error, policy):
                         raise
@@ -99,20 +111,21 @@ class RetryExecutor:
         policy: RetryPolicy | None = None,
         **kwargs: Any,
     ) -> OperationReturnType:
-        """Execute operation with retry (per-call convenience form).
+        """
+        Execute operation with retry (per-call convenience form).
 
         Args:
-            operation: Function to execute.
-            *args: Positional arguments to operation.
-            policy: Retry policy configuration. Required.
-            **kwargs: Keyword arguments to operation.
+            operation:
+                Function to execute.
+            *args:
+                Positional arguments to operation.
+            policy:
+                Retry policy configuration. Required.
+            **kwargs:
+                Keyword arguments to operation.
 
         Returns:
             Function result.
-
-        Raises:
-            ValueError: If policy is None.
-            BaseException: Original exception if all retries exhausted.
         """
         if policy is None:
             raise ValueError(const.ERR_RETRY_POLICY_REQUIRED)
@@ -124,7 +137,8 @@ class RetryExecutor:
         error: BaseException,
         policy: RetryPolicy,
     ) -> bool:
-        """Determine if exception is retryable.
+        """
+        Determine if exception is retryable.
 
         The predicate receives the caught exception as-is and owns any
         unwrapping of __cause__ chains.
@@ -146,6 +160,8 @@ class RetryExecutor:
             policy.backoff_max_seconds,
         )
         if policy.jitter:
-            jitter_factor = random.uniform(0.9, 1.1)
+            jitter_factor = random.uniform(
+                backoff_const.JITTER_LOWER_FACTOR, backoff_const.JITTER_UPPER_FACTOR
+            )
             backoff *= jitter_factor
         return backoff

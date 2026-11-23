@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from logging_suite.notifications.common.constants import events as const
+
 
 @dataclass(frozen=True, slots=True)
 class SuppressionPolicy:
@@ -17,18 +19,22 @@ class SuppressionTracker:
     """In-memory tracker of suppressed (category, fingerprint) pairs."""
 
     window_seconds: int
-    max_capacity: int = 10000
+    max_capacity: int = const.SUPPRESSION_MAX_CAPACITY
     _seen: dict[tuple[str, str], float] = field(default_factory=dict)
 
     def is_suppressed(
         self, category: str, fingerprint: str, current_time: float
     ) -> bool:
-        """Check if (category, fingerprint) is within suppression window.
+        """
+        Check if (category, fingerprint) is within suppression window.
 
         Args:
-            category: Event category.
-            fingerprint: Event fingerprint.
-            current_time: Current time in seconds (from time.time()).
+            category:
+                Event category.
+            fingerprint:
+                Event fingerprint.
+            current_time:
+                Current time in seconds (from time.time()).
 
         Returns:
             True if within window and seen recently; False otherwise.
@@ -41,16 +47,22 @@ class SuppressionTracker:
         return False
 
     def record(self, category: str, fingerprint: str, current_time: float) -> None:
-        """Record a (category, fingerprint) seen at current_time.
+        """
+        Record a (category, fingerprint) seen at current_time.
 
         Args:
-            category: Event category.
-            fingerprint: Event fingerprint.
-            current_time: Current time in seconds.
+            category:
+                Event category.
+            fingerprint:
+                Event fingerprint.
+            current_time:
+                Current time in seconds.
         """
         key = (category, fingerprint)
         self._seen[key] = current_time
 
         if len(self._seen) > self.max_capacity:
-            oldest_key = min(self._seen.keys(), key=lambda k: self._seen[k])
+            oldest_key = min(
+                self._seen.keys(), key=lambda seen_key: self._seen[seen_key]
+            )
             del self._seen[oldest_key]

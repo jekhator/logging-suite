@@ -1,4 +1,5 @@
-"""logging-mixin botocore adapter: AWS correlation-ID injection.
+"""
+logging-mixin botocore adapter: AWS correlation-ID injection.
 
 Surfaces:
 - BotocoreCorrelation: value object for safe correlation-ID extraction

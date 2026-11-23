@@ -32,11 +32,12 @@ class WebSocketCorrelation:
             None,
         )
         if candidate is not None:
-            decoded = candidate.decode(errors="ignore")
+            decoded = candidate.decode(errors=const.DECODE_ERRORS_IGNORE)
             if cls._is_safe(decoded):
                 return cls(correlation_id=decoded, extracted=True)
+        generated_id = uuid4().hex[: const.GENERATED_ID_LENGTH]
         return cls(
-            correlation_id=uuid4().hex[: const.GENERATED_ID_LENGTH],
+            correlation_id=generated_id,
             extracted=False,
         )
 

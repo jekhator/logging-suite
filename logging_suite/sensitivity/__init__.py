@@ -1,4 +1,5 @@
-"""logging_suite.sensitivity: sensitive-data classification for frozen dataclasses.
+"""
+logging_suite.sensitivity: sensitive-data classification for frozen dataclasses.
 
 Quick start:
     from dataclasses import dataclass, field

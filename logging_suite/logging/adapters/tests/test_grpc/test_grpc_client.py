@@ -52,7 +52,8 @@ class TestCorrelationInterceptorIntercept:
         handler_call_details = MagicMock(spec=grpc.HandlerCallDetails)
         handler_call_details.invocation_metadata = tuple(metadata)
 
-        continuation = MagicMock(return_value=MagicMock(spec=grpc.RpcMethodHandler))
+        method_handler = MagicMock(spec=grpc.RpcMethodHandler)
+        continuation = MagicMock(return_value=method_handler)
 
         result = interceptor.intercept_service(continuation, handler_call_details)
 

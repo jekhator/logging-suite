@@ -12,7 +12,12 @@ from logging_suite.sensitivity.services.classify.classify_objects import Sensiti
 
 @pytest.fixture
 def mixed_type() -> type[Any]:
-    """A frozen dataclass with multiple sensitivity classes and one untagged field."""
+    """
+    A frozen dataclass with multiple sensitivity classes and one untagged field.
+
+    Used by: TestClassifyBinding, TestFieldsOf, TestFromDataclass, TestFrozenProfile, TestHas, TestIsEmpty,
+    TestSensitivityOf.
+    """
 
     @dataclass(frozen=True, slots=True)
     class Record:
@@ -28,7 +33,11 @@ def mixed_type() -> type[Any]:
 
 @pytest.fixture
 def unclassified_type() -> type[Any]:
-    """A frozen dataclass with no sensitivity-tagged fields."""
+    """
+    A frozen dataclass with no sensitivity-tagged fields.
+
+    Used by: TestFieldsOf, TestFromDataclass, TestHas, TestIsEmpty, TestSensitivityOf.
+    """
 
     @dataclass(frozen=True, slots=True)
     class Public:

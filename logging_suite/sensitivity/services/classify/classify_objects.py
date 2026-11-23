@@ -32,7 +32,8 @@ class SensitivityProfile:
             kind = field.metadata.get(const.SENSITIVITY_KEY)
             if kind is not None:
                 pairs.append((field.name, Sensitivity(kind)))
-        return cls(classes=tuple(pairs))
+        classes = tuple(pairs)
+        return cls(classes=classes)
 
     @property
     def is_empty(self) -> bool:

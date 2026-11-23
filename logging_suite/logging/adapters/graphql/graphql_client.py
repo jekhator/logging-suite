@@ -14,4 +14,5 @@ class CorrelationContextInjector:
     def inject(context: dict[str, Any]) -> dict[str, Any]:
         """Merge correlation_id into an existing resolver context dict; return new dict."""
         correlation = objs.GraphQLCorrelation.from_context()
-        return {**context, **correlation.as_context_dict()}
+        correlation_context = correlation.as_context_dict()
+        return {**context, **correlation_context}

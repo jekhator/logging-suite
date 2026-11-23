@@ -11,7 +11,12 @@ from logging_suite.logging import clear_correlation_id
 
 @pytest.fixture(autouse=True)
 def reset_correlation() -> Iterator[None]:
-    """Clear correlation context before and after each test for isolation."""
+    """
+    Clear correlation context before and after each test for isolation.
+
+    Used by: TestCorrelationIdPoolManagerUrlopen, TestUrllib3CorrelationConstruction, TestUrllib3CorrelationFromContext,
+    TestUrllib3CorrelationHeaderTuple, TestUrllib3CorrelationIsSafe.
+    """
     clear_correlation_id()
     yield
     clear_correlation_id()

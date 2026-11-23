@@ -19,40 +19,46 @@ __all__ = [
     "MESSAGE_ATTRIBUTE_STRING_VALUE_KEY_SQS",
     "MESSAGE_ATTRIBUTE_VALUE_KEY_SNS",
     "UNSAFE_HEADER_CHARS",
+    "FIRST_RECORD_INDEX",
 ]
 
 
 """Event extraction keys for SNS/SQS messages."""
 
-EVENT_KEY_RECORDS: Final = "Records"
-EVENT_KEY_SNS: Final = "Sns"
-EVENT_KEY_MESSAGE_ATTRIBUTES_SQS: Final = "messageAttributes"
-EVENT_KEY_MESSAGE_ATTRIBUTES_SNS: Final = "MessageAttributes"
-EVENT_KEY_HEADERS: Final = "headers"
-EVENT_KEY_DETAIL: Final = "detail"
+EVENT_KEY_RECORDS: Final[str] = "Records"
+EVENT_KEY_SNS: Final[str] = "Sns"
+EVENT_KEY_MESSAGE_ATTRIBUTES_SQS: Final[str] = "messageAttributes"
+EVENT_KEY_MESSAGE_ATTRIBUTES_SNS: Final[str] = "MessageAttributes"
+EVENT_KEY_HEADERS: Final[str] = "headers"
+EVENT_KEY_DETAIL: Final[str] = "detail"
 
 
 """SNS and SQS message attribute value keys (AWS uses different casing)."""
 
-MESSAGE_ATTRIBUTE_VALUE_KEY_SNS: Final = "Value"
-MESSAGE_ATTRIBUTE_STRING_VALUE_KEY_SQS: Final = "stringValue"
+MESSAGE_ATTRIBUTE_VALUE_KEY_SNS: Final[str] = "Value"
+MESSAGE_ATTRIBUTE_STRING_VALUE_KEY_SQS: Final[str] = "stringValue"
 
 
 """Extraction locations."""
 
-CORRELATION_ID_HEADER: Final = "X-Correlation-ID"
-CORRELATION_ID_KEY: Final = "correlation_id"
+CORRELATION_ID_HEADER: Final[str] = "X-Correlation-ID"
+CORRELATION_ID_KEY: Final[str] = "correlation_id"
 
 
 """Validation."""
 
-CORRELATION_ID_MAX_LENGTH: Final = 128
-GENERATED_ID_LENGTH: Final = 12
-UNSAFE_HEADER_CHARS: Final = frozenset({"\r", "\n", "\0"})
+CORRELATION_ID_MAX_LENGTH: Final[int] = 128
+GENERATED_ID_LENGTH: Final[int] = 12
+UNSAFE_HEADER_CHARS: Final[frozenset[str]] = frozenset({"\r", "\n", "\0"})
 
 
 """Error messages."""
 
-ERR_CORRELATION_ID_UNSAFE: Final = (
+ERR_CORRELATION_ID_UNSAFE: Final[str] = (
     "correlation_id must be non-empty, within length cap, free of unsafe chars"
 )
+
+
+"""Position of the record read from a batch event."""
+
+FIRST_RECORD_INDEX: Final[int] = 0

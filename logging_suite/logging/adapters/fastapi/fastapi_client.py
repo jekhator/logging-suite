@@ -8,9 +8,9 @@ from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from logging_suite.logging import clear_correlation_id, set_correlation_id
-from logging_suite.logging.adapters.fastapi import fastapi_objects as objs
-from logging_suite.logging.adapters.fastapi.constants import (
-    ERR_FASTAPI_NO_CORRELATION_ID,
+from logging_suite.logging.adapters.fastapi import (
+    constants as const,
+    fastapi_objects as objs,
 )
 
 
@@ -29,23 +29,23 @@ class CorrelationIdMiddleware(BaseHTTPMiddleware):
         set_correlation_id(correlation.correlation_id)
         try:
             response = await call_next(request)
-            response.headers[correlation.response_header[0]] = (
-                correlation.response_header[1]
-            )
+            header_name, header_value = correlation.response_header
+            response.headers[header_name] = header_value
             return response
         finally:
             clear_correlation_id()
 
 
 async def get_correlation_id_dependency() -> str:
-    """FastAPI dependency that returns the current correlation ID from context.
+    """
+    FastAPI dependency that returns the current correlation ID from context.
 
     Raises ValueError if no correlation ID is set in context (should not happen if middleware is installed).
     Use in route handlers: `async def my_handler(corr_id: str = Depends(get_correlation_id_dependency))`
     """
     from logging_suite.logging import get_correlation_id
 
-    corr_id = get_correlation_id()
-    if corr_id is None:
-        raise ValueError(ERR_FASTAPI_NO_CORRELATION_ID)
-    return corr_id
+    correlation_id = get_correlation_id()
+    if correlation_id is None:
+        raise ValueError(const.ERR_FASTAPI_NO_CORRELATION_ID)
+    return correlation_id

@@ -20,40 +20,40 @@ class TestFastApiCorrelationFromHeaders:
     ) -> None:
         """from_headers() extracts correlation ID from x-correlation-id header."""
         headers = {const.CORRELATION_ID_HEADER: correlation_id_abc}
-        corr = FastApiCorrelation.from_headers(headers)
-        assert corr.correlation_id == correlation_id_abc
-        assert corr.from_header is True
+        correlation = FastApiCorrelation.from_headers(headers)
+        assert correlation.correlation_id == correlation_id_abc
+        assert correlation.from_header is True
 
     def test_from_headers_generates_uuid_when_header_missing(self) -> None:
         """from_headers() generates UUID when header is missing."""
         headers: dict[str, str] = {}
-        corr = FastApiCorrelation.from_headers(headers)
-        assert corr.correlation_id is not None
-        assert len(corr.correlation_id) == 12
-        assert corr.from_header is False
+        correlation = FastApiCorrelation.from_headers(headers)
+        assert correlation.correlation_id is not None
+        assert len(correlation.correlation_id) == 12
+        assert correlation.from_header is False
 
     def test_from_headers_rejects_unsafe_header_value(self) -> None:
         """from_headers() rejects correlation ID with unsafe characters."""
         unsafe_value = "abc\r\ndef"
         headers = {const.CORRELATION_ID_HEADER: unsafe_value}
-        corr = FastApiCorrelation.from_headers(headers)
-        assert corr.correlation_id != unsafe_value
-        assert corr.from_header is False
+        correlation = FastApiCorrelation.from_headers(headers)
+        assert correlation.correlation_id != unsafe_value
+        assert correlation.from_header is False
 
     def test_from_headers_rejects_oversized_header_value(self) -> None:
         """from_headers() rejects correlation ID exceeding max length."""
         oversized = "x" * (const.CORRELATION_ID_MAX_LENGTH + 1)
         headers = {const.CORRELATION_ID_HEADER: oversized}
-        corr = FastApiCorrelation.from_headers(headers)
-        assert corr.correlation_id != oversized
-        assert corr.from_header is False
+        correlation = FastApiCorrelation.from_headers(headers)
+        assert correlation.correlation_id != oversized
+        assert correlation.from_header is False
 
     def test_from_headers_rejects_empty_header_value(self) -> None:
         """from_headers() rejects empty correlation ID from header."""
         headers = {const.CORRELATION_ID_HEADER: ""}
-        corr = FastApiCorrelation.from_headers(headers)
-        assert corr.correlation_id != ""
-        assert corr.from_header is False
+        correlation = FastApiCorrelation.from_headers(headers)
+        assert correlation.correlation_id != ""
+        assert correlation.from_header is False
 
 
 class TestFastApiCorrelationIsSafe:
@@ -98,8 +98,10 @@ class TestFastApiCorrelationPostInit:
         correlation_id_abc: str,
     ) -> None:
         """__post_init__() accepts non-empty correlation_id."""
-        corr = FastApiCorrelation(correlation_id=correlation_id_abc, from_header=True)
-        assert corr.correlation_id == correlation_id_abc
+        correlation = FastApiCorrelation(
+            correlation_id=correlation_id_abc, from_header=True
+        )
+        assert correlation.correlation_id == correlation_id_abc
 
 
 class TestFastApiCorrelationResponseHeader:
@@ -107,10 +109,10 @@ class TestFastApiCorrelationResponseHeader:
 
     def test_response_header_returns_tuple(self, correlation_id_custom: str) -> None:
         """response_header property returns (name, value) tuple."""
-        corr = FastApiCorrelation(
+        correlation = FastApiCorrelation(
             correlation_id=correlation_id_custom, from_header=False
         )
-        header = corr.response_header
+        header = correlation.response_header
         assert isinstance(header, tuple)
         assert len(header) == 2
 
@@ -119,9 +121,9 @@ class TestFastApiCorrelationResponseHeader:
         correlation_id_custom: str,
     ) -> None:
         """response_header property includes the correlation ID value."""
-        corr = FastApiCorrelation(
+        correlation = FastApiCorrelation(
             correlation_id=correlation_id_custom, from_header=False
         )
-        name, value = corr.response_header
+        name, value = correlation.response_header
         assert name == const.CORRELATION_ID_HEADER
         assert value == correlation_id_custom

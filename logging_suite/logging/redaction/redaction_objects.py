@@ -16,29 +16,21 @@ class RedactionFilter(logging.Filter):
 
     @classmethod
     def with_defaults(cls) -> RedactionFilter:
-        """Create a filter with default sensitive field name patterns.
+        """
+        Create a filter with default sensitive field name patterns.
 
         Returns:
             RedactionFilter configured with common sensitive field names.
         """
-        patterns = frozenset(
-            [
-                "password",
-                "secret",
-                "api_key",
-                "token",
-                "auth",
-                "credential",
-                "key",
-            ]
-        )
-        return cls(sensitive_patterns=patterns)
+        return cls(sensitive_patterns=const.DEFAULT_SENSITIVE_PATTERNS)
 
     def filter(self, record: logging.LogRecord) -> bool:
-        """Apply redaction to LogRecord and return True to allow emission.
+        """
+        Apply redaction to LogRecord and return True to allow emission.
 
         Args:
-            record: LogRecord to filter and potentially redact.
+            record:
+                LogRecord to filter and potentially redact.
 
         Returns:
             True to allow record emission (filter contract).
@@ -47,23 +39,27 @@ class RedactionFilter(logging.Filter):
         return True
 
     def _redact_record(self, record: logging.LogRecord) -> None:
-        """Redact sensitive fields in the LogRecord.
+        """
+        Redact sensitive fields in the LogRecord.
 
         Args:
-            record: LogRecord to modify in place.
+            record:
+                LogRecord to modify in place.
         """
         for key in list(record.__dict__.keys()):
-            if key.startswith("_"):
+            if key.startswith(const.PRIVATE_ATTRIBUTE_PREFIX):
                 continue
 
             if self._is_sensitive_field_name(key):
                 record.__dict__[key] = const.MASK_TOKEN
 
     def _is_sensitive_field_name(self, name: str) -> bool:
-        """Check if a field name matches sensitive patterns.
+        """
+        Check if a field name matches sensitive patterns.
 
         Args:
-            name: Field name to check.
+            name:
+                Field name to check.
 
         Returns:
             True if name matches any sensitive pattern.

@@ -186,6 +186,20 @@ class TestEgressGate:
         capturing_internal_backend,
     ) -> None:
         """Internal backends receive all attachments regardless of egress_safe."""
+        event_attachments = (
+            Attachment(
+                filename="safe.txt",
+                content_type="text/plain",
+                content=b"safe content",
+                egress_safe=True,
+            ),
+            Attachment(
+                filename="sensitive.txt",
+                content_type="text/plain",
+                content=b"sensitive content",
+                egress_safe=False,
+            ),
+        )
         event = NotificationEvent(
             category="files",
             severity=Severity.INFO,
@@ -194,20 +208,7 @@ class TestEgressGate:
             fingerprint="file-001",
             occurred_at="2026-07-21T10:00:00+00:00",
             correlation_id=None,
-            attachments=(
-                Attachment(
-                    filename="safe.txt",
-                    content_type="text/plain",
-                    content=b"safe content",
-                    egress_safe=True,
-                ),
-                Attachment(
-                    filename="sensitive.txt",
-                    content_type="text/plain",
-                    content=b"sensitive content",
-                    egress_safe=False,
-                ),
-            ),
+            attachments=event_attachments,
         )
 
         dispatcher = Dispatcher(backends=(capturing_internal_backend,))
@@ -221,6 +222,20 @@ class TestEgressGate:
         capturing_external_backend,
     ) -> None:
         """External backends receive only attachments with egress_safe=True."""
+        event_attachments = (
+            Attachment(
+                filename="safe.txt",
+                content_type="text/plain",
+                content=b"safe content",
+                egress_safe=True,
+            ),
+            Attachment(
+                filename="sensitive.txt",
+                content_type="text/plain",
+                content=b"sensitive content",
+                egress_safe=False,
+            ),
+        )
         event = NotificationEvent(
             category="files",
             severity=Severity.INFO,
@@ -229,20 +244,7 @@ class TestEgressGate:
             fingerprint="file-001",
             occurred_at="2026-07-21T10:00:00+00:00",
             correlation_id=None,
-            attachments=(
-                Attachment(
-                    filename="safe.txt",
-                    content_type="text/plain",
-                    content=b"safe content",
-                    egress_safe=True,
-                ),
-                Attachment(
-                    filename="sensitive.txt",
-                    content_type="text/plain",
-                    content=b"sensitive content",
-                    egress_safe=False,
-                ),
-            ),
+            attachments=event_attachments,
         )
 
         dispatcher = Dispatcher(backends=(capturing_external_backend,))
@@ -257,6 +259,14 @@ class TestEgressGate:
         capturing_external_backend,
     ) -> None:
         """Negative control: prove gate fails without egress_safe filtering."""
+        event_attachments = (
+            Attachment(
+                filename="unsafe.txt",
+                content_type="text/plain",
+                content=b"unsafe content",
+                egress_safe=False,
+            ),
+        )
         event = NotificationEvent(
             category="files",
             severity=Severity.INFO,
@@ -265,14 +275,7 @@ class TestEgressGate:
             fingerprint="file-001",
             occurred_at="2026-07-21T10:00:00+00:00",
             correlation_id=None,
-            attachments=(
-                Attachment(
-                    filename="unsafe.txt",
-                    content_type="text/plain",
-                    content=b"unsafe content",
-                    egress_safe=False,
-                ),
-            ),
+            attachments=event_attachments,
         )
 
         dispatcher = Dispatcher(backends=(capturing_external_backend,))

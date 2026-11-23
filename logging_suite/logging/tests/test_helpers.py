@@ -49,12 +49,12 @@ class TestRecordCollectorEmit:
                 name=test_const.LOGGER_NAME_TEST,
                 level=logging.INFO,
                 pathname=__file__,
-                lineno=i,
-                msg=f"{test_const.RECORD_MSG_PREFIX}{i}",
+                lineno=index,
+                msg=f"{test_const.RECORD_MSG_PREFIX}{index}",
                 args=(),
                 exc_info=None,
             )
-            for i in range(3)
+            for index in range(3)
         ]
         for record in records:
             collector.emit(record)

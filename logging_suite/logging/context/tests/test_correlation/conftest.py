@@ -14,7 +14,12 @@ if TYPE_CHECKING:
 
 @pytest.fixture(autouse=True)
 def reset_correlation() -> Iterator[None]:
-    """Clear correlation context before and after each test for isolation."""
+    """
+    Clear correlation context before and after each test for isolation.
+
+    Used by: TestClearCorrelationId, TestContextVarBehavior, TestCorrelationContext, TestGetCorrelationId,
+    TestSetCorrelationId.
+    """
     clear_correlation_id()
     yield
     clear_correlation_id()

@@ -68,7 +68,8 @@ class TestDispatcherGuardedDispatch:
             def send(self, event: NotificationEvent):
                 raise RuntimeError("Backend failed")
 
-        dispatcher = Dispatcher(backends=(FailingBackend(),))  # type: ignore
+        dispatch_backends = (FailingBackend(),)
+        dispatcher = Dispatcher(backends=dispatch_backends)  # type: ignore
 
         result = dispatcher.notify(test_event)
 
@@ -89,7 +90,8 @@ class TestDispatcherGuardedDispatch:
                 raise RuntimeError("Backend failed")
 
         collecting = CollectingBackend()
-        dispatcher = Dispatcher(backends=(FailingBackend(), collecting))  # type: ignore
+        dispatch_backends = (FailingBackend(), collecting)
+        dispatcher = Dispatcher(backends=dispatch_backends)  # type: ignore
 
         result = dispatcher.notify(test_event)
 
