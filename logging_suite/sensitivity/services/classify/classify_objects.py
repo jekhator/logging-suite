@@ -53,6 +53,4 @@ class SensitivityProfile:
 
     def fields_of(self, kind: Sensitivity) -> tuple[str, ...]:
         """Return the names of the fields carrying the given sensitivity class."""
-        return tuple(
-            field_name for field_name, field_kind in self.classes if field_kind == kind
-        )
+        return tuple(field_name for field_name, field_kind in self.classes if field_kind == kind)

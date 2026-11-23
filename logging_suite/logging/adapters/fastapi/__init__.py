@@ -8,8 +8,4 @@ from logging_suite.logging.adapters.fastapi.fastapi_objects import (
     FastApiCorrelation,
 )
 
-__all__ = [
-    "CorrelationIdMiddleware",
-    "FastApiCorrelation",
-    "get_correlation_id_dependency",
-]
+__all__ = ["CorrelationIdMiddleware", "FastApiCorrelation", "get_correlation_id_dependency"]

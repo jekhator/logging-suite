@@ -8,9 +8,7 @@ ERR_NOTIFICATION_EMPTY_CATEGORY: Final[str] = "category must be non-empty"
 ERR_NOTIFICATION_EMPTY_TITLE: Final[str] = "title must be non-empty"
 ERR_NOTIFICATION_EMPTY_FINGERPRINT: Final[str] = "fingerprint must be non-empty"
 ERR_ATTACHMENT_EMPTY_FILENAME: Final[str] = "attachment filename must be non-empty"
-ERR_ATTACHMENT_EMPTY_CONTENT_TYPE: Final[str] = (
-    "attachment content_type must be non-empty"
-)
+ERR_ATTACHMENT_EMPTY_CONTENT_TYPE: Final[str] = "attachment content_type must be non-empty"
 
 
 """Egress gate: what an external backend receives in place of sensitive content."""
@@ -33,7 +31,5 @@ SUPPRESSION_MAX_CAPACITY: Final[int] = 10000
 
 """Dispatcher log message and failure detail."""
 
-LOG_BACKEND_FAILED_TEMPLATE: Final[str] = (
-    "Backend {backend_name} failed to deliver notification"
-)
+LOG_BACKEND_FAILED_TEMPLATE: Final[str] = "Backend {backend_name} failed to deliver notification"
 DETAIL_EXCEPTION_TEMPLATE: Final[str] = "exception: {error_name}"

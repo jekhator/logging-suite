@@ -22,10 +22,7 @@ class TestCorrelationHTTPAdapterAddHeaders:
         adapter = requests_client.CorrelationHTTPAdapter()
         prepared_request = make_prepared_request()
         adapter.add_headers(prepared_request)
-        assert (
-            prepared_request.headers[const.CORRELATION_ID_HEADER]
-            == test_const.HTTPX_CORR_ID_TEST
-        )
+        assert prepared_request.headers[const.CORRELATION_ID_HEADER] == test_const.HTTPX_CORR_ID_TEST
 
     def test_add_headers_without_context_is_noop(self, make_prepared_request: Callable[..., Any]) -> None:
         """add_headers() does nothing when context is not set."""
@@ -88,10 +85,7 @@ class TestCorrelationHTTPAdapterRealRequestsIntegration:
         response = session.get(f"{server_url}/test")
         assert response.status_code == 200
         assert const.CORRELATION_ID_HEADER in captured_headers
-        assert (
-            captured_headers[const.CORRELATION_ID_HEADER]
-            == test_const.HTTPX_CORR_ID_SAFE
-        )
+        assert captured_headers[const.CORRELATION_ID_HEADER] == test_const.HTTPX_CORR_ID_SAFE
 
     def test_real_session_omits_header_when_context_unset(
         self, http_server_with_header_capture: tuple[str, dict[str, Any]]

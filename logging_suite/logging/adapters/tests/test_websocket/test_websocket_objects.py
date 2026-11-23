@@ -70,12 +70,8 @@ class TestWebSocketCorrelationFromHeaders:
         """from_headers() processes only the first correlation ID header and ignores later ones."""
         headers = [
             (b"other-header", b"value1"),
-            (
-                const.CORRELATION_ID_HEADER.encode(),
-                test_const.CORRELATION_ID_TRACE.encode(),
-            ),
-            (b"another-header", b"value2"),
-            (const.CORRELATION_ID_HEADER.encode(), b"should-be-ignored"),
+            (const.CORRELATION_ID_HEADER.encode(), test_const.CORRELATION_ID_TRACE.encode()),
+            (b"another-header", b"value2"), (const.CORRELATION_ID_HEADER.encode(), b"should-be-ignored")
         ]
         correlation = objs.WebSocketCorrelation.from_headers(headers)
         assert correlation.correlation_id == test_const.CORRELATION_ID_TRACE
@@ -91,10 +87,7 @@ class TestWebSocketCorrelationIsSafe:
 
     def test_is_safe_with_valid_value(self) -> None:
         """_is_safe() returns True for clean alphanumeric value."""
-        assert (
-            objs.WebSocketCorrelation._is_safe(test_const.CORRELATION_ID_VALID_ID_123)
-            is True
-        )
+        assert objs.WebSocketCorrelation._is_safe(test_const.CORRELATION_ID_VALID_ID_123) is True
 
     def test_is_safe_with_hex_value(self) -> None:
         """_is_safe() returns True for 12-hex UUID value."""
@@ -143,9 +136,7 @@ class TestWebSocketCorrelationPostInit:
 
     def test_post_init_accepts_safe_string(self) -> None:
         """__post_init__() accepts any safe correlation_id."""
-        correlation = objs.WebSocketCorrelation(
-            correlation_id=test_const.CORRELATION_ID_VALID_ID_123, extracted=True
-        )
+        correlation = objs.WebSocketCorrelation(correlation_id=test_const.CORRELATION_ID_VALID_ID_123, extracted=True)
         assert correlation.correlation_id == test_const.CORRELATION_ID_VALID_ID_123
 
     def test_post_init_raises_on_oversized_correlation_id(self) -> None:

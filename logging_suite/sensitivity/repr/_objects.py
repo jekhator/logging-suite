@@ -73,9 +73,7 @@ class SensitiveRepr:
             else:
                 display_value = repr(value)
 
-            part = const.REPR_FIELD_TEMPLATE.format(
-                name=dataclass_field.name, value=display_value
-            )
+            part = const.REPR_FIELD_TEMPLATE.format(name=dataclass_field.name, value=display_value)
             parts.append(part)
 
         class_name = type(self).__name__

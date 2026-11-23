@@ -24,21 +24,7 @@ from logging_suite.notifications.suppression import (
 )
 
 __all__ = [
-    "Attachment",
-    "CollectingBackend",
-    "DeliveryResult",
-    "Dispatcher",
-    "DispatchResult",
-    "LoggingBackend",
-    "NotificationBackend",
-    "NotificationEvent",
-    "NotificationEventClient",
-    "NullBackend",
-    "RetryingBackend",
-    "SESBackend",
-    "SNSBackend",
-    "Severity",
-    "SuppressionPolicy",
-    "SuppressionTracker",
-    "__version__",
+    "Attachment", "CollectingBackend", "DeliveryResult", "Dispatcher", "DispatchResult", "LoggingBackend",
+    "NotificationBackend", "NotificationEvent", "NotificationEventClient", "NullBackend", "RetryingBackend",
+    "SESBackend", "SNSBackend", "Severity", "SuppressionPolicy", "SuppressionTracker", "__version__"
 ]

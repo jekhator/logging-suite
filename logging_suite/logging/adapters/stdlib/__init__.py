@@ -10,8 +10,4 @@ from logging_suite.logging.adapters.stdlib.stdlib_client import (
     CorrelationLogFilter,
 )
 
-__all__ = [
-    "CorrelationLogFilter",
-    "FlushOnWarningConfig",
-    "FlushOnWarningHandler",
-]
+__all__ = ["CorrelationLogFilter", "FlushOnWarningConfig", "FlushOnWarningHandler"]

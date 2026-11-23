@@ -13,10 +13,7 @@ class TestCloudCorrelationConstruction:
 
     def test_construct_with_safe_id_succeeds(self) -> None:
         """CloudCorrelation constructor succeeds with safe correlation_id."""
-        correlation = objs.CloudCorrelation(
-            correlation_id="safe-id-123",
-            extracted=True,
-        )
+        correlation = objs.CloudCorrelation(correlation_id="safe-id-123", extracted=True)
         assert correlation.correlation_id == "safe-id-123"
         assert correlation.extracted is True
 

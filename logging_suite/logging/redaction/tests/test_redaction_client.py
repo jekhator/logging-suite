@@ -29,10 +29,7 @@ class TestRedactionClient:
         redaction_logger.addHandler(capture)
         RedactionClient.attach_default(redaction_logger)
 
-        redaction_logger.info(
-            "Request",
-            extra={"api_key": "secret_key_12345"},
-        )
+        redaction_logger.info("Request", extra={"api_key": "secret_key_12345"})
 
         assert len(records) == 1
         record = records[0]
@@ -52,10 +49,7 @@ class TestRedactionClient:
         redaction_logger.addHandler(capture)
         RedactionClient.attach_default(redaction_logger)
 
-        redaction_logger.info(
-            "User action",
-            extra={"user_id": "12345", "action": "login"},
-        )
+        redaction_logger.info("User action", extra={"user_id": "12345", "action": "login"})
 
         assert len(records) == 1
         record = records[0]
@@ -76,10 +70,7 @@ class TestRedactionClient:
         redaction_logger.addHandler(capture)
         RedactionClient.attach_default(redaction_logger)
 
-        redaction_logger.info(
-            "Auth",
-            extra={"password": "user_secret_password"},
-        )
+        redaction_logger.info("Auth", extra={"password": "user_secret_password"})
 
         assert len(records) == 1
         record = records[0]
@@ -89,13 +80,7 @@ class TestRedactionClient:
         """Filter always returns True to allow emission."""
         RedactionClient.attach_default(redaction_logger)
         record = logging.LogRecord(
-            name="test",
-            level=logging.INFO,
-            pathname="",
-            lineno=0,
-            msg="test",
-            args=(),
-            exc_info=None,
+            name="test", level=logging.INFO, pathname="", lineno=0, msg="test", args=(), exc_info=None
         )
 
         result = redaction_logger.filters[0].filter(record)  # type: ignore[union-attr]
@@ -115,10 +100,7 @@ class TestRedactionClient:
         redaction_logger.addHandler(capture)
         RedactionClient.attach_default(redaction_logger)
 
-        redaction_logger.info(
-            "Metric",
-            extra={"count": 42, "duration_ms": 1500},
-        )
+        redaction_logger.info("Metric", extra={"count": 42, "duration_ms": 1500})
 
         assert len(records) == 1
         record = records[0]
@@ -129,13 +111,7 @@ class TestRedactionClient:
         """Filter skips attributes starting with underscore."""
         RedactionClient.attach_default(redaction_logger)
         record = logging.LogRecord(
-            name="test",
-            level=logging.INFO,
-            pathname="",
-            lineno=0,
-            msg="test",
-            args=(),
-            exc_info=None,
+            name="test", level=logging.INFO, pathname="", lineno=0, msg="test", args=(), exc_info=None
         )
         record._private = "sensitive_data"  # type: ignore[attr-defined]
 
@@ -155,13 +131,7 @@ class TestRedactionFilter:
     def test_filter_modifies_record_in_place(self, redaction_filter: RedactionFilter) -> None:
         """Filter modifies LogRecord in place."""
         record = logging.LogRecord(
-            name="test",
-            level=logging.INFO,
-            pathname="",
-            lineno=0,
-            msg="test",
-            args=(),
-            exc_info=None,
+            name="test", level=logging.INFO, pathname="", lineno=0, msg="test", args=(), exc_info=None
         )
         record.api_key = "secret"  # type: ignore[attr-defined]
 
@@ -179,13 +149,7 @@ class TestRedactionFilter:
     def test_case_insensitive_pattern_matching(self, redaction_filter: RedactionFilter) -> None:
         """Pattern matching is case-insensitive."""
         record = logging.LogRecord(
-            name="test",
-            level=logging.INFO,
-            pathname="",
-            lineno=0,
-            msg="test",
-            args=(),
-            exc_info=None,
+            name="test", level=logging.INFO, pathname="", lineno=0, msg="test", args=(), exc_info=None
         )
         record.API_KEY = "secret"  # type: ignore[attr-defined]
 

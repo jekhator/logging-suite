@@ -24,10 +24,7 @@ class TestSensitiveRepr:
         Silent shadowing is prevented: dataclass-generated __repr__
         cannot be used without being detected.
         """
-        with pytest.raises(
-            SensitiveDeclarationError,
-            match="must use @dataclass.*repr=False",
-        ):
+        with pytest.raises(SensitiveDeclarationError, match="must use @dataclass.*repr=False"):
 
             @dataclass(frozen=True, slots=True)
             class PatientBad(SensitiveRepr):
@@ -94,10 +91,7 @@ class TestSensitiveRepr:
             secret_field: str = field(metadata={"sensitivity": Sensitivity.SECRET})
 
         mixed_data = MixedData(
-            public_field="public",
-            pii_field="pii_value",
-            phi_field="phi_value",
-            secret_field="secret_value",
+            public_field="public", pii_field="pii_value", phi_field="phi_value", secret_field="secret_value"
         )
         repr_str = repr(mixed_data)
 
@@ -193,10 +187,7 @@ class TestSensitiveRepr:
     def test_adopter_with_own_post_init_without_repr_false_raises(self) -> None:
         """Adopter with __post_init__ still guarded when repr=False omitted."""
 
-        with pytest.raises(
-            SensitiveDeclarationError,
-            match="must use @dataclass.*repr=False",
-        ):
+        with pytest.raises(SensitiveDeclarationError, match="must use @dataclass.*repr=False"):
 
             @dataclass(frozen=True, slots=True)
             class PatientWithInitBad(SensitiveRepr):

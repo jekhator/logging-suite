@@ -4,9 +4,7 @@ from __future__ import annotations
 
 from typing import Final
 
-__all__ = [
-    "CONTEXT_KEY",
-]
+__all__ = ["CONTEXT_KEY"]
 
 
 """Key under which correlation_id is exposed in resolver context."""

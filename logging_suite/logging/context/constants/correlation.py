@@ -4,12 +4,7 @@ from __future__ import annotations
 
 from typing import Final
 
-__all__ = [
-    "CORRELATION_CONTEXT_VAR_NAME",
-    "CORRELATION_ID_KEY",
-    "UNSET_CORRELATION_ID",
-    "AMBIENT_LOGGER_NAME",
-]
+__all__ = ["CORRELATION_CONTEXT_VAR_NAME", "CORRELATION_ID_KEY", "UNSET_CORRELATION_ID", "AMBIENT_LOGGER_NAME"]
 
 
 """Correlation ID log-record key and unset sentinel."""

@@ -23,10 +23,7 @@ class TestASGIAppCall:
     async def test_asgi_app_sets_correlation_context(self, basic_http_scope, mock_receive, mock_send, mock_app) -> None:
         """ASGIApp.__call__() sets correlation ID into context before calling wrapped app."""
         clear_correlation_id()
-        correlation = asgi_objs.AsgiCorrelation(
-            correlation_id=test_const.CORRELATION_ID_TRACE,
-            from_header=True,
-        )
+        correlation = asgi_objs.AsgiCorrelation(correlation_id=test_const.CORRELATION_ID_TRACE, from_header=True)
         app_wrapper = asgi_client.ASGIApp(mock_app, correlation)
         await app_wrapper(basic_http_scope, mock_receive, mock_send)
         assert get_correlation_id() == test_const.CORRELATION_ID_TRACE
@@ -40,10 +37,7 @@ class TestASGIAppCall:
             called_with["receive"] = receive
             called_with["send"] = send
 
-        correlation = asgi_objs.AsgiCorrelation(
-            correlation_id=test_const.CORRELATION_ID_TRACE,
-            from_header=True,
-        )
+        correlation = asgi_objs.AsgiCorrelation(correlation_id=test_const.CORRELATION_ID_TRACE, from_header=True)
         app_wrapper = asgi_client.ASGIApp(recording_app, correlation)
         await app_wrapper(basic_http_scope, mock_receive, mock_send)
         assert called_with["scope"] is basic_http_scope
@@ -55,10 +49,7 @@ class TestASGIAppCall:
     ) -> None:
         """ASGIApp.__call__() sets context; clearing is middleware's responsibility."""
         clear_correlation_id()
-        correlation = asgi_objs.AsgiCorrelation(
-            correlation_id=test_const.CORRELATION_ID_TRACE,
-            from_header=True,
-        )
+        correlation = asgi_objs.AsgiCorrelation(correlation_id=test_const.CORRELATION_ID_TRACE, from_header=True)
         app_wrapper = asgi_client.ASGIApp(mock_app, correlation)
         await app_wrapper(basic_http_scope, mock_receive, mock_send)
         assert get_correlation_id() == test_const.CORRELATION_ID_TRACE
@@ -157,9 +148,7 @@ class TestCorrelationIdMiddlewareCall:
                     const.HEADERS_KEY: []
                 }
             )
-            await send(
-                {const.TYPE_KEY: test_const.HTTP_EVENT_RESPONSE_BODY, "body": b"test"}
-            )
+            await send({const.TYPE_KEY: test_const.HTTP_EVENT_RESPONSE_BODY, "body": b"test"})
 
         async def recording_send(message: Any) -> None:
             messages.append(message)

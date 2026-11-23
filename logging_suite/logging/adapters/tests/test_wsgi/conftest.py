@@ -90,8 +90,7 @@ def mock_app_that_calls_start_response() -> Callable[[dict[str, Any], Any], Any]
 
     def app(environ: dict[str, Any], start_response: Any) -> Any:
         start_response(
-            test_const.HTTP_STATUS_200_OK,
-            [(test_const.HTTP_HEADER_CONTENT_TYPE, test_const.HTTP_MIME_TEXT_PLAIN)],
+            test_const.HTTP_STATUS_200_OK, [(test_const.HTTP_HEADER_CONTENT_TYPE, test_const.HTTP_MIME_TEXT_PLAIN)]
         )
         return iter([b"test"])
 

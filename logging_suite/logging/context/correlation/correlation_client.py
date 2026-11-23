@@ -28,9 +28,7 @@ class ContextVarClient:
         self.correlation_ctx.set(objs.CorrelationContext(None))
 
 
-_correlation_var: ContextVar[objs.CorrelationContext] = ContextVar(
-    const.CORRELATION_CONTEXT_VAR_NAME,
-)
+_correlation_var: ContextVar[objs.CorrelationContext] = ContextVar(const.CORRELATION_CONTEXT_VAR_NAME)
 _correlation_var.set(objs.CorrelationContext(None))
 
 _client: ContextVarClient = ContextVarClient(_correlation_var)

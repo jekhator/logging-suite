@@ -66,9 +66,7 @@ class TestAiohttpCorrelationHeaderTuple:
 
     def test_header_tuple_returns_canonical_pair(self) -> None:
         """header_tuple returns (header_name, correlation_id) pair."""
-        correlation = objs.AiohttpCorrelation(
-            correlation_id=test_const.HTTPX_CORR_ID_XYZ
-        )
+        correlation = objs.AiohttpCorrelation(correlation_id=test_const.HTTPX_CORR_ID_XYZ)
         name, value = correlation.header_tuple
         assert name == const.CORRELATION_ID_HEADER
         assert value == test_const.HTTPX_CORR_ID_XYZ

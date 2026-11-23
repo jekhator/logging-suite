@@ -8,8 +8,4 @@ from logging_suite.logging.adapters.grpc.grpc_objects import (
     Metadata,
 )
 
-__all__ = [
-    "CorrelationInterceptor",
-    "GRPCCorrelation",
-    "Metadata",
-]
+__all__ = ["CorrelationInterceptor", "GRPCCorrelation", "Metadata"]

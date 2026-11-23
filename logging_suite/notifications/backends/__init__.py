@@ -14,12 +14,6 @@ from logging_suite.notifications.backends.ses import SESBackend
 from logging_suite.notifications.backends.sns import SNSBackend
 
 __all__ = [
-    "CollectingBackend",
-    "DeliveryResult",
-    "LoggingBackend",
-    "NotificationBackend",
-    "NullBackend",
-    "RetryingBackend",
-    "SESBackend",
-    "SNSBackend",
+    "CollectingBackend", "DeliveryResult", "LoggingBackend", "NotificationBackend", "NullBackend", "RetryingBackend",
+    "SESBackend", "SNSBackend"
 ]

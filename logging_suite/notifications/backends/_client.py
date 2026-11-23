@@ -22,10 +22,7 @@ class NullBackend:
     def send(self, event: event_objs.NotificationEvent) -> objs.DeliveryResult:
         """Accept but discard the event."""
         return objs.DeliveryResult(
-            delivered=False,
-            backend_name=const.BACKEND_NAME_NULL,
-            detail=const.DETAIL_DISCARDED,
-            retryable=False,
+            delivered=False, backend_name=const.BACKEND_NAME_NULL, detail=const.DETAIL_DISCARDED, retryable=False
         )
 
 
@@ -45,10 +42,7 @@ class CollectingBackend:
         self.events.append(event)
         detail = const.DETAIL_COLLECTED_TEMPLATE.format(fingerprint=event.fingerprint)
         return objs.DeliveryResult(
-            delivered=True,
-            backend_name=const.BACKEND_NAME_COLLECTING,
-            detail=detail,
-            retryable=False,
+            delivered=True, backend_name=const.BACKEND_NAME_COLLECTING, detail=detail, retryable=False
         )
 
 
@@ -73,9 +67,7 @@ class LoggingBackend:
     def send(self, event: event_objs.NotificationEvent) -> objs.DeliveryResult:
         """Emit the event via logging."""
         log_level = const.SEVERITY_LOG_LEVELS.get(event.severity.value, logging.INFO)
-        log_message = const.LOG_TITLE_TEMPLATE.format(
-            category=event.category, title=event.title
-        )
+        log_message = const.LOG_TITLE_TEMPLATE.format(category=event.category, title=event.title)
         log_extra = {
             const.LOG_EXTRA_BODY: event.body, const.LOG_EXTRA_FINGERPRINT: event.fingerprint,
             const.LOG_EXTRA_CORRELATION_ID: event.correlation_id
@@ -84,10 +76,7 @@ class LoggingBackend:
         self.logger.log(log_level, log_message, extra=log_extra)
         detail = const.DETAIL_LOGGED_TEMPLATE.format(severity=event.severity.value)
         return objs.DeliveryResult(
-            delivered=True,
-            backend_name=const.BACKEND_NAME_LOGGING,
-            detail=detail,
-            retryable=False,
+            delivered=True, backend_name=const.BACKEND_NAME_LOGGING, detail=detail, retryable=False
         )
 
 
@@ -136,12 +125,9 @@ class RetryingBackend:
             return False
 
         policy_with_predicate = RetryPolicy(
-            max_attempts=self.policy.max_attempts,
-            backoff_base_seconds=self.policy.backoff_base_seconds,
-            backoff_multiplier=self.policy.backoff_multiplier,
-            backoff_max_seconds=self.policy.backoff_max_seconds,
-            jitter=self.policy.jitter,
-            should_retry=should_retry,
+            max_attempts=self.policy.max_attempts, backoff_base_seconds=self.policy.backoff_base_seconds,
+            backoff_multiplier=self.policy.backoff_multiplier, backoff_max_seconds=self.policy.backoff_max_seconds,
+            jitter=self.policy.jitter, should_retry=should_retry
         )
 
         try:
@@ -159,42 +145,24 @@ class RetryingBackend:
                         prefix=const.DETAIL_EXHAUSTED, outcome=dead_result.detail
                     )
                     return objs.DeliveryResult(
-                        delivered=dead_result.delivered,
-                        backend_name=backend_name,
-                        detail=detail,
-                        retryable=False,
+                        delivered=dead_result.delivered, backend_name=backend_name, detail=detail, retryable=False
                     )
                 except Exception as error:
-                    logger.warning(
-                        const.LOG_DEAD_LETTER_FAILED_EXHAUSTION,
-                        exc_info=error,
-                    )
-                    detail = const.DETAIL_DEAD_LETTER_FAILED_TEMPLATE.format(
-                        prefix=const.DETAIL_EXHAUSTED
-                    )
+                    logger.warning(const.LOG_DEAD_LETTER_FAILED_EXHAUSTION, exc_info=error)
+                    detail = const.DETAIL_DEAD_LETTER_FAILED_TEMPLATE.format(prefix=const.DETAIL_EXHAUSTED)
                     return objs.DeliveryResult(
-                        delivered=False,
-                        backend_name=const.BACKEND_NAME_RETRYING,
-                        detail=detail,
-                        retryable=False,
+                        delivered=False, backend_name=const.BACKEND_NAME_RETRYING, detail=detail, retryable=False
                     )
             detail = const.DETAIL_REASON_TEMPLATE.format(
                 prefix=const.DETAIL_EXHAUSTED, reason=exhaustion_error.result.detail
             )
             return objs.DeliveryResult(
-                delivered=False,
-                backend_name=const.BACKEND_NAME_RETRYING,
-                detail=detail,
-                retryable=False,
+                delivered=False, backend_name=const.BACKEND_NAME_RETRYING, detail=detail, retryable=False
             )
         except Exception as error:
             outer_error = error
             is_retryable_exception = should_retry(outer_error)
-            detail_prefix = (
-                const.DETAIL_EXHAUSTED
-                if is_retryable_exception
-                else const.DETAIL_NON_RETRYABLE
-            )
+            detail_prefix = const.DETAIL_EXHAUSTED if is_retryable_exception else const.DETAIL_NON_RETRYABLE
 
             if self.dead_letter is not None:
                 try:
@@ -206,35 +174,17 @@ class RetryingBackend:
                         prefix=detail_prefix, outcome=dead_result.detail
                     )
                     return objs.DeliveryResult(
-                        delivered=dead_result.delivered,
-                        backend_name=backend_name,
-                        detail=detail,
-                        retryable=False,
+                        delivered=dead_result.delivered, backend_name=backend_name, detail=detail, retryable=False
                     )
                 except Exception as error:
-                    log_message = const.LOG_DEAD_LETTER_FAILED_TEMPLATE.format(
-                        prefix=detail_prefix
-                    )
-                    logger.warning(
-                        log_message,
-                        exc_info=error,
-                    )
-                    detail = const.DETAIL_DEAD_LETTER_FAILED_TEMPLATE.format(
-                        prefix=detail_prefix
-                    )
+                    log_message = const.LOG_DEAD_LETTER_FAILED_TEMPLATE.format(prefix=detail_prefix)
+                    logger.warning(log_message, exc_info=error)
+                    detail = const.DETAIL_DEAD_LETTER_FAILED_TEMPLATE.format(prefix=detail_prefix)
                     return objs.DeliveryResult(
-                        delivered=False,
-                        backend_name=const.BACKEND_NAME_RETRYING,
-                        detail=detail,
-                        retryable=False,
+                        delivered=False, backend_name=const.BACKEND_NAME_RETRYING, detail=detail, retryable=False
                     )
 
-            detail = const.DETAIL_REASON_TEMPLATE.format(
-                prefix=detail_prefix, reason=outer_error.__class__.__name__
-            )
+            detail = const.DETAIL_REASON_TEMPLATE.format(prefix=detail_prefix, reason=outer_error.__class__.__name__)
             return objs.DeliveryResult(
-                delivered=False,
-                backend_name=const.BACKEND_NAME_RETRYING,
-                detail=detail,
-                retryable=False,
+                delivered=False, backend_name=const.BACKEND_NAME_RETRYING, detail=detail, retryable=False
             )

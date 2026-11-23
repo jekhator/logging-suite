@@ -10,7 +10,4 @@ from logging_suite.logging.adapters.celery.celery_objects import (
     CeleryCorrelation,
 )
 
-__all__ = [
-    "CeleryCorrelation",
-    "CorrelationSignals",
-]
+__all__ = ["CeleryCorrelation", "CorrelationSignals"]

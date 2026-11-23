@@ -15,11 +15,7 @@ class CorrelationLogFilter(logging.Filter):
 
     def filter(self, record: logging.LogRecord) -> bool:
         """Set record.correlation_id from context (or the unset sentinel); always return True."""
-        setattr(
-            record,
-            const.CORRELATION_RECORD_ATTR,
-            get_correlation_id() or const.UNSET_CORRELATION_ID,
-        )
+        setattr(record, const.CORRELATION_RECORD_ATTR, get_correlation_id() or const.UNSET_CORRELATION_ID)
         return True
 
     @classmethod

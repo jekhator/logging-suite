@@ -5,15 +5,8 @@ from __future__ import annotations
 from typing import Final
 
 __all__ = [
-    "CORRELATION_ID_HEADER",
-    "CORRELATION_ID_MAX_LENGTH",
-    "ERR_CORRELATION_ID_UNSAFE",
-    "GENERATED_ID_LENGTH",
-    "HEADERS_KEY",
-    "TYPE_KEY",
-    "UNSAFE_HEADER_CHARS",
-    "WEBSOCKET_SCOPE_TYPE",
-    "DECODE_ERRORS_IGNORE",
+    "CORRELATION_ID_HEADER", "CORRELATION_ID_MAX_LENGTH", "ERR_CORRELATION_ID_UNSAFE", "GENERATED_ID_LENGTH",
+    "HEADERS_KEY", "TYPE_KEY", "UNSAFE_HEADER_CHARS", "WEBSOCKET_SCOPE_TYPE", "DECODE_ERRORS_IGNORE"
 ]
 
 
@@ -42,9 +35,7 @@ UNSAFE_HEADER_CHARS: Final[frozenset[str]] = frozenset({"\r", "\n", "\0"})
 
 """Error messages raised at the API surface (source-side; tests match against these via const.ERR_*)."""
 
-ERR_CORRELATION_ID_UNSAFE: Final[str] = (
-    "correlation_id must be non-empty, within length cap, free of unsafe chars"
-)
+ERR_CORRELATION_ID_UNSAFE: Final[str] = "correlation_id must be non-empty, within length cap, free of unsafe chars"
 
 
 """Header decoding: undecodable bytes are dropped."""

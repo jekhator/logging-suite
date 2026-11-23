@@ -12,5 +12,5 @@ PUBLIC_API: Final[frozenset[str]] = frozenset(
     {
         "Sensitivity", "SensitiveDeclarationError", "SensitiveRepr", "SensitivityProfile", "PUBLIC_API", "__version__",
         "classify"
-    },
+    }
 )

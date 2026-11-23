@@ -16,9 +16,7 @@ class TestCorrelationIdMiddleware:
         self, fastapi_client: TestClient, correlation_id_abc: str
     ) -> None:
         """Middleware extracts correlation ID from x-correlation-id request header."""
-        response = fastapi_client.get(
-            "/test", headers={"x-correlation-id": correlation_id_abc}
-        )
+        response = fastapi_client.get("/test", headers={"x-correlation-id": correlation_id_abc})
         assert response.status_code == 200
         data = response.json()
         assert data["correlation_id"] == correlation_id_abc
@@ -35,9 +33,7 @@ class TestCorrelationIdMiddleware:
         self, fastapi_client: TestClient, correlation_id_custom: str
     ) -> None:
         """Middleware injects correlation ID into x-correlation-id response header."""
-        response = fastapi_client.get(
-            "/test", headers={"x-correlation-id": correlation_id_custom}
-        )
+        response = fastapi_client.get("/test", headers={"x-correlation-id": correlation_id_custom})
         assert response.status_code == 200
         assert response.headers.get("x-correlation-id") == correlation_id_custom
 
@@ -64,10 +60,7 @@ class TestCorrelationIdMiddleware:
         self, fastapi_client: TestClient, correlation_id_abc: str
     ) -> None:
         """Middleware makes correlation ID available to request handler."""
-        response = fastapi_client.get(
-            "/test-with-request",
-            headers={"x-correlation-id": correlation_id_abc},
-        )
+        response = fastapi_client.get("/test-with-request", headers={"x-correlation-id": correlation_id_abc})
         assert response.status_code == 200
         data = response.json()
         assert data["correlation_id"] == correlation_id_abc
@@ -87,9 +80,7 @@ class TestCorrelationIdMiddleware:
         from logging_suite.logging.adapters.constants import fastapi as const
 
         oversized_id = "x" * (const.CORRELATION_ID_MAX_LENGTH + 1)
-        response = fastapi_client.get(
-            "/test", headers={"x-correlation-id": oversized_id}
-        )
+        response = fastapi_client.get("/test", headers={"x-correlation-id": oversized_id})
         assert response.status_code == 200
         data = response.json()
         assert data["correlation_id"] != oversized_id

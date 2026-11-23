@@ -7,7 +7,4 @@ from logging_suite.logging.adapters.urllib3.urllib3_objects import (
     Urllib3Correlation,
 )
 
-__all__ = [
-    "CorrelationIdPoolManager",
-    "Urllib3Correlation",
-]
+__all__ = ["CorrelationIdPoolManager", "Urllib3Correlation"]

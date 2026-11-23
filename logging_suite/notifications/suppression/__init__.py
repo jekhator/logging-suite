@@ -5,7 +5,4 @@ from logging_suite.notifications.suppression._objects import (
     SuppressionTracker,
 )
 
-__all__ = [
-    "SuppressionPolicy",
-    "SuppressionTracker",
-]
+__all__ = ["SuppressionPolicy", "SuppressionTracker"]

@@ -110,9 +110,7 @@ class TestCorrelationIdMiddlewareCall:
             set_value = get_correlation_id()
 
         middleware = websocket_client.CorrelationIdMiddleware(recording_app)
-        await middleware(
-            websocket_scope_with_carriage_return_header, mock_receive, mock_send
-        )
+        await middleware(websocket_scope_with_carriage_return_header, mock_receive, mock_send)
         assert set_value is not None
         assert len(set_value) == 12
         assert all(char in "0123456789abcdef" for char in set_value)

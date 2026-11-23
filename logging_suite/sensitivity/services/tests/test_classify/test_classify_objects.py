@@ -54,10 +54,8 @@ class TestFromDataclass:
         """from_dataclass collects sensitivity-tagged fields as (name, Sensitivity) pairs."""
         profile = SensitivityProfile.from_dataclass(mixed_type)
         assert profile.classes == (
-            ("name", Sensitivity.PII),
-            ("ssn", Sensitivity.PHI),
-            ("card_token", Sensitivity.PCI),
-            ("api_key", Sensitivity.SECRET),
+            ("name", Sensitivity.PII), ("ssn", Sensitivity.PHI), ("card_token", Sensitivity.PCI),
+            ("api_key", Sensitivity.SECRET)
         )
 
     def test_preserves_field_declaration_order(self, mixed_type: type[Any]) -> None:

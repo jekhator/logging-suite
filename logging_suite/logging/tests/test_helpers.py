@@ -29,13 +29,8 @@ class TestRecordCollectorEmit:
         """Emitting one record results in a one-element records list."""
         collector = _RecordCollector()
         record = logging.LogRecord(
-            name=test_const.LOGGER_NAME_TEST,
-            level=logging.INFO,
-            pathname=__file__,
-            lineno=1,
-            msg=test_const.RECORD_MSG_HELLO,
-            args=(),
-            exc_info=None,
+            name=test_const.LOGGER_NAME_TEST, level=logging.INFO, pathname=__file__, lineno=1,
+            msg=test_const.RECORD_MSG_HELLO, args=(), exc_info=None
         )
         collector.emit(record)
         assert len(collector.records) == 1  # noqa: S101
@@ -46,15 +41,9 @@ class TestRecordCollectorEmit:
         collector = _RecordCollector()
         records = [
             logging.LogRecord(
-                name=test_const.LOGGER_NAME_TEST,
-                level=logging.INFO,
-                pathname=__file__,
-                lineno=index,
-                msg=f"{test_const.RECORD_MSG_PREFIX}{index}",
-                args=(),
-                exc_info=None,
-            )
-            for index in range(3)
+                name=test_const.LOGGER_NAME_TEST, level=logging.INFO, pathname=__file__, lineno=index,
+                msg=f"{test_const.RECORD_MSG_PREFIX}{index}", args=(), exc_info=None
+            ) for index in range(3)
         ]
         for record in records:
             collector.emit(record)
@@ -64,13 +53,8 @@ class TestRecordCollectorEmit:
         """Captured record retains original level, message, and module."""
         collector = _RecordCollector()
         record = logging.LogRecord(
-            name=test_const.LOGGER_NAME_CUSTOM,
-            level=logging.WARNING,
-            pathname=__file__,
-            lineno=test_const.RECORD_LINE_NO_42,
-            msg=test_const.RECORD_MSG_WARNING_TEXT,
-            args=(),
-            exc_info=None,
+            name=test_const.LOGGER_NAME_CUSTOM, level=logging.WARNING, pathname=__file__,
+            lineno=test_const.RECORD_LINE_NO_42, msg=test_const.RECORD_MSG_WARNING_TEXT, args=(), exc_info=None
         )
         collector.emit(record)
         assert collector.records[0].name == test_const.LOGGER_NAME_CUSTOM  # noqa: S101

@@ -7,9 +7,4 @@ from logging_suite.notifications.events._objects import (
     Severity,
 )
 
-__all__ = [
-    "Attachment",
-    "NotificationEvent",
-    "NotificationEventClient",
-    "Severity",
-]
+__all__ = ["Attachment", "NotificationEvent", "NotificationEventClient", "Severity"]

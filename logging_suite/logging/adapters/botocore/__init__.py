@@ -13,7 +13,4 @@ from logging_suite.logging.adapters.botocore.botocore_objects import (
     BotocoreCorrelation,
 )
 
-__all__ = [
-    "BotocoreCorrelation",
-    "CorrelationIdInjector",
-]
+__all__ = ["BotocoreCorrelation", "CorrelationIdInjector"]

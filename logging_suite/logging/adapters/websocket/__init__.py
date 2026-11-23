@@ -11,8 +11,4 @@ from logging_suite.logging.adapters.websocket.websocket_objects import (
     WebSocketCorrelation,
 )
 
-__all__ = [
-    "CorrelationIdMiddleware",
-    "Headers",
-    "WebSocketCorrelation",
-]
+__all__ = ["CorrelationIdMiddleware", "Headers", "WebSocketCorrelation"]

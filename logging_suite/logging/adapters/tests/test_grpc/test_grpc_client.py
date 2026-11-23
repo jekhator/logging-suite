@@ -21,8 +21,7 @@ class TestCorrelationInterceptorIntercept:
         interceptor = grpc_client.CorrelationInterceptor()
 
         metadata: list[tuple[str, str]] = [
-            ("x-correlation-id", test_const.CORRELATION_ID_VALID_ID_123),
-            ("other-header", "value"),
+            ("x-correlation-id", test_const.CORRELATION_ID_VALID_ID_123), ("other-header", "value")
         ]
         handler_call_details = MagicMock(spec=grpc.HandlerCallDetails)
         handler_call_details.invocation_metadata = tuple(metadata)
@@ -46,9 +45,7 @@ class TestCorrelationInterceptorIntercept:
         """intercept_service() clears correlation context in finally block."""
         interceptor = grpc_client.CorrelationInterceptor()
 
-        metadata: list[tuple[str, str]] = [
-            ("x-correlation-id", test_const.CORRELATION_ID_VALID_ID_123),
-        ]
+        metadata: list[tuple[str, str]] = [("x-correlation-id", test_const.CORRELATION_ID_VALID_ID_123)]
         handler_call_details = MagicMock(spec=grpc.HandlerCallDetails)
         handler_call_details.invocation_metadata = tuple(metadata)
 
@@ -64,9 +61,7 @@ class TestCorrelationInterceptorIntercept:
         """intercept_service() clears context even if continuation raises exception."""
         interceptor = grpc_client.CorrelationInterceptor()
 
-        metadata: list[tuple[str, str]] = [
-            ("x-correlation-id", test_const.CORRELATION_ID_VALID_ID_123),
-        ]
+        metadata: list[tuple[str, str]] = [("x-correlation-id", test_const.CORRELATION_ID_VALID_ID_123)]
         handler_call_details = MagicMock(spec=grpc.HandlerCallDetails)
         handler_call_details.invocation_metadata = tuple(metadata)
 
@@ -97,9 +92,7 @@ class TestCorrelationInterceptorIntercept:
         """intercept_service() generates correlation ID when x-correlation-id absent."""
         interceptor = grpc_client.CorrelationInterceptor()
 
-        metadata: list[tuple[str, str]] = [
-            ("other-header", "value"),
-        ]
+        metadata: list[tuple[str, str]] = [("other-header", "value")]
         handler_call_details = MagicMock(spec=grpc.HandlerCallDetails)
         handler_call_details.invocation_metadata = tuple(metadata)
 
@@ -124,9 +117,7 @@ class TestCorrelationInterceptorIntercept:
         """intercept_service() generates ID when metadata value is unsafe."""
         interceptor = grpc_client.CorrelationInterceptor()
 
-        metadata: list[tuple[str, str]] = [
-            ("x-correlation-id", "test\r-bad"),
-        ]
+        metadata: list[tuple[str, str]] = [("x-correlation-id", "test\r-bad")]
         handler_call_details = MagicMock(spec=grpc.HandlerCallDetails)
         handler_call_details.invocation_metadata = tuple(metadata)
 

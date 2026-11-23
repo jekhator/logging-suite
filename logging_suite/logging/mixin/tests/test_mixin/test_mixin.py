@@ -99,10 +99,7 @@ class TestLoggingMixin:
         svc.log_debug("test")
 
         assert len(collector.records) == 1
-        assert (
-            collector.records[0].__dict__[correlation_const.CORRELATION_ID_KEY]
-            == test_const.CORRELATION_ID_TRACE
-        )
+        assert collector.records[0].__dict__[correlation_const.CORRELATION_ID_KEY] == test_const.CORRELATION_ID_TRACE
 
     def test_log_injects_dash_when_correlation_id_unset(self, log_capture: tuple[LoggingMixin, Any]) -> None:
         """log_*() injects "-" when no correlation_id is set."""
@@ -121,18 +118,12 @@ class TestLoggingMixin:
 
         svc.log_debug(
             "test",
-            **{test_const.FIELD_USER_ID: test_const.USER_ID_42, test_const.FIELD_ACTION: test_const.ACTION_CREATE},
+            **{test_const.FIELD_USER_ID: test_const.USER_ID_42, test_const.FIELD_ACTION: test_const.ACTION_CREATE}
         )
 
         assert len(collector.records) == 1
-        assert (
-            collector.records[0].__dict__[test_const.FIELD_USER_ID]
-            == test_const.USER_ID_42
-        )
-        assert (
-            collector.records[0].__dict__[test_const.FIELD_ACTION]
-            == test_const.ACTION_CREATE
-        )
+        assert collector.records[0].__dict__[test_const.FIELD_USER_ID] == test_const.USER_ID_42
+        assert collector.records[0].__dict__[test_const.FIELD_ACTION] == test_const.ACTION_CREATE
 
     def test_log_extra_ignores_mask_for_logging(self) -> None:
         """_log_extra() ignores mask_for_logging, returns correlation_id + kwargs."""
@@ -149,10 +140,7 @@ class TestLoggingMixin:
         svc = Svc()
         result = svc._log_extra({test_const.FIELD_CUSTOM: "value"})
 
-        assert (
-            result[correlation_const.CORRELATION_ID_KEY]
-            == test_const.CORRELATION_ID_XYZ
-        )
+        assert result[correlation_const.CORRELATION_ID_KEY] == test_const.CORRELATION_ID_XYZ
         assert result[test_const.FIELD_CUSTOM] == "value"
         assert test_const.FIELD_INSTANCE not in result
 
@@ -162,7 +150,7 @@ class TestLoggingMixin:
 
         svc = service_class()
         result = svc._log_extra(
-            {test_const.FIELD_USER_ID: test_const.USER_ID_GENERIC, test_const.FIELD_ACTION: test_const.ACTION_CREATE},
+            {test_const.FIELD_USER_ID: test_const.USER_ID_GENERIC, test_const.FIELD_ACTION: test_const.ACTION_CREATE}
         )
 
         assert result == {
@@ -175,10 +163,7 @@ class TestLoggingMixin:
         svc = service_class()
         result = svc._log_extra({test_const.FIELD_CUSTOM: "value"})
 
-        assert (
-            result[correlation_const.CORRELATION_ID_KEY]
-            == test_const.UNSET_CORRELATION_MARKER
-        )
+        assert result[correlation_const.CORRELATION_ID_KEY] == test_const.UNSET_CORRELATION_MARKER
         assert result[test_const.FIELD_CUSTOM] == "value"
 
     def test_multiple_service_classes_have_separate_loggers(self) -> None:

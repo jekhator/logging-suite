@@ -60,7 +60,5 @@ class SuppressionTracker:
         self._seen[key] = current_time
 
         if len(self._seen) > self.max_capacity:
-            oldest_key = min(
-                self._seen.keys(), key=lambda seen_key: self._seen[seen_key]
-            )
+            oldest_key = min(self._seen.keys(), key=lambda seen_key: self._seen[seen_key])
             del self._seen[oldest_key]

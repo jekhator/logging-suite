@@ -14,12 +14,5 @@ from logging_suite.logging.adapters.wsgi.wsgi_objects import (
 )
 
 __all__ = [
-    "App",
-    "CorrelationIdMiddleware",
-    "Environ",
-    "ExcInfo",
-    "Headers",
-    "StartResponse",
-    "WsgiApp",
-    "WsgiCorrelation",
+    "App", "CorrelationIdMiddleware", "Environ", "ExcInfo", "Headers", "StartResponse", "WsgiApp", "WsgiCorrelation"
 ]

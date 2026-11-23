@@ -92,9 +92,7 @@ class TestFastApiCorrelationPostInit:
 
     def test_post_init_accepts_non_empty_correlation_id(self, correlation_id_abc: str) -> None:
         """__post_init__() accepts non-empty correlation_id."""
-        correlation = FastApiCorrelation(
-            correlation_id=correlation_id_abc, from_header=True
-        )
+        correlation = FastApiCorrelation(correlation_id=correlation_id_abc, from_header=True)
         assert correlation.correlation_id == correlation_id_abc
 
 
@@ -103,18 +101,14 @@ class TestFastApiCorrelationResponseHeader:
 
     def test_response_header_returns_tuple(self, correlation_id_custom: str) -> None:
         """response_header property returns (name, value) tuple."""
-        correlation = FastApiCorrelation(
-            correlation_id=correlation_id_custom, from_header=False
-        )
+        correlation = FastApiCorrelation(correlation_id=correlation_id_custom, from_header=False)
         header = correlation.response_header
         assert isinstance(header, tuple)
         assert len(header) == 2
 
     def test_response_header_includes_correlation_id_value(self, correlation_id_custom: str) -> None:
         """response_header property includes the correlation ID value."""
-        correlation = FastApiCorrelation(
-            correlation_id=correlation_id_custom, from_header=False
-        )
+        correlation = FastApiCorrelation(correlation_id=correlation_id_custom, from_header=False)
         name, value = correlation.response_header
         assert name == const.CORRELATION_ID_HEADER
         assert value == correlation_id_custom

@@ -19,18 +19,13 @@ class TestCorrelationIdMiddleware:
         """CorrelationIdMiddleware extracts header and injects response header."""
         captured, start_response = start_response_capture
         environ = make_environ({"X-Correlation-ID": test_const.CORRELATION_ID_ABC_123})
-        middleware = wsgi_client.CorrelationIdMiddleware(
-            mock_app_that_calls_start_response
-        )
+        middleware = wsgi_client.CorrelationIdMiddleware(mock_app_that_calls_start_response)
         iterable = middleware(environ, start_response)
         list(iterable)
         assert len(captured) == 1
         status, headers = captured[0]
         header_dict = dict(headers)
-        assert (
-            header_dict.get(const.CORRELATION_ID_HEADER)
-            == test_const.CORRELATION_ID_ABC_123
-        )
+        assert header_dict.get(const.CORRELATION_ID_HEADER) == test_const.CORRELATION_ID_ABC_123
 
     def test_absent_header_generates_and_sets_response_header(
         self, make_environ, start_response_capture, mock_app_that_calls_start_response
@@ -38,9 +33,7 @@ class TestCorrelationIdMiddleware:
         """CorrelationIdMiddleware generates uuid4 and injects response header when absent."""
         captured, start_response = start_response_capture
         environ = make_environ()
-        middleware = wsgi_client.CorrelationIdMiddleware(
-            mock_app_that_calls_start_response
-        )
+        middleware = wsgi_client.CorrelationIdMiddleware(mock_app_that_calls_start_response)
         iterable = middleware(environ, start_response)
         list(iterable)
         assert len(captured) == 1
@@ -57,9 +50,7 @@ class TestCorrelationIdMiddleware:
         """CorrelationIdMiddleware clears context after wrapped app iteration finishes."""
         captured, start_response = start_response_capture
         environ = make_environ({"X-Correlation-ID": test_const.CORRELATION_ID_TEST})
-        middleware = wsgi_client.CorrelationIdMiddleware(
-            mock_app_that_calls_start_response
-        )
+        middleware = wsgi_client.CorrelationIdMiddleware(mock_app_that_calls_start_response)
         iterable = middleware(environ, start_response)
         list(iterable)
         assert get_correlation_id() is None
@@ -118,8 +109,7 @@ class TestWsgiApp:
         captured, start_response = start_response_capture
         environ = make_environ()
         correlation = wsgi_objs.WsgiCorrelation(
-            correlation_id=test_const.CORRELATION_ID_PRESET_ID_123,
-            from_header=True,
+            correlation_id=test_const.CORRELATION_ID_PRESET_ID_123, from_header=True
         )
         app_wrapper = wsgi_client.WsgiApp(app=recording_app, correlation=correlation)
         iterable = app_wrapper(environ, start_response)
@@ -140,10 +130,7 @@ class TestWsgiApp:
 
         captured, start_response = start_response_capture
         environ = make_environ()
-        correlation = wsgi_objs.WsgiCorrelation(
-            correlation_id=test_const.CORRELATION_ID_TEST_ID_456,
-            from_header=False,
-        )
+        correlation = wsgi_objs.WsgiCorrelation(correlation_id=test_const.CORRELATION_ID_TEST_ID_456, from_header=False)
         app_wrapper = wsgi_client.WsgiApp(app=recording_app, correlation=correlation)
         iterable = app_wrapper(environ, start_response)
         response = list(iterable)

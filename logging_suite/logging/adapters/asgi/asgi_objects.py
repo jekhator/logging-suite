@@ -43,9 +43,7 @@ class AsgiCorrelation:
         """Extract X-Correlation-ID from scope; validate or fall back to uuid4."""
         headers = scope.get(const.HEADERS_KEY, [])
         for header_name, header_value in headers:
-            if not isinstance(header_name, bytes) or not isinstance(
-                header_value, bytes
-            ):
+            if not isinstance(header_name, bytes) or not isinstance(header_value, bytes):
                 continue
             if header_name.lower() == const.CORRELATION_ID_HEADER:
                 try:
@@ -53,16 +51,10 @@ class AsgiCorrelation:
                 except UnicodeDecodeError:
                     break
                 if cls._is_safe(decoded_id):
-                    return cls(
-                        correlation_id=decoded_id,
-                        from_header=True,
-                    )
+                    return cls(correlation_id=decoded_id, from_header=True)
                 break
         generated_id = uuid4().hex[: const.GENERATED_ID_LENGTH]
-        return cls(
-            correlation_id=generated_id,
-            from_header=False,
-        )
+        return cls(correlation_id=generated_id, from_header=False)
 
     @property
     def response_header(self) -> tuple[bytes, bytes]:

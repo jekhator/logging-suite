@@ -27,19 +27,13 @@ class WebSocketCorrelation:
     def from_headers(cls, headers: Headers) -> Self:
         """Extract correlation_id from WS handshake headers; generate if absent or unsafe."""
         target = const.CORRELATION_ID_HEADER.encode()
-        candidate = next(
-            (value for key, value in headers if key.lower() == target),
-            None,
-        )
+        candidate = next((value for key, value in headers if key.lower() == target), None)
         if candidate is not None:
             decoded = candidate.decode(errors=const.DECODE_ERRORS_IGNORE)
             if cls._is_safe(decoded):
                 return cls(correlation_id=decoded, extracted=True)
         generated_id = uuid4().hex[: const.GENERATED_ID_LENGTH]
-        return cls(
-            correlation_id=generated_id,
-            extracted=False,
-        )
+        return cls(correlation_id=generated_id, extracted=False)
 
     @staticmethod
     def _is_safe(value: str) -> bool:

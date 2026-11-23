@@ -35,10 +35,7 @@ class LatencyClock:
             LatencyMeasurement with elapsed duration in milliseconds.
         """
         elapsed_seconds = time.perf_counter() - self._start_time
-        duration_ms = round(
-            elapsed_seconds * const.MILLISECONDS_PER_SECOND,
-            const.LATENCY_ROUNDING_DECIMALS,
-        )
+        duration_ms = round(elapsed_seconds * const.MILLISECONDS_PER_SECOND, const.LATENCY_ROUNDING_DECIMALS)
         return objs.LatencyMeasurement(duration_ms=duration_ms)
 
     @classmethod

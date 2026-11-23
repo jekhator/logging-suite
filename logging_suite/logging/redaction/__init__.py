@@ -7,7 +7,4 @@ from logging_suite.logging.redaction.redaction_objects import (
     RedactionFilter,
 )
 
-__all__ = [
-    "RedactionClient",
-    "RedactionFilter",
-]
+__all__ = ["RedactionClient", "RedactionFilter"]

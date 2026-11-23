@@ -18,24 +18,15 @@ class TestCorrelationLogFilterFilter:
 
     @pytest.mark.parametrize(
         "correlation_id",
-        [
-            test_const.CORRELATION_ID_VALID_ID_123,
-            test_const.CORRELATION_ID_TRACE,
-            test_const.CORRELATION_ID_ABC_123,
-        ],
+        [test_const.CORRELATION_ID_VALID_ID_123, test_const.CORRELATION_ID_TRACE, test_const.CORRELATION_ID_ABC_123]
     )
     def test_filter_with_set_correlation_stamps_record_attribute(self, correlation_id: str) -> None:
         """filter() stamps record.correlation_id from context when set."""
         set_correlation_id(correlation_id)
         correlation_filter = stdlib_client.CorrelationLogFilter()
         record = logging.LogRecord(
-            name="test_logger",
-            level=logging.INFO,
-            pathname="test.py",
-            lineno=42,
-            msg="test message",
-            args=(),
-            exc_info=None,
+            name="test_logger", level=logging.INFO, pathname="test.py", lineno=42,
+            msg="test message", args=(), exc_info=None
         )
         result = correlation_filter.filter(record)
         assert result is True
@@ -45,32 +36,20 @@ class TestCorrelationLogFilterFilter:
         """filter() stamps record with UNSET_CORRELATION_ID sentinel when context is unset."""
         correlation_filter = stdlib_client.CorrelationLogFilter()
         record = logging.LogRecord(
-            name="test_logger",
-            level=logging.INFO,
-            pathname="test.py",
-            lineno=42,
-            msg="test message",
-            args=(),
-            exc_info=None,
+            name="test_logger", level=logging.INFO, pathname="test.py", lineno=42,
+            msg="test message", args=(), exc_info=None
         )
         result = correlation_filter.filter(record)
         assert result is True
-        assert (
-            getattr(record, const.CORRELATION_RECORD_ATTR) == const.UNSET_CORRELATION_ID
-        )
+        assert getattr(record, const.CORRELATION_RECORD_ATTR) == const.UNSET_CORRELATION_ID
 
     def test_filter_returns_true_always(self) -> None:
         """filter() always returns True (passes record through)."""
         set_correlation_id(test_const.CORRELATION_ID_VALID_ID_123)
         correlation_filter = stdlib_client.CorrelationLogFilter()
         record = logging.LogRecord(
-            name="test_logger",
-            level=logging.WARNING,
-            pathname="test.py",
-            lineno=42,
-            msg="test message",
-            args=(),
-            exc_info=None,
+            name="test_logger", level=logging.WARNING, pathname="test.py", lineno=42,
+            msg="test message", args=(), exc_info=None
         )
         result = correlation_filter.filter(record)
         assert result is True
@@ -82,18 +61,14 @@ class TestCorrelationLogFilterAddCorrelationFilter:
     def test_add_correlation_filter_returns_filter_instance(self) -> None:
         """add_correlation_filter() returns a CorrelationLogFilter instance."""
         logger = logging.getLogger("test_add_filter")
-        correlation_filter = stdlib_client.CorrelationLogFilter.add_correlation_filter(
-            logger
-        )
+        correlation_filter = stdlib_client.CorrelationLogFilter.add_correlation_filter(logger)
         assert isinstance(correlation_filter, stdlib_client.CorrelationLogFilter)
 
     def test_add_correlation_filter_attaches_filter_to_logger(self) -> None:
         """add_correlation_filter() attaches the filter to the logger.filters."""
         logger = logging.getLogger("test_attach_filter")
         logger.filters.clear()
-        correlation_filter = stdlib_client.CorrelationLogFilter.add_correlation_filter(
-            logger
-        )
+        correlation_filter = stdlib_client.CorrelationLogFilter.add_correlation_filter(logger)
         assert correlation_filter in logger.filters
 
     def test_add_correlation_filter_multiple_calls_add_multiple_filters(self) -> None:
@@ -133,10 +108,7 @@ class TestCorrelationLogFilterRealLoggingIntegration:
         logger.info("test message")
         assert len(captured_records) == 1
         record = captured_records[0]
-        assert (
-            getattr(record, const.CORRELATION_RECORD_ATTR)
-            == test_const.CORRELATION_ID_VALID_ID_123
-        )
+        assert getattr(record, const.CORRELATION_RECORD_ATTR) == test_const.CORRELATION_ID_VALID_ID_123
 
     def test_real_logging_without_correlation_captures_unset_sentinel(self) -> None:
         """Real logger with CorrelationLogFilter captures unset sentinel when context is empty."""
@@ -160,9 +132,7 @@ class TestCorrelationLogFilterRealLoggingIntegration:
         logger.info("test message")
         assert len(captured_records) == 1
         record = captured_records[0]
-        assert (
-            getattr(record, const.CORRELATION_RECORD_ATTR) == const.UNSET_CORRELATION_ID
-        )
+        assert getattr(record, const.CORRELATION_RECORD_ATTR) == const.UNSET_CORRELATION_ID
 
     def test_real_logging_correlation_changes_between_emissions(self) -> None:
         """Real logger emits records with different correlation_ids as context changes."""
@@ -188,14 +158,8 @@ class TestCorrelationLogFilterRealLoggingIntegration:
         set_correlation_id(test_const.CORRELATION_ID_TRACE)
         logger.info("second message")
         assert len(captured_records) == 2
-        assert (
-            getattr(captured_records[0], const.CORRELATION_RECORD_ATTR)
-            == test_const.CORRELATION_ID_VALID_ID_123
-        )
-        assert (
-            getattr(captured_records[1], const.CORRELATION_RECORD_ATTR)
-            == test_const.CORRELATION_ID_TRACE
-        )
+        assert getattr(captured_records[0], const.CORRELATION_RECORD_ATTR) == test_const.CORRELATION_ID_VALID_ID_123
+        assert getattr(captured_records[1], const.CORRELATION_RECORD_ATTR) == test_const.CORRELATION_ID_TRACE
 
     def test_real_logging_isolation_between_test_loggers(self) -> None:
         """Real loggers are isolated; filter attachment on one does not affect another."""
@@ -234,8 +198,5 @@ class TestCorrelationLogFilterRealLoggingIntegration:
         logger_two.info("message from logger_two")
         assert len(captured_one) == 1
         assert len(captured_two) == 1
-        assert (
-            getattr(captured_one[0], const.CORRELATION_RECORD_ATTR)
-            == test_const.CORRELATION_ID_VALID_ID_123
-        )
+        assert getattr(captured_one[0], const.CORRELATION_RECORD_ATTR) == test_const.CORRELATION_ID_VALID_ID_123
         assert not hasattr(captured_two[0], const.CORRELATION_RECORD_ATTR)

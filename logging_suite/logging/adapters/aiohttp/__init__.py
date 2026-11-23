@@ -7,7 +7,4 @@ from logging_suite.logging.adapters.aiohttp.aiohttp_objects import (
     AiohttpCorrelation,
 )
 
-__all__ = [
-    "AiohttpCorrelation",
-    "CorrelationIdInjector",
-]
+__all__ = ["AiohttpCorrelation", "CorrelationIdInjector"]

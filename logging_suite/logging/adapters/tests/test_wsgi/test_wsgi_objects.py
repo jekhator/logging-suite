@@ -53,10 +53,7 @@ class TestWsgiCorrelation:
 
     def test_response_header_property_returns_tuple(self) -> None:
         """response_header property returns (header_name, correlation_id) tuple."""
-        correlation = wsgi_objs.WsgiCorrelation(
-            correlation_id=test_const.CORRELATION_ID_TEST,
-            from_header=True,
-        )
+        correlation = wsgi_objs.WsgiCorrelation(correlation_id=test_const.CORRELATION_ID_TEST, from_header=True)
         header_name, header_value = correlation.response_header
         assert header_name == const.CORRELATION_ID_HEADER
         assert header_value == test_const.CORRELATION_ID_TEST

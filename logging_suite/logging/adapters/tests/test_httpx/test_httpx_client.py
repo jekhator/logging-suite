@@ -22,14 +22,8 @@ class TestCorrelationIdInjectorEventHooks:
         hooks = httpx_client.CorrelationIdInjector.event_hooks()
         assert const.EVENT_HOOK_REQUEST in hooks
         assert len(hooks[const.EVENT_HOOK_REQUEST]) == 2
-        assert (
-            hooks[const.EVENT_HOOK_REQUEST][0]
-            == httpx_client.CorrelationIdInjector.inject_sync
-        )
-        assert (
-            hooks[const.EVENT_HOOK_REQUEST][1]
-            == httpx_client.CorrelationIdInjector.inject_async
-        )
+        assert hooks[const.EVENT_HOOK_REQUEST][0] == httpx_client.CorrelationIdInjector.inject_sync
+        assert hooks[const.EVENT_HOOK_REQUEST][1] == httpx_client.CorrelationIdInjector.inject_async
 
 
 class TestCorrelationIdInjectorSync:
@@ -40,10 +34,7 @@ class TestCorrelationIdInjectorSync:
         set_correlation_id(test_const.HTTPX_CORR_ID_TEST)
         request = make_request()
         httpx_client.CorrelationIdInjector.inject_sync(request)
-        assert (
-            request.headers[const.CORRELATION_ID_HEADER]
-            == test_const.HTTPX_CORR_ID_TEST
-        )
+        assert request.headers[const.CORRELATION_ID_HEADER] == test_const.HTTPX_CORR_ID_TEST
 
     def test_inject_sync_without_context_is_noop(self, make_request: Callable[..., Any]) -> None:
         """inject_sync() does nothing when context is not set."""
@@ -69,10 +60,7 @@ class TestCorrelationIdInjectorAsync:
         set_correlation_id(test_const.HTTPX_CORR_ID_ASYNC)
         request = make_request()
         await httpx_client.CorrelationIdInjector.inject_async(request)
-        assert (
-            request.headers[const.CORRELATION_ID_HEADER]
-            == test_const.HTTPX_CORR_ID_ASYNC
-        )
+        assert request.headers[const.CORRELATION_ID_HEADER] == test_const.HTTPX_CORR_ID_ASYNC
 
     @pytest.mark.asyncio
     async def test_inject_async_without_context_is_noop(self, make_request: Callable[..., Any]) -> None:
@@ -86,9 +74,6 @@ class TestCorrelationIdInjectorAsync:
         """inject_async() delegates to inject_sync."""
         set_correlation_id(test_const.HTTPX_CORR_ID_SAFE)
         request = make_request()
-        with mock.patch.object(
-            httpx_client.CorrelationIdInjector,
-            "inject_sync",
-        ) as mock_inject:
+        with mock.patch.object(httpx_client.CorrelationIdInjector, "inject_sync") as mock_inject:
             await httpx_client.CorrelationIdInjector.inject_async(request)
             mock_inject.assert_called_once_with(request)

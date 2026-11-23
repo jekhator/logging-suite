@@ -150,22 +150,12 @@ class TestDispatcherSuppression:
         dispatcher = Dispatcher(backends=(backend,), suppression_policy=policy)
 
         event1 = NotificationEvent(
-            category="test",
-            severity=Severity.INFO,
-            title="Event 1",
-            body="Body",
-            fingerprint="fp-1",
-            occurred_at="2026-07-21T10:00:00+00:00",
-            correlation_id=None,
+            category="test", severity=Severity.INFO, title="Event 1", body="Body",
+            fingerprint="fp-1", occurred_at="2026-07-21T10:00:00+00:00", correlation_id=None
         )
         event2 = NotificationEvent(
-            category="test",
-            severity=Severity.INFO,
-            title="Event 2",
-            body="Body",
-            fingerprint="fp-2",
-            occurred_at="2026-07-21T10:00:00+00:00",
-            correlation_id=None,
+            category="test", severity=Severity.INFO, title="Event 2", body="Body",
+            fingerprint="fp-2", occurred_at="2026-07-21T10:00:00+00:00", correlation_id=None
         )
 
         dispatcher.notify(event1)
@@ -180,22 +170,12 @@ class TestDispatcherSuppression:
         dispatcher = Dispatcher(backends=(backend,), suppression_policy=policy)
 
         event1 = NotificationEvent(
-            category="auth",
-            severity=Severity.INFO,
-            title="Event",
-            body="Body",
-            fingerprint="fp",
-            occurred_at="2026-07-21T10:00:00+00:00",
-            correlation_id=None,
+            category="auth", severity=Severity.INFO, title="Event", body="Body",
+            fingerprint="fp", occurred_at="2026-07-21T10:00:00+00:00", correlation_id=None
         )
         event2 = NotificationEvent(
-            category="system",
-            severity=Severity.INFO,
-            title="Event",
-            body="Body",
-            fingerprint="fp",
-            occurred_at="2026-07-21T10:00:00+00:00",
-            correlation_id=None,
+            category="system", severity=Severity.INFO, title="Event", body="Body",
+            fingerprint="fp", occurred_at="2026-07-21T10:00:00+00:00", correlation_id=None
         )
 
         dispatcher.notify(event1)

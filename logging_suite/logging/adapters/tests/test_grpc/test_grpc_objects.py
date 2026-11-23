@@ -15,8 +15,7 @@ class TestGRPCCorrelationFromMetadata:
     def test_from_metadata_with_present_safe_id(self) -> None:
         """from_metadata() extracts correlation ID and sets extracted=True."""
         metadata: grpc_objs.Metadata = (
-            ("x-correlation-id", test_const.CORRELATION_ID_VALID_ID_123),
-            ("other-key", "other-value"),
+            ("x-correlation-id", test_const.CORRELATION_ID_VALID_ID_123), ("other-key", "other-value")
         )
         correlation = grpc_objs.GRPCCorrelation.from_metadata(metadata)
         assert correlation.correlation_id == test_const.CORRELATION_ID_VALID_ID_123
@@ -32,10 +31,7 @@ class TestGRPCCorrelationFromMetadata:
 
     def test_from_metadata_with_unsafe_carriage_return(self) -> None:
         """from_metadata() rejects ID with CR and generates new ID."""
-        metadata: grpc_objs.Metadata = (
-            ("x-correlation-id", "test-id\r-bad"),
-            ("other-key", "other-value"),
-        )
+        metadata: grpc_objs.Metadata = (("x-correlation-id", "test-id\r-bad"), ("other-key", "other-value"))
         correlation = grpc_objs.GRPCCorrelation.from_metadata(metadata)
         assert len(correlation.correlation_id) == 12
         assert all(char in "0123456789abcdef" for char in correlation.correlation_id)
@@ -43,10 +39,7 @@ class TestGRPCCorrelationFromMetadata:
 
     def test_from_metadata_with_unsafe_newline(self) -> None:
         """from_metadata() rejects ID with LF and generates new ID."""
-        metadata: grpc_objs.Metadata = (
-            ("x-correlation-id", "test-id\n-bad"),
-            ("other-key", "other-value"),
-        )
+        metadata: grpc_objs.Metadata = (("x-correlation-id", "test-id\n-bad"), ("other-key", "other-value"))
         correlation = grpc_objs.GRPCCorrelation.from_metadata(metadata)
         assert len(correlation.correlation_id) == 12
         assert all(char in "0123456789abcdef" for char in correlation.correlation_id)
@@ -54,10 +47,7 @@ class TestGRPCCorrelationFromMetadata:
 
     def test_from_metadata_with_unsafe_null_byte(self) -> None:
         """from_metadata() rejects ID with null byte and generates new ID."""
-        metadata: grpc_objs.Metadata = (
-            ("x-correlation-id", "test-id\x00-bad"),
-            ("other-key", "other-value"),
-        )
+        metadata: grpc_objs.Metadata = (("x-correlation-id", "test-id\x00-bad"), ("other-key", "other-value"))
         correlation = grpc_objs.GRPCCorrelation.from_metadata(metadata)
         assert len(correlation.correlation_id) == 12
         assert all(char in "0123456789abcdef" for char in correlation.correlation_id)
@@ -74,9 +64,7 @@ class TestGRPCCorrelationFromMetadata:
 
     def test_from_metadata_with_hex_id(self) -> None:
         """from_metadata() accepts hex correlation ID."""
-        metadata: grpc_objs.Metadata = (
-            ("x-correlation-id", test_const.CORRELATION_ID_HEX),
-        )
+        metadata: grpc_objs.Metadata = (("x-correlation-id", test_const.CORRELATION_ID_HEX),)
         correlation = grpc_objs.GRPCCorrelation.from_metadata(metadata)
         assert correlation.correlation_id == test_const.CORRELATION_ID_HEX
         assert correlation.extracted is True
@@ -99,10 +87,7 @@ class TestGRPCCorrelationIsSafe:
 
     def test_is_safe_with_valid_id(self) -> None:
         """_is_safe() returns True for valid alphanumeric ID."""
-        assert (
-            grpc_objs.GRPCCorrelation._is_safe(test_const.CORRELATION_ID_VALID_ID_123)
-            is True
-        )
+        assert grpc_objs.GRPCCorrelation._is_safe(test_const.CORRELATION_ID_VALID_ID_123) is True
 
     def test_is_safe_with_hex_id(self) -> None:
         """_is_safe() returns True for hex ID."""
@@ -142,32 +127,20 @@ class TestGRPCCorrelationPostInit:
     def test_post_init_raises_on_unsafe_correlation_id(self) -> None:
         """__post_init__() raises ValueError if correlation_id is unsafe."""
         with pytest.raises(ValueError, match=const.ERR_CORRELATION_ID_UNSAFE):
-            grpc_objs.GRPCCorrelation(
-                correlation_id="test\r-bad",
-                extracted=False,
-            )
+            grpc_objs.GRPCCorrelation(correlation_id="test\r-bad", extracted=False)
 
     def test_post_init_raises_on_empty_correlation_id(self) -> None:
         """__post_init__() raises ValueError if correlation_id is empty."""
         with pytest.raises(ValueError, match=const.ERR_CORRELATION_ID_UNSAFE):
-            grpc_objs.GRPCCorrelation(
-                correlation_id="",
-                extracted=False,
-            )
+            grpc_objs.GRPCCorrelation(correlation_id="", extracted=False)
 
     def test_post_init_raises_on_oversized_correlation_id(self) -> None:
         """__post_init__() raises ValueError if correlation_id exceeds MAX_LENGTH."""
         oversized = "a" * (const.CORRELATION_ID_MAX_LENGTH + 1)
         with pytest.raises(ValueError, match=const.ERR_CORRELATION_ID_UNSAFE):
-            grpc_objs.GRPCCorrelation(
-                correlation_id=oversized,
-                extracted=False,
-            )
+            grpc_objs.GRPCCorrelation(correlation_id=oversized, extracted=False)
 
     def test_post_init_accepts_safe_correlation_id(self) -> None:
         """__post_init__() accepts safe correlation_id."""
-        correlation = grpc_objs.GRPCCorrelation(
-            correlation_id=test_const.CORRELATION_ID_VALID_ID_123,
-            extracted=True,
-        )
+        correlation = grpc_objs.GRPCCorrelation(correlation_id=test_const.CORRELATION_ID_VALID_ID_123, extracted=True)
         assert correlation.correlation_id == test_const.CORRELATION_ID_VALID_ID_123

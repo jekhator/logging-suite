@@ -10,10 +10,4 @@ from logging_suite.logging.adapters.httpx.httpx_objects import (
     RequestHook,
 )
 
-__all__ = [
-    "AsyncRequestHook",
-    "CorrelationIdInjector",
-    "EventHooks",
-    "HttpxCorrelation",
-    "RequestHook",
-]
+__all__ = ["AsyncRequestHook", "CorrelationIdInjector", "EventHooks", "HttpxCorrelation", "RequestHook"]

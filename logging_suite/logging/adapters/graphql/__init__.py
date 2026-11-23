@@ -7,7 +7,4 @@ from logging_suite.logging.adapters.graphql.graphql_objects import (
     GraphQLCorrelation,
 )
 
-__all__ = [
-    "CorrelationContextInjector",
-    "GraphQLCorrelation",
-]
+__all__ = ["CorrelationContextInjector", "GraphQLCorrelation"]

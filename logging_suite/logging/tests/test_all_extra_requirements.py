@@ -79,9 +79,7 @@ class TestAllExtraRequirements:
 
     def test_all_covers_every_other_extra(self) -> None:
         """The all extra installs everything the other extras install."""
-        missing = real_requirements(PYPROJECT_PATH) - set(
-            all_extra_entries(PYPROJECT_PATH)
-        )
+        missing = real_requirements(PYPROJECT_PATH) - set(all_extra_entries(PYPROJECT_PATH))
         assert missing == set()
 
     def test_all_entries_are_deduplicated(self) -> None:

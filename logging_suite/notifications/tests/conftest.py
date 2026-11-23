@@ -32,13 +32,8 @@ def _test_event() -> NotificationEvent:
     Used by: no test class yet.
     """
     return NotificationEvent(
-        category="test",
-        severity=Severity.INFO,
-        title="Test Event",
-        body="Test body",
-        fingerprint="test-001",
-        occurred_at="2026-07-21T10:00:00+00:00",
-        correlation_id="test-corr",
+        category="test", severity=Severity.INFO, title="Test Event", body="Test body",
+        fingerprint="test-001", occurred_at="2026-07-21T10:00:00+00:00", correlation_id="test-corr"
     )
 
 
@@ -51,13 +46,8 @@ def _test_event_fixture() -> NotificationEvent:
     TestLoggingBackend, TestNullBackend, TestRetryingBackend, TestSESBackend, TestSNSBackend.
     """
     return NotificationEvent(
-        category="test",
-        severity=Severity.INFO,
-        title="Test Event",
-        body="Test body",
-        fingerprint="test-001",
-        occurred_at="2026-07-21T10:00:00+00:00",
-        correlation_id="test-corr",
+        category="test", severity=Severity.INFO, title="Test Event", body="Test body",
+        fingerprint="test-001", occurred_at="2026-07-21T10:00:00+00:00", correlation_id="test-corr"
     )
 
 

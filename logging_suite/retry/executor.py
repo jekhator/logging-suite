@@ -53,10 +53,7 @@ class RetryExecutor:
                     return operation(*args, **kwargs)
                 except BaseException as error:
                     last_error = error
-                    if (
-                        attempt
-                        == policy.max_attempts - backoff_const.LAST_ATTEMPT_OFFSET
-                    ):
+                    if attempt == policy.max_attempts - backoff_const.LAST_ATTEMPT_OFFSET:
                         raise
                     if not self._should_retry(error, policy):
                         raise
@@ -78,10 +75,7 @@ class RetryExecutor:
                     return await operation(*args, **kwargs)
                 except BaseException as error:
                     last_error = error
-                    if (
-                        attempt
-                        == policy.max_attempts - backoff_const.LAST_ATTEMPT_OFFSET
-                    ):
+                    if attempt == policy.max_attempts - backoff_const.LAST_ATTEMPT_OFFSET:
                         raise
                     if not self._should_retry(error, policy):
                         raise
@@ -132,13 +126,8 @@ class RetryExecutor:
 
     def _calculate_backoff(self, attempt: int, policy: RetryPolicy) -> float:
         """Calculate backoff delay with optional jitter."""
-        backoff = min(
-            policy.backoff_base_seconds * (policy.backoff_multiplier**attempt),
-            policy.backoff_max_seconds,
-        )
+        backoff = min(policy.backoff_base_seconds * (policy.backoff_multiplier**attempt), policy.backoff_max_seconds)
         if policy.jitter:
-            jitter_factor = random.uniform(
-                backoff_const.JITTER_LOWER_FACTOR, backoff_const.JITTER_UPPER_FACTOR
-            )
+            jitter_factor = random.uniform(backoff_const.JITTER_LOWER_FACTOR, backoff_const.JITTER_UPPER_FACTOR)
             backoff *= jitter_factor
         return backoff

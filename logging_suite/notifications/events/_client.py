@@ -37,21 +37,13 @@ class NotificationEventClient:
         """
         from logging_suite.logging import get_correlation_id
 
-        resolved_severity = (
-            objs.Severity(severity) if isinstance(severity, str) else severity
-        )
+        resolved_severity = objs.Severity(severity) if isinstance(severity, str) else severity
 
         now_utc = datetime.now(timezone.utc).isoformat()
 
         correlation_id = get_correlation_id()
 
         return objs.NotificationEvent(
-            category=category,
-            severity=resolved_severity,
-            title=title,
-            body=body,
-            fingerprint=fingerprint,
-            occurred_at=now_utc,
-            correlation_id=correlation_id,
-            metadata=metadata,
+            category=category, severity=resolved_severity, title=title, body=body,
+            fingerprint=fingerprint, occurred_at=now_utc, correlation_id=correlation_id, metadata=metadata
         )

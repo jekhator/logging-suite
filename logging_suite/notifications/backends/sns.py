@@ -57,21 +57,13 @@ class SNSBackend:
 
         try:
             response = self.sns_client.publish(
-                TopicArn=topic_arn,
-                Subject=title,
-                Message=body,
-                MessageAttributes=message_attributes,
+                TopicArn=topic_arn, Subject=title, Message=body, MessageAttributes=message_attributes
             )
 
-            message_id = response.get(
-                const.AWS_MESSAGE_ID_KEY, const.AWS_MESSAGE_ID_UNKNOWN
-            )
+            message_id = response.get(const.AWS_MESSAGE_ID_KEY, const.AWS_MESSAGE_ID_UNKNOWN)
             detail = const.DETAIL_MESSAGE_ID_TEMPLATE.format(message_id=message_id)
             return objs.DeliveryResult(
-                delivered=True,
-                backend_name=const.BACKEND_NAME_SNS,
-                detail=detail,
-                retryable=False,
+                delivered=True, backend_name=const.BACKEND_NAME_SNS, detail=detail, retryable=False
             )
         except Exception as error:
             error_response = getattr(error, const.AWS_RESPONSE_ATTR, {})
@@ -83,8 +75,5 @@ class SNSBackend:
             detail = const.DETAIL_SNS_ERROR_TEMPLATE.format(reason=reason)
 
             return objs.DeliveryResult(
-                delivered=False,
-                backend_name=const.BACKEND_NAME_SNS,
-                detail=detail,
-                retryable=is_retryable,
+                delivered=False, backend_name=const.BACKEND_NAME_SNS, detail=detail, retryable=is_retryable
             )

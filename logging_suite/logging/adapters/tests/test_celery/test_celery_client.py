@@ -19,10 +19,7 @@ class TestCorrelationSignalsInjectOnPublish:
         set_correlation_id(test_const.CORRELATION_ID_VALID_ID_123)
         headers: dict[str, str] = {}
         celery_client.CorrelationSignals.inject_on_publish(headers=headers)
-        assert (
-            headers[const.CORRELATION_ID_HEADER]
-            == test_const.CORRELATION_ID_VALID_ID_123
-        )
+        assert headers[const.CORRELATION_ID_HEADER] == test_const.CORRELATION_ID_VALID_ID_123
 
     def test_inject_on_publish_without_context_is_noop(self) -> None:
         """inject_on_publish() does nothing when context is not set."""
@@ -47,10 +44,7 @@ class TestCorrelationSignalsInjectOnPublish:
         set_correlation_id(test_const.CORRELATION_ID_VALID_ID_123)
         headers: dict[str, str] = {const.CORRELATION_ID_HEADER: "stale-value"}
         celery_client.CorrelationSignals.inject_on_publish(headers=headers)
-        assert (
-            headers[const.CORRELATION_ID_HEADER]
-            == test_const.CORRELATION_ID_VALID_ID_123
-        )
+        assert headers[const.CORRELATION_ID_HEADER] == test_const.CORRELATION_ID_VALID_ID_123
 
 
 class TestCorrelationSignalsRestoreOnPrerun:
@@ -113,27 +107,18 @@ class TestCorrelationSignalsConnect:
 
     def test_connect_registers_signal_handlers(self) -> None:
         """connect() registers all three handlers on celery signals (weak=False)."""
-        with mock.patch(
-            "logging_suite.logging.adapters.celery.celery_client.before_task_publish"
-        ) as mock_publish:
-            with mock.patch(
-                "logging_suite.logging.adapters.celery.celery_client.task_prerun"
-            ) as mock_prerun:
-                with mock.patch(
-                    "logging_suite.logging.adapters.celery.celery_client.task_postrun"
-                ) as mock_postrun:
+        with mock.patch("logging_suite.logging.adapters.celery.celery_client.before_task_publish") as mock_publish:
+            with mock.patch("logging_suite.logging.adapters.celery.celery_client.task_prerun") as mock_prerun:
+                with mock.patch("logging_suite.logging.adapters.celery.celery_client.task_postrun") as mock_postrun:
                     celery_client.CorrelationSignals.connect()
                     mock_publish.connect.assert_called_once_with(
-                        celery_client.CorrelationSignals.inject_on_publish,
-                        weak=False,
+                        celery_client.CorrelationSignals.inject_on_publish, weak=False
                     )
                     mock_prerun.connect.assert_called_once_with(
-                        celery_client.CorrelationSignals.restore_on_prerun,
-                        weak=False,
+                        celery_client.CorrelationSignals.restore_on_prerun, weak=False
                     )
                     mock_postrun.connect.assert_called_once_with(
-                        celery_client.CorrelationSignals.clear_on_postrun,
-                        weak=False,
+                        celery_client.CorrelationSignals.clear_on_postrun, weak=False
                     )
 
 

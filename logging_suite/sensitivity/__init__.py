@@ -32,11 +32,6 @@ from logging_suite.sensitivity.services.classify import (
 )
 
 __all__ = [
-    "PUBLIC_API",
-    "Sensitivity",
-    "SensitiveDeclarationError",
-    "SensitiveRepr",
-    "SensitivityProfile",
-    "__version__",
-    "classify",
+    "PUBLIC_API", "Sensitivity", "SensitiveDeclarationError", "SensitiveRepr", "SensitivityProfile", "__version__",
+    "classify"
 ]

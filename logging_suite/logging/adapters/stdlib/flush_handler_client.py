@@ -16,12 +16,7 @@ from logging_suite.logging.context.correlation.correlation_client import (
 class FlushOnWarningHandler(logging.Handler):
     """Buffer records per correlation_id; flush on WARNING+ to target handler."""
 
-    __slots__ = (
-        "_config",
-        "_buffers",
-        "_timestamps",
-        "_correlation_order",
-    )
+    __slots__ = ("_config", "_buffers", "_timestamps", "_correlation_order")
 
     def __init__(self, config: objs.FlushOnWarningConfig) -> None:
         """Initialize handler with config; set up per-correlation buffers."""
