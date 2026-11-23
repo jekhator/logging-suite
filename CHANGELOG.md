@@ -7,11 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-11-22
+
+### Fixed
+
+- **The `all` extra pulled two unrelated third-party packages.** It listed the bare names `ses` and `sns`, which pip resolves as unrelated PyPI projects instead of this project's own extras, and it did not install boto3. The `all` extra now lists `boto3>=1.28.0` (what the `ses` and `sns` extras require). If you installed `logging-suite[all]` at 0.7.0 or earlier, uninstall the `ses` and `sns` distributions and whatever they pulled in.
+- `uv.lock` regenerated from `pyproject.toml` (it was out of date and still locked those two packages).
+- Docs: removed imports that do not exist (`logged`, `LoggedClient`, `retried`, `sensitive`, `SensitiveDecorator`, `_client`, the policy classes); the retry guide now documents `RetryPolicy` and `RetryExecutor`; the `@logged` and sensitivity policy pages now state that those surfaces were removed in 0.6.0 and show the replacement.
+- Docs: the 0.7.0 notes and the README no longer claim that the old `mixin-suite` PyPI project carries a moved-to notice.
+
+### Added
+
+- Test that reads `pyproject.toml` and fails if any entry in the `all` extra is not a requirement of another extra or a project dependency.
+
 ## [0.7.0] - 2026-11-22
 
 ### Changed
 
-- **Renamed from mixin-suite to logging-suite.** The distribution is now `logging-suite`; the GitHub repository will be `jekhator/logging-suite` (the old URL redirects). The old `mixin-suite` PyPI project stays installable with a moved-to notice.
+- **Renamed from mixin-suite to logging-suite.** The distribution is now `logging-suite`; the GitHub repository will be `jekhator/logging-suite` (the old URL redirects). The old `mixin-suite` PyPI project stays installable at its last release (it carries no moved-to notice).
 - **Imports moved under the single root `logging_suite`** (old prefix dropped): `mixin_logging` -> `logging_suite.logging`, `mixin_retry` -> `logging_suite.retry`, `mixin_latency` -> `logging_suite.latency`, `mixin_sensitivity` -> `logging_suite.sensitivity`, `mixin_notifications` -> `logging_suite.notifications`. The old import names no longer exist; update imports and logger names (`mixin_logging.ambient` is now `logging_suite.logging.ambient`, `mixin_notifications` is now `logging_suite.notifications`).
 - All five roots versioned to 0.7.0 (lockstep).
 - Docs directories moved to `docs/<root>`; CI and release workflows updated to the new package paths.
