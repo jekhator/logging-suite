@@ -27,54 +27,37 @@ class TestCorrelationIdInjectorTraceConfig:
         """trace_config() appends _inject to on_request_start hooks."""
         config = aiohttp_client.CorrelationIdInjector.trace_config()
         assert len(config.on_request_start) == 1
-        assert (
-            config.on_request_start[0] == aiohttp_client.CorrelationIdInjector._inject
-        )
+        assert config.on_request_start[0] == aiohttp_client.CorrelationIdInjector._inject
 
 
 class TestCorrelationIdInjectorInject:
     """Tests for CorrelationIdInjector._inject() async method."""
 
     @pytest.mark.asyncio
-    async def test_inject_with_set_correlation_writes_header(
-        self,
-        make_trace_params: Callable[..., Any],
-    ) -> None:
+    async def test_inject_with_set_correlation_writes_header(self, make_trace_params: Callable[..., Any]) -> None:
         """_inject() writes X-Correlation-ID header when correlation_id is set."""
         set_correlation_id(test_const.HTTPX_CORR_ID_SAFE)
         params = make_trace_params()
         session = mock.MagicMock(spec=aiohttp.ClientSession)
         trace_config_ctx = mock.MagicMock()
 
-        await aiohttp_client.CorrelationIdInjector._inject(
-            session, trace_config_ctx, params
-        )
+        await aiohttp_client.CorrelationIdInjector._inject(session, trace_config_ctx, params)
 
-        assert (
-            params.headers[const.CORRELATION_ID_HEADER] == test_const.HTTPX_CORR_ID_SAFE
-        )
+        assert params.headers[const.CORRELATION_ID_HEADER] == test_const.HTTPX_CORR_ID_SAFE
 
     @pytest.mark.asyncio
-    async def test_inject_without_context_is_noop(
-        self,
-        make_trace_params: Callable[..., Any],
-    ) -> None:
+    async def test_inject_without_context_is_noop(self, make_trace_params: Callable[..., Any]) -> None:
         """_inject() does nothing when context is not set."""
         params = make_trace_params()
         session = mock.MagicMock(spec=aiohttp.ClientSession)
         trace_config_ctx = mock.MagicMock()
 
-        await aiohttp_client.CorrelationIdInjector._inject(
-            session, trace_config_ctx, params
-        )
+        await aiohttp_client.CorrelationIdInjector._inject(session, trace_config_ctx, params)
 
         assert const.CORRELATION_ID_HEADER not in params.headers
 
     @pytest.mark.asyncio
-    async def test_inject_with_unsafe_context_is_noop(
-        self,
-        make_trace_params: Callable[..., Any],
-    ) -> None:
+    async def test_inject_with_unsafe_context_is_noop(self, make_trace_params: Callable[..., Any]) -> None:
         """_inject() does nothing when context has unsafe value."""
         unsafe_id = "bad\r\nvalue"
         set_correlation_id(unsafe_id)
@@ -82,8 +65,6 @@ class TestCorrelationIdInjectorInject:
         session = mock.MagicMock(spec=aiohttp.ClientSession)
         trace_config_ctx = mock.MagicMock()
 
-        await aiohttp_client.CorrelationIdInjector._inject(
-            session, trace_config_ctx, params
-        )
+        await aiohttp_client.CorrelationIdInjector._inject(session, trace_config_ctx, params)
 
         assert const.CORRELATION_ID_HEADER not in params.headers

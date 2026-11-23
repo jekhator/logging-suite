@@ -111,24 +111,12 @@ The `ClassMakerAware` protocol (mask, looks_sensitive) is correctly implemented 
 
 **Current:**
 ```python
-__all__ = [
-    "Sensitivity",
-    "SensitivityProfile",
-    "__version__",
-    "classify",
-    "sensitive",
-]
+__all__ = ["Sensitivity", "SensitivityProfile", "__version__", "classify", "sensitive"]
 ```
 
 **Should be:**
 ```python
-__all__ = [
-    "classify",
-    "sensitive",
-    "Sensitivity",
-    "SensitivityProfile",
-    "__version__",
-]
+__all__ = ["classify", "sensitive", "Sensitivity", "SensitivityProfile", "__version__"]
 ```
 
 (Dunders typically sort after regular names; within regular names, alphabetical order applies.)

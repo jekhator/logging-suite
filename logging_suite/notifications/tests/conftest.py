@@ -32,13 +32,8 @@ def _test_event() -> NotificationEvent:
     Used by: no test class yet.
     """
     return NotificationEvent(
-        category="test",
-        severity=Severity.INFO,
-        title="Test Event",
-        body="Test body",
-        fingerprint="test-001",
-        occurred_at="2026-07-21T10:00:00+00:00",
-        correlation_id="test-corr",
+        category="test", severity=Severity.INFO, title="Test Event", body="Test body",
+        fingerprint="test-001", occurred_at="2026-07-21T10:00:00+00:00", correlation_id="test-corr"
     )
 
 
@@ -51,13 +46,8 @@ def _test_event_fixture() -> NotificationEvent:
     TestLoggingBackend, TestNullBackend, TestRetryingBackend, TestSESBackend, TestSNSBackend.
     """
     return NotificationEvent(
-        category="test",
-        severity=Severity.INFO,
-        title="Test Event",
-        body="Test body",
-        fingerprint="test-001",
-        occurred_at="2026-07-21T10:00:00+00:00",
-        correlation_id="test-corr",
+        category="test", severity=Severity.INFO, title="Test Event", body="Test body",
+        fingerprint="test-001", occurred_at="2026-07-21T10:00:00+00:00", correlation_id="test-corr"
     )
 
 
@@ -80,10 +70,7 @@ def _capturing_external_backend():
         def send(self, event: NotificationEvent):
             self.events.append(event)
             return {
-                "delivered": True,
-                "backend_name": "CapturingExternalBackend",
-                "detail": "captured",
-                "retryable": False,
+                "delivered": True, "backend_name": "CapturingExternalBackend", "detail": "captured", "retryable": False
             }
 
     return CapturingExternalBackend()
@@ -108,10 +95,7 @@ def _capturing_internal_backend():
         def send(self, event: NotificationEvent):
             self.events.append(event)
             return {
-                "delivered": True,
-                "backend_name": "CapturingInternalBackend",
-                "detail": "captured",
-                "retryable": False,
+                "delivered": True, "backend_name": "CapturingInternalBackend", "detail": "captured", "retryable": False
             }
 
     return CapturingInternalBackend()

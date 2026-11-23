@@ -110,11 +110,7 @@ def filter(self, record: logging.LogRecord) -> bool:
     correlation_id = get_correlation_id()
     if correlation_id and not self._is_safe(correlation_id):
         correlation_id = None
-    setattr(
-        record,
-        const.CORRELATION_RECORD_ATTR,
-        correlation_id or const.UNSET_CORRELATION_ID,
-    )
+    setattr(record, const.CORRELATION_RECORD_ATTR, correlation_id or const.UNSET_CORRELATION_ID)
     return True
 ```
 

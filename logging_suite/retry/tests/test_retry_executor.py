@@ -18,11 +18,7 @@ class TestRetryPolicy:
     def test_policy_valid_construction(self) -> None:
         """RetryPolicy constructs with valid parameters."""
         policy = RetryPolicy(
-            max_attempts=3,
-            backoff_base_seconds=0.1,
-            backoff_multiplier=2.0,
-            backoff_max_seconds=10.0,
-            jitter=True,
+            max_attempts=3, backoff_base_seconds=0.1, backoff_multiplier=2.0, backoff_max_seconds=10.0, jitter=True
         )
         assert policy.max_attempts == 3
         assert policy.backoff_base_seconds == 0.1
@@ -31,55 +27,36 @@ class TestRetryPolicy:
         """RetryPolicy rejects max_attempts < 1."""
         with pytest.raises(ValueError, match=const.ERR_RETRY_MAX_ATTEMPTS):
             RetryPolicy(
-                max_attempts=0,
-                backoff_base_seconds=0.1,
-                backoff_multiplier=2.0,
-                backoff_max_seconds=10.0,
-                jitter=False,
+                max_attempts=0, backoff_base_seconds=0.1, backoff_multiplier=2.0, backoff_max_seconds=10.0, jitter=False
             )
 
     def test_policy_invalid_backoff_base_negative(self) -> None:
         """RetryPolicy rejects backoff_base_seconds < 0."""
         with pytest.raises(ValueError, match=const.ERR_RETRY_BACKOFF_BASE):
             RetryPolicy(
-                max_attempts=3,
-                backoff_base_seconds=-0.1,
-                backoff_multiplier=2.0,
-                backoff_max_seconds=10.0,
-                jitter=False,
+                max_attempts=3, backoff_base_seconds=-0.1, backoff_multiplier=2.0,
+                backoff_max_seconds=10.0, jitter=False
             )
 
     def test_policy_invalid_backoff_multiplier_zero(self) -> None:
         """RetryPolicy rejects backoff_multiplier <= 0."""
         with pytest.raises(ValueError, match=const.ERR_RETRY_BACKOFF_MULTIPLIER):
             RetryPolicy(
-                max_attempts=3,
-                backoff_base_seconds=0.1,
-                backoff_multiplier=0.0,
-                backoff_max_seconds=10.0,
-                jitter=False,
+                max_attempts=3, backoff_base_seconds=0.1, backoff_multiplier=0.0, backoff_max_seconds=10.0, jitter=False
             )
 
     def test_policy_invalid_backoff_max_negative(self) -> None:
         """RetryPolicy rejects backoff_max_seconds < 0."""
         with pytest.raises(ValueError, match=const.ERR_RETRY_BACKOFF_MAX):
             RetryPolicy(
-                max_attempts=3,
-                backoff_base_seconds=0.1,
-                backoff_multiplier=2.0,
-                backoff_max_seconds=-0.1,
-                jitter=False,
+                max_attempts=3, backoff_base_seconds=0.1, backoff_multiplier=2.0, backoff_max_seconds=-0.1, jitter=False
             )
 
     def test_policy_zero_backoff_construction(self) -> None:
         """RetryPolicy accepts zero backoff (immediate retry, no sleep)."""
         policy = RetryPolicy(
-            max_attempts=3,
-            backoff_base_seconds=0.0,
-            backoff_multiplier=1.0,
-            backoff_max_seconds=0.0,
-            jitter=False,
-            should_retry=lambda error: isinstance(error, ValueError),
+            max_attempts=3, backoff_base_seconds=0.0, backoff_multiplier=1.0,
+            backoff_max_seconds=0.0, jitter=False, should_retry=lambda error: isinstance(error, ValueError)
         )
         assert policy.backoff_base_seconds == 0.0
         assert policy.backoff_max_seconds == 0.0
@@ -92,12 +69,8 @@ class TestRetryExecutor:
         """Wrap sync function that succeeds immediately."""
         executor = RetryExecutor()
         policy = RetryPolicy(
-            max_attempts=3,
-            backoff_base_seconds=0.01,
-            backoff_multiplier=2.0,
-            backoff_max_seconds=0.1,
-            jitter=False,
-            retry_on=(ConnectionError,),
+            max_attempts=3, backoff_base_seconds=0.01, backoff_multiplier=2.0,
+            backoff_max_seconds=0.1, jitter=False, retry_on=(ConnectionError,)
         )
 
         call_count = 0
@@ -117,12 +90,8 @@ class TestRetryExecutor:
         """Wrap sync function that fails then succeeds."""
         executor = RetryExecutor()
         policy = RetryPolicy(
-            max_attempts=3,
-            backoff_base_seconds=0.001,
-            backoff_multiplier=2.0,
-            backoff_max_seconds=0.01,
-            jitter=False,
-            retry_on=(ValueError,),
+            max_attempts=3, backoff_base_seconds=0.001, backoff_multiplier=2.0,
+            backoff_max_seconds=0.01, jitter=False, retry_on=(ValueError,)
         )
 
         call_count = 0
@@ -147,12 +116,8 @@ class TestRetryExecutor:
         """Wrap sync function that always fails."""
         executor = RetryExecutor()
         policy = RetryPolicy(
-            max_attempts=2,
-            backoff_base_seconds=0.001,
-            backoff_multiplier=2.0,
-            backoff_max_seconds=0.01,
-            jitter=False,
-            retry_on=(ValueError,),
+            max_attempts=2, backoff_base_seconds=0.001, backoff_multiplier=2.0,
+            backoff_max_seconds=0.01, jitter=False, retry_on=(ValueError,)
         )
 
         call_count = 0
@@ -174,12 +139,8 @@ class TestRetryExecutor:
         """Wrap sync with should_retry predicate on direct exception."""
         executor = RetryExecutor()
         policy = RetryPolicy(
-            max_attempts=3,
-            backoff_base_seconds=0.001,
-            backoff_multiplier=2.0,
-            backoff_max_seconds=0.01,
-            jitter=False,
-            should_retry=lambda error: isinstance(error, ConnectionError),
+            max_attempts=3, backoff_base_seconds=0.001, backoff_multiplier=2.0,
+            backoff_max_seconds=0.01, jitter=False, should_retry=lambda error: isinstance(error, ConnectionError)
         )
 
         call_count = 0
@@ -213,12 +174,8 @@ class TestRetryExecutor:
             return isinstance(error.__cause__, ValueError)
 
         policy = RetryPolicy(
-            max_attempts=3,
-            backoff_base_seconds=0.001,
-            backoff_multiplier=2.0,
-            backoff_max_seconds=0.01,
-            jitter=False,
-            should_retry=check_cause_for_value_error,
+            max_attempts=3, backoff_base_seconds=0.001, backoff_multiplier=2.0,
+            backoff_max_seconds=0.01, jitter=False, should_retry=check_cause_for_value_error
         )
 
         call_count = 0
@@ -233,9 +190,7 @@ class TestRetryExecutor:
                     raise RuntimeError("outer error") from error
             return "ok"
 
-        wrapped = executor.wrap(
-            fails_with_runtime_error_caused_by_value_error, policy=policy
-        )
+        wrapped = executor.wrap(fails_with_runtime_error_caused_by_value_error, policy=policy)
 
         with patch("time.sleep"):
             result = wrapped()
@@ -247,12 +202,8 @@ class TestRetryExecutor:
         """Wrap sync that raises non-retryable exception."""
         executor = RetryExecutor()
         policy = RetryPolicy(
-            max_attempts=3,
-            backoff_base_seconds=0.001,
-            backoff_multiplier=2.0,
-            backoff_max_seconds=0.01,
-            jitter=False,
-            retry_on=(ConnectionError,),
+            max_attempts=3, backoff_base_seconds=0.001, backoff_multiplier=2.0,
+            backoff_max_seconds=0.01, jitter=False, retry_on=(ConnectionError,)
         )
 
         def fails_with_value_error() -> None:
@@ -267,12 +218,8 @@ class TestRetryExecutor:
         """Wrap async function that succeeds immediately."""
         executor = RetryExecutor()
         policy = RetryPolicy(
-            max_attempts=3,
-            backoff_base_seconds=0.001,
-            backoff_multiplier=2.0,
-            backoff_max_seconds=0.01,
-            jitter=False,
-            retry_on=(ConnectionError,),
+            max_attempts=3, backoff_base_seconds=0.001, backoff_multiplier=2.0,
+            backoff_max_seconds=0.01, jitter=False, retry_on=(ConnectionError,)
         )
 
         call_count = 0
@@ -292,12 +239,8 @@ class TestRetryExecutor:
         """Wrap async function that fails then succeeds."""
         executor = RetryExecutor()
         policy = RetryPolicy(
-            max_attempts=3,
-            backoff_base_seconds=0.0001,
-            backoff_multiplier=2.0,
-            backoff_max_seconds=0.0001,
-            jitter=False,
-            retry_on=(ValueError,),
+            max_attempts=3, backoff_base_seconds=0.0001, backoff_multiplier=2.0,
+            backoff_max_seconds=0.0001, jitter=False, retry_on=(ValueError,)
         )
 
         call_count = 0
@@ -319,12 +262,8 @@ class TestRetryExecutor:
         """Wrap async function that always fails."""
         executor = RetryExecutor()
         policy = RetryPolicy(
-            max_attempts=2,
-            backoff_base_seconds=0.0001,
-            backoff_multiplier=2.0,
-            backoff_max_seconds=0.0001,
-            jitter=False,
-            retry_on=(ValueError,),
+            max_attempts=2, backoff_base_seconds=0.0001, backoff_multiplier=2.0,
+            backoff_max_seconds=0.0001, jitter=False, retry_on=(ValueError,)
         )
 
         call_count = 0
@@ -347,12 +286,8 @@ class TestRetryExecutor:
 
         executor = RetryExecutor()
         policy = RetryPolicy(
-            max_attempts=3,
-            backoff_base_seconds=0.0,
-            backoff_multiplier=1.0,
-            backoff_max_seconds=0.0,
-            jitter=False,
-            should_retry=lambda error: isinstance(error, ValueError),
+            max_attempts=3, backoff_base_seconds=0.0, backoff_multiplier=1.0,
+            backoff_max_seconds=0.0, jitter=False, should_retry=lambda error: isinstance(error, ValueError)
         )
 
         call_count = 0
@@ -387,12 +322,8 @@ class TestRetryExecutor:
         """call() method with policy on sync function."""
         executor = RetryExecutor()
         policy = RetryPolicy(
-            max_attempts=2,
-            backoff_base_seconds=0.001,
-            backoff_multiplier=2.0,
-            backoff_max_seconds=0.01,
-            jitter=False,
-            retry_on=(ValueError,),
+            max_attempts=2, backoff_base_seconds=0.001, backoff_multiplier=2.0,
+            backoff_max_seconds=0.01, jitter=False, retry_on=(ValueError,)
         )
 
         def add(left: int, right: int) -> int:
@@ -407,11 +338,7 @@ class TestRetryExecutor:
         """Backoff calculation without jitter."""
         executor = RetryExecutor()
         policy = RetryPolicy(
-            max_attempts=3,
-            backoff_base_seconds=1.0,
-            backoff_multiplier=2.0,
-            backoff_max_seconds=10.0,
-            jitter=False,
+            max_attempts=3, backoff_base_seconds=1.0, backoff_multiplier=2.0, backoff_max_seconds=10.0, jitter=False
         )
 
         assert executor._calculate_backoff(0, policy) == 1.0
@@ -422,11 +349,7 @@ class TestRetryExecutor:
         """Backoff calculation respects max_seconds."""
         executor = RetryExecutor()
         policy = RetryPolicy(
-            max_attempts=4,
-            backoff_base_seconds=1.0,
-            backoff_multiplier=2.0,
-            backoff_max_seconds=3.0,
-            jitter=False,
+            max_attempts=4, backoff_base_seconds=1.0, backoff_multiplier=2.0, backoff_max_seconds=3.0, jitter=False
         )
 
         assert executor._calculate_backoff(0, policy) == 1.0
@@ -438,11 +361,7 @@ class TestRetryExecutor:
         """Backoff with jitter stays within bounds."""
         executor = RetryExecutor()
         policy = RetryPolicy(
-            max_attempts=2,
-            backoff_base_seconds=1.0,
-            backoff_multiplier=2.0,
-            backoff_max_seconds=10.0,
-            jitter=True,
+            max_attempts=2, backoff_base_seconds=1.0, backoff_multiplier=2.0, backoff_max_seconds=10.0, jitter=True
         )
 
         for _ in range(10):
@@ -453,12 +372,8 @@ class TestRetryExecutor:
         """Wrap async that raises non-retryable exception."""
         executor = RetryExecutor()
         policy = RetryPolicy(
-            max_attempts=3,
-            backoff_base_seconds=0.0001,
-            backoff_multiplier=2.0,
-            backoff_max_seconds=0.0001,
-            jitter=False,
-            retry_on=(ConnectionError,),
+            max_attempts=3, backoff_base_seconds=0.0001, backoff_multiplier=2.0,
+            backoff_max_seconds=0.0001, jitter=False, retry_on=(ConnectionError,)
         )
 
         async def fails_with_value_error() -> None:
@@ -473,11 +388,7 @@ class TestRetryExecutor:
         """_should_retry returns False when no retry condition is set."""
         executor = RetryExecutor()
         policy = RetryPolicy(
-            max_attempts=2,
-            backoff_base_seconds=0.001,
-            backoff_multiplier=2.0,
-            backoff_max_seconds=0.01,
-            jitter=False,
+            max_attempts=2, backoff_base_seconds=0.001, backoff_multiplier=2.0, backoff_max_seconds=0.01, jitter=False
         )
 
         def always_fails() -> None:
@@ -496,13 +407,8 @@ class TestRetryExecutor:
             return False
 
         policy = RetryPolicy(
-            max_attempts=2,
-            backoff_base_seconds=0.001,
-            backoff_multiplier=2.0,
-            backoff_max_seconds=0.01,
-            jitter=False,
-            should_retry=predicate_rejects_all,
-            retry_on=(ValueError,),
+            max_attempts=2, backoff_base_seconds=0.001, backoff_multiplier=2.0, backoff_max_seconds=0.01,
+            jitter=False, should_retry=predicate_rejects_all, retry_on=(ValueError,)
         )
 
         def fails_with_value_error() -> None:
@@ -517,11 +423,7 @@ class TestRetryExecutor:
         """Wrap preserves original function metadata."""
         executor = RetryExecutor()
         policy = RetryPolicy(
-            max_attempts=1,
-            backoff_base_seconds=0.001,
-            backoff_multiplier=1.0,
-            backoff_max_seconds=0.01,
-            jitter=False,
+            max_attempts=1, backoff_base_seconds=0.001, backoff_multiplier=1.0, backoff_max_seconds=0.01, jitter=False
         )
 
         def my_function() -> str:
@@ -537,11 +439,7 @@ class TestRetryExecutor:
         """Policy with no retry_on and no should_retry raises immediately."""
         executor = RetryExecutor()
         policy = RetryPolicy(
-            max_attempts=3,
-            backoff_base_seconds=0.001,
-            backoff_multiplier=2.0,
-            backoff_max_seconds=0.01,
-            jitter=False,
+            max_attempts=3, backoff_base_seconds=0.001, backoff_multiplier=2.0, backoff_max_seconds=0.01, jitter=False
         )
 
         def fails() -> None:

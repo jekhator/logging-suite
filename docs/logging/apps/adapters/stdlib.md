@@ -55,9 +55,7 @@ logger = logging.getLogger(__name__)
 CorrelationLogFilter.add_correlation_filter(logger)
 
 handler = logging.StreamHandler()
-formatter = logging.Formatter(
-    "%(asctime)s - %(name)s - [%(correlation_id)s] - %(levelname)s - %(message)s"
-)
+formatter = logging.Formatter("%(asctime)s - %(name)s - [%(correlation_id)s] - %(levelname)s - %(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
@@ -69,25 +67,14 @@ Or in a logging configuration dictionary:
 ```python
 import logging.config
 
-logging.config.dictConfig({
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "standard": {
-            "format": "%(asctime)s - [%(correlation_id)s] - %(message)s"
-        }
-    },
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "standard"
-        }
-    },
-    "root": {
-        "level": "INFO",
-        "handlers": ["console"]
+logging.config.dictConfig(
+    {
+        "version": 1, "disable_existing_loggers": False,
+        "formatters": {"standard": {"format": "%(asctime)s - [%(correlation_id)s] - %(message)s"}},
+        "handlers": {"console": {"class": "logging.StreamHandler", "formatter": "standard"}},
+        "root": {"level": "INFO", "handlers": ["console"]}
     }
-})
+)
 
 logger = logging.getLogger(__name__)
 CorrelationLogFilter.add_correlation_filter(logger)

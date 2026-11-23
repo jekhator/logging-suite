@@ -4,11 +4,7 @@ from __future__ import annotations
 
 from typing import Final
 
-__all__ = [
-    "MASK_TOKEN",
-    "DEFAULT_SENSITIVE_PATTERNS",
-    "PRIVATE_ATTRIBUTE_PREFIX",
-]
+__all__ = ["MASK_TOKEN", "DEFAULT_SENSITIVE_PATTERNS", "PRIVATE_ATTRIBUTE_PREFIX"]
 
 
 """Redaction masking parameters."""

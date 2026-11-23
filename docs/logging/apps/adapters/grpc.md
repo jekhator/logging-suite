@@ -58,9 +58,7 @@ import grpc
 from logging_suite.logging.adapters.grpc import CorrelationInterceptor
 
 def serve():
-    server = grpc.aio.server(
-        interceptors=[CorrelationInterceptor()]
-    )
+    server = grpc.aio.server(interceptors=[CorrelationInterceptor()])
     # Add services to server
     server.add_insecure_port("[::]:50051")
     await server.start()
@@ -76,10 +74,7 @@ Or with synchronous gRPC:
 import grpc
 from logging_suite.logging.adapters.grpc import CorrelationInterceptor
 
-server = grpc.server(
-    thread_pool=grpc.ThreadPoolExecutor(max_workers=10),
-    interceptors=[CorrelationInterceptor()]
-)
+server = grpc.server(thread_pool=grpc.ThreadPoolExecutor(max_workers=10), interceptors=[CorrelationInterceptor()])
 # Add services to server
 server.add_insecure_port("[::]:50051")
 server.start()

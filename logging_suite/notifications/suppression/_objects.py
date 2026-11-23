@@ -22,9 +22,7 @@ class SuppressionTracker:
     max_capacity: int = const.SUPPRESSION_MAX_CAPACITY
     _seen: dict[tuple[str, str], float] = field(default_factory=dict)
 
-    def is_suppressed(
-        self, category: str, fingerprint: str, current_time: float
-    ) -> bool:
+    def is_suppressed(self, category: str, fingerprint: str, current_time: float) -> bool:
         """
         Check if (category, fingerprint) is within suppression window.
 
@@ -62,7 +60,5 @@ class SuppressionTracker:
         self._seen[key] = current_time
 
         if len(self._seen) > self.max_capacity:
-            oldest_key = min(
-                self._seen.keys(), key=lambda seen_key: self._seen[seen_key]
-            )
+            oldest_key = min(self._seen.keys(), key=lambda seen_key: self._seen[seen_key])
             del self._seen[oldest_key]

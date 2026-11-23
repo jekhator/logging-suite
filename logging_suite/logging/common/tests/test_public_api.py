@@ -35,58 +35,42 @@ class TestSubPackagePublicApi:
     def test_asgi_subpackage_all_exportable(self) -> None:
         """Every name in adapters.asgi.__all__ is importable from adapters.asgi."""
         for name in logging_suite.logging.adapters.asgi.__all__:
-            assert hasattr(logging_suite.logging.adapters.asgi, name), (
-                f"asgi: Missing {name}"
-            )  # noqa: S101
+            assert hasattr(logging_suite.logging.adapters.asgi, name), (f"asgi: Missing {name}")  # noqa: S101
 
     def test_botocore_subpackage_all_exportable(self) -> None:
         """Every name in adapters.botocore.__all__ is importable from adapters.botocore."""
         for name in logging_suite.logging.adapters.botocore.__all__:
-            assert hasattr(logging_suite.logging.adapters.botocore, name), (
-                f"botocore: Missing {name}"
-            )  # noqa: S101
+            assert hasattr(logging_suite.logging.adapters.botocore, name), (f"botocore: Missing {name}")  # noqa: S101
 
     def test_celery_subpackage_all_exportable(self) -> None:
         """Every name in adapters.celery.__all__ is importable from adapters.celery."""
         for name in logging_suite.logging.adapters.celery.__all__:
-            assert hasattr(logging_suite.logging.adapters.celery, name), (
-                f"celery: Missing {name}"
-            )  # noqa: S101
+            assert hasattr(logging_suite.logging.adapters.celery, name), (f"celery: Missing {name}")  # noqa: S101
 
     def test_cloud_subpackage_all_exportable(self) -> None:
         """Every name in adapters.cloud.__all__ is importable from adapters.cloud."""
         for name in logging_suite.logging.adapters.cloud.__all__:
-            assert hasattr(logging_suite.logging.adapters.cloud, name), (
-                f"cloud: Missing {name}"
-            )  # noqa: S101
+            assert hasattr(logging_suite.logging.adapters.cloud, name), (f"cloud: Missing {name}")  # noqa: S101
 
     def test_httpx_subpackage_all_exportable(self) -> None:
         """Every name in adapters.httpx.__all__ is importable from adapters.httpx."""
         for name in logging_suite.logging.adapters.httpx.__all__:
-            assert hasattr(logging_suite.logging.adapters.httpx, name), (
-                f"httpx: Missing {name}"
-            )  # noqa: S101
+            assert hasattr(logging_suite.logging.adapters.httpx, name), (f"httpx: Missing {name}")  # noqa: S101
 
     def test_requests_subpackage_all_exportable(self) -> None:
         """Every name in adapters.requests.__all__ is importable from adapters.requests."""
         for name in logging_suite.logging.adapters.requests.__all__:
-            assert hasattr(logging_suite.logging.adapters.requests, name), (
-                f"requests: Missing {name}"
-            )  # noqa: S101
+            assert hasattr(logging_suite.logging.adapters.requests, name), (f"requests: Missing {name}")  # noqa: S101
 
     def test_stdlib_subpackage_all_exportable(self) -> None:
         """Every name in adapters.stdlib.__all__ is importable from adapters.stdlib."""
         for name in logging_suite.logging.adapters.stdlib.__all__:
-            assert hasattr(logging_suite.logging.adapters.stdlib, name), (
-                f"stdlib: Missing {name}"
-            )  # noqa: S101
+            assert hasattr(logging_suite.logging.adapters.stdlib, name), (f"stdlib: Missing {name}")  # noqa: S101
 
     def test_wsgi_subpackage_all_exportable(self) -> None:
         """Every name in adapters.wsgi.__all__ is importable from adapters.wsgi."""
         for name in logging_suite.logging.adapters.wsgi.__all__:
-            assert hasattr(logging_suite.logging.adapters.wsgi, name), (
-                f"wsgi: Missing {name}"
-            )  # noqa: S101
+            assert hasattr(logging_suite.logging.adapters.wsgi, name), (f"wsgi: Missing {name}")  # noqa: S101
 
     def test_correlation_subpackage_all_exportable(self) -> None:
         """Every name in context.correlation.__all__ is importable from context.correlation."""

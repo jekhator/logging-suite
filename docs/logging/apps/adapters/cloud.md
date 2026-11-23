@@ -76,17 +76,13 @@ from logging_suite.logging.adapters.cloud.cloud_client import CloudSetup
 
 def lambda_handler(event, context):
     correlation_id = CloudSetup.setup_correlation_id(event, context)
-    
+
     # Application code (services, loggers) inherit correlation_id via ContextVar
     svc = MyService()
     result = svc.process(event)
-    
+
     # Optional: inject correlation_id into HTTP response headers
-    return {
-        "statusCode": 200,
-        "headers": {"X-Correlation-ID": correlation_id},
-        "body": json.dumps(result)
-    }
+    return {"statusCode": 200, "headers": {"X-Correlation-ID": correlation_id}, "body": json.dumps(result)}
 ```
 
 For SQS or other async triggers (no HTTP response):

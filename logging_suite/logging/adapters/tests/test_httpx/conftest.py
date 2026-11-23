@@ -33,10 +33,7 @@ def make_request() -> Callable[..., Any]:
     Used by: TestCorrelationIdInjectorAsync, TestCorrelationIdInjectorSync.
     """
 
-    def factory(
-        method: str = "GET",
-        url: str = "https://example.com/test",
-    ) -> httpx_lib.Request:
+    def factory(method: str = "GET", url: str = "https://example.com/test") -> httpx_lib.Request:
         """Create a minimal httpx.Request for testing."""
         return httpx_lib.Request(method=method, url=url)
 

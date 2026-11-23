@@ -4,11 +4,7 @@
 
 from __future__ import annotations
 
-from logging_suite.logging import (
-    clear_correlation_id,
-    get_correlation_id,
-    set_correlation_id,
-)
+from logging_suite.logging import clear_correlation_id, get_correlation_id, set_correlation_id
 from logging_suite.logging.common.constants import tests as test_const
 
 

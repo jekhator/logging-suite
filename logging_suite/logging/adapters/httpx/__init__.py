@@ -1,8 +1,6 @@
 """logging-mixin HTTPX adapter: httpx_objects (HttpxCorrelation + types) + httpx_client (CorrelationIdInjector)."""
 
-from logging_suite.logging.adapters.httpx.httpx_client import (
-    CorrelationIdInjector,
-)
+from logging_suite.logging.adapters.httpx.httpx_client import CorrelationIdInjector
 from logging_suite.logging.adapters.httpx.httpx_objects import (
     AsyncRequestHook,
     EventHooks,
@@ -10,10 +8,4 @@ from logging_suite.logging.adapters.httpx.httpx_objects import (
     RequestHook,
 )
 
-__all__ = [
-    "AsyncRequestHook",
-    "CorrelationIdInjector",
-    "EventHooks",
-    "HttpxCorrelation",
-    "RequestHook",
-]
+__all__ = ["AsyncRequestHook", "CorrelationIdInjector", "EventHooks", "HttpxCorrelation", "RequestHook"]

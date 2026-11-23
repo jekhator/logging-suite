@@ -17,9 +17,7 @@ class LoggingMixin:
     @property
     def _logger(self) -> logging.Logger:
         """Per-class logger named <module>.<ClassName>."""
-        return logging.getLogger(self.__class__.__module__).getChild(
-            self.__class__.__name__,
-        )
+        return logging.getLogger(self.__class__.__module__).getChild(self.__class__.__name__)
 
     def _log_extra(self, extra: dict[str, Any]) -> dict[str, Any]:
         """Build the log extra: correlation_id + the caller's explicit kwargs."""

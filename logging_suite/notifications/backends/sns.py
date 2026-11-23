@@ -6,10 +6,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from logging_suite.notifications.backends import _objects as objs
-from logging_suite.notifications.common.constants import (
-    backends as const,
-    events as event_const,
-)
+from logging_suite.notifications.common.constants import backends as const, events as event_const
 from logging_suite.notifications.events import _objects as event_objs
 
 
@@ -41,43 +38,29 @@ class SNSBackend:
         body = event.body
 
         message_attributes = {
-            const.SNS_ATTRIBUTE_CATEGORY: {
-                **const.SNS_STRING_ATTRIBUTE,
-                const.SNS_STRING_VALUE_KEY: event.category,
-            },
+            const.SNS_ATTRIBUTE_CATEGORY: {**const.SNS_STRING_ATTRIBUTE, const.SNS_STRING_VALUE_KEY: event.category},
             const.SNS_ATTRIBUTE_SEVERITY: {
-                **const.SNS_STRING_ATTRIBUTE,
-                const.SNS_STRING_VALUE_KEY: event.severity.value,
+                **const.SNS_STRING_ATTRIBUTE, const.SNS_STRING_VALUE_KEY: event.severity.value
             },
             const.SNS_ATTRIBUTE_FINGERPRINT: {
-                **const.SNS_STRING_ATTRIBUTE,
-                const.SNS_STRING_VALUE_KEY: event.fingerprint,
-            },
+                **const.SNS_STRING_ATTRIBUTE, const.SNS_STRING_VALUE_KEY: event.fingerprint
+            }
         }
 
         if event.correlation_id:
             message_attributes[const.SNS_ATTRIBUTE_CORRELATION_ID] = {
-                **const.SNS_STRING_ATTRIBUTE,
-                const.SNS_STRING_VALUE_KEY: event.correlation_id,
+                **const.SNS_STRING_ATTRIBUTE, const.SNS_STRING_VALUE_KEY: event.correlation_id
             }
 
         try:
             response = self.sns_client.publish(
-                TopicArn=topic_arn,
-                Subject=title,
-                Message=body,
-                MessageAttributes=message_attributes,
+                TopicArn=topic_arn, Subject=title, Message=body, MessageAttributes=message_attributes
             )
 
-            message_id = response.get(
-                const.AWS_MESSAGE_ID_KEY, const.AWS_MESSAGE_ID_UNKNOWN
-            )
+            message_id = response.get(const.AWS_MESSAGE_ID_KEY, const.AWS_MESSAGE_ID_UNKNOWN)
             detail = const.DETAIL_MESSAGE_ID_TEMPLATE.format(message_id=message_id)
             return objs.DeliveryResult(
-                delivered=True,
-                backend_name=const.BACKEND_NAME_SNS,
-                detail=detail,
-                retryable=False,
+                delivered=True, backend_name=const.BACKEND_NAME_SNS, detail=detail, retryable=False
             )
         except Exception as error:
             error_response = getattr(error, const.AWS_RESPONSE_ATTR, {})
@@ -89,8 +72,5 @@ class SNSBackend:
             detail = const.DETAIL_SNS_ERROR_TEMPLATE.format(reason=reason)
 
             return objs.DeliveryResult(
-                delivered=False,
-                backend_name=const.BACKEND_NAME_SNS,
-                detail=detail,
-                retryable=is_retryable,
+                delivered=False, backend_name=const.BACKEND_NAME_SNS, detail=detail, retryable=is_retryable
             )

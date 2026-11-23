@@ -37,10 +37,7 @@ def celery_app() -> Callable[..., Any]:
     def factory() -> Celery:
         """Create a minimal Celery app with task_always_eager=True."""
         app = Celery()
-        app.conf.update(
-            task_always_eager=True,
-            task_eager_propagates=True,
-        )
+        app.conf.update(task_always_eager=True, task_eager_propagates=True)
         return app
 
     return factory

@@ -85,12 +85,8 @@ Resilient function execution with configurable backoff and predicate-based retry
 from logging_suite.retry import RetryPolicy, RetryExecutor
 
 policy = RetryPolicy(
-    max_attempts=3,
-    backoff_base_seconds=0.1,
-    backoff_multiplier=2.0,
-    backoff_max_seconds=1.0,
-    jitter=True,
-    should_retry=lambda exc: isinstance(exc, ConnectionError)
+    max_attempts=3, backoff_base_seconds=0.1, backoff_multiplier=2.0,
+    backoff_max_seconds=1.0, jitter=True, should_retry=lambda exc: isinstance(exc, ConnectionError)
 )
 
 executor = RetryExecutor()
@@ -225,13 +221,7 @@ class User(SensitiveRepr):
 #### 2. Use in your code
 
 ```python
-user = User(
-    id=1,
-    api_token="sk-123456",
-    email="alice@example.com",
-    ssn="123-45-6789",
-    name="Alice"
-)
+user = User(id=1, api_token="sk-123456", email="alice@example.com", ssn="123-45-6789", name="Alice")
 
 # Safe for logging
 logger.info("User created: %s", repr(user))
@@ -259,7 +249,7 @@ from logging_suite.logging import LoggingMixin, set_correlation_id
 
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s - correlation_id=%(correlation_id)s",
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s - correlation_id=%(correlation_id)s"
 )
 
 
@@ -311,11 +301,8 @@ class HealthRecord(SensitiveRepr):
     attending_physician: str
 
 record = HealthRecord(
-    patient_id=42,
-    ssn="987-65-4321",
-    diagnosis="Type 2 Diabetes",
-    treatment_notes="Prescribed Metformin 500mg",
-    attending_physician="Dr. Smith"
+    patient_id=42, ssn="987-65-4321", diagnosis="Type 2 Diabetes",
+    treatment_notes="Prescribed Metformin 500mg", attending_physician="Dr. Smith"
 )
 
 # Safe repr

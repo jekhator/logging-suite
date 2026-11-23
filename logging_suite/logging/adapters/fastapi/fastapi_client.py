@@ -8,20 +8,13 @@ from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from logging_suite.logging import clear_correlation_id, set_correlation_id
-from logging_suite.logging.adapters.fastapi import (
-    constants as const,
-    fastapi_objects as objs,
-)
+from logging_suite.logging.adapters.fastapi import constants as const, fastapi_objects as objs
 
 
 class CorrelationIdMiddleware(BaseHTTPMiddleware):
     """FastAPI middleware for correlation-ID context propagation."""
 
-    async def dispatch(
-        self,
-        request: Request,
-        call_next: Callable[[Request], Awaitable[Response]],
-    ) -> Response:
+    async def dispatch(self, request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
         """Extract correlation ID, set context, execute handler, inject response header, clear context."""
         headers = dict(request.headers)
         correlation = objs.FastApiCorrelation.from_headers(headers)

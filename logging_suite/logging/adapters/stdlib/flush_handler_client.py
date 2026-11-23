@@ -8,20 +8,13 @@ from collections import deque
 
 from logging_suite.logging.adapters.constants import stdlib as const
 from logging_suite.logging.adapters.stdlib import flush_handler_objects as objs
-from logging_suite.logging.context.correlation.correlation_client import (
-    get_correlation_id,
-)
+from logging_suite.logging.context.correlation.correlation_client import get_correlation_id
 
 
 class FlushOnWarningHandler(logging.Handler):
     """Buffer records per correlation_id; flush on WARNING+ to target handler."""
 
-    __slots__ = (
-        "_config",
-        "_buffers",
-        "_timestamps",
-        "_correlation_order",
-    )
+    __slots__ = ("_config", "_buffers", "_timestamps", "_correlation_order")
 
     def __init__(self, config: objs.FlushOnWarningConfig) -> None:
         """Initialize handler with config; set up per-correlation buffers."""
@@ -75,12 +68,7 @@ class FlushOnWarningHandler(logging.Handler):
         self._buffers.pop(correlation_id, None)
         self._timestamps.pop(correlation_id, None)
 
-    def _buffer_record(
-        self,
-        record: logging.LogRecord,
-        correlation_id: str,
-        current_time: float,
-    ) -> None:
+    def _buffer_record(self, record: logging.LogRecord, correlation_id: str, current_time: float) -> None:
         """Append record to per-correlation buffer; enforce capacity constraint."""
         if correlation_id not in self._buffers:
             self._buffers[correlation_id] = deque(maxlen=self._config.capacity)

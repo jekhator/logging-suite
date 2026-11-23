@@ -47,7 +47,7 @@ from . import correlation_objects as objs
 @dataclass(frozen=True, slots=True)
 class ContextVarClient:
     """Owns the correlation ContextVar and its current/set/clear operations."""
-    
+
     correlation_ctx: ContextVar[objs.CorrelationContext]
 
     def current_id(self) -> str | None:
@@ -63,9 +63,7 @@ class ContextVarClient:
         self.correlation_ctx.set(objs.CorrelationContext(None))
 
 
-_client: ContextVarClient = ContextVarClient(
-    ContextVar("correlation_ctx", default=objs.CorrelationContext(None))
-)
+_client: ContextVarClient = ContextVarClient(ContextVar("correlation_ctx", default=objs.CorrelationContext(None)))
 ```
 
 ### Public API & Re-exports
@@ -75,14 +73,9 @@ Both `CorrelationContext` and `ContextVarClient` are imported in the top-level p
 ```python
 # logging_suite/logging/__init__.py (curated public API)
 from logging_suite.logging.context.correlation.correlation_client import (
-    ContextVarClient,
-    clear_correlation_id,
-    get_correlation_id,
-    set_correlation_id,
+    ContextVarClient, clear_correlation_id, get_correlation_id, set_correlation_id
 )
-from logging_suite.logging.context.correlation.correlation_objects import (
-    CorrelationContext,
-)
+from logging_suite.logging.context.correlation.correlation_objects import CorrelationContext
 
 __all__ = [..., "ContextVarClient", "CorrelationContext", ...]
 ```

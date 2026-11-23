@@ -9,12 +9,8 @@ import pytest
 
 from logging_suite.logging import clear_correlation_id, set_correlation_id
 from logging_suite.logging.adapters.constants import stdlib as const
-from logging_suite.logging.adapters.stdlib.flush_handler_client import (
-    FlushOnWarningHandler,
-)
-from logging_suite.logging.adapters.stdlib.flush_handler_objects import (
-    FlushOnWarningConfig,
-)
+from logging_suite.logging.adapters.stdlib.flush_handler_client import FlushOnWarningHandler
+from logging_suite.logging.adapters.stdlib.flush_handler_objects import FlushOnWarningConfig
 from logging_suite.logging.common.constants import tests as test_const
 
 
@@ -59,47 +55,31 @@ class TestFlushOnWarningConfigValidation:
         """Config raises ValueError if flush_level < WARNING."""
         target = _RecordCapturingHandler()
         with pytest.raises(ValueError, match="flush_level must be >= logging.WARNING"):
-            FlushOnWarningConfig(
-                target_handler=target,
-                flush_level=logging.INFO,
-            )
+            FlushOnWarningConfig(target_handler=target, flush_level=logging.INFO)
 
     def test_config_requires_positive_ttl(self) -> None:
         """Config raises ValueError if ttl_seconds <= 0."""
         target = _RecordCapturingHandler()
         with pytest.raises(ValueError, match="ttl_seconds must be > 0"):
-            FlushOnWarningConfig(
-                target_handler=target,
-                ttl_seconds=0,
-            )
+            FlushOnWarningConfig(target_handler=target, ttl_seconds=0)
 
     def test_config_requires_positive_capacity(self) -> None:
         """Config raises ValueError if capacity <= 0."""
         target = _RecordCapturingHandler()
         with pytest.raises(ValueError, match="capacity must be > 0"):
-            FlushOnWarningConfig(
-                target_handler=target,
-                capacity=0,
-            )
+            FlushOnWarningConfig(target_handler=target, capacity=0)
 
     def test_config_requires_positive_max_correlations(self) -> None:
         """Config raises ValueError if max_correlations <= 0."""
         target = _RecordCapturingHandler()
         with pytest.raises(ValueError, match="max_correlations must be > 0"):
-            FlushOnWarningConfig(
-                target_handler=target,
-                max_correlations=0,
-            )
+            FlushOnWarningConfig(target_handler=target, max_correlations=0)
 
     def test_config_accepts_valid_values(self) -> None:
         """Config accepts valid values."""
         target = _RecordCapturingHandler()
         config = FlushOnWarningConfig(
-            target_handler=target,
-            flush_level=logging.WARNING,
-            ttl_seconds=100,
-            capacity=500,
-            max_correlations=50,
+            target_handler=target, flush_level=logging.WARNING, ttl_seconds=100, capacity=500, max_correlations=50
         )
         assert config.target_handler is target
         assert config.flush_level == logging.WARNING
@@ -119,13 +99,7 @@ class TestFlushOnWarningHandlerBuffering:
 
         set_correlation_id(test_const.CORRELATION_ID_VALID_ID_123)
         record = logging.LogRecord(
-            name="test",
-            level=logging.DEBUG,
-            pathname="test.py",
-            lineno=42,
-            msg="debug message",
-            args=(),
-            exc_info=None,
+            name="test", level=logging.DEBUG, pathname="test.py", lineno=42, msg="debug message", args=(), exc_info=None
         )
         record.correlation_id = test_const.CORRELATION_ID_VALID_ID_123
         handler.emit(record)
@@ -146,13 +120,8 @@ class TestFlushOnWarningHandlerBuffering:
         set_correlation_id(test_const.CORRELATION_ID_VALID_ID_123)
 
         debug_record = logging.LogRecord(
-            name="test",
-            level=logging.DEBUG,
-            pathname="test.py",
-            lineno=42,
-            msg="debug message",
-            args=(),
-            exc_info=None,
+            name="test", level=logging.DEBUG, pathname="test.py", lineno=42,
+            msg="debug message", args=(), exc_info=None
         )
         debug_record.correlation_id = test_const.CORRELATION_ID_VALID_ID_123
         handler.emit(debug_record)
@@ -160,13 +129,8 @@ class TestFlushOnWarningHandlerBuffering:
         assert len(target.records) == 0
 
         warning_record = logging.LogRecord(
-            name="test",
-            level=logging.WARNING,
-            pathname="test.py",
-            lineno=43,
-            msg="warning message",
-            args=(),
-            exc_info=None,
+            name="test", level=logging.WARNING, pathname="test.py", lineno=43,
+            msg="warning message", args=(), exc_info=None
         )
         warning_record.correlation_id = test_const.CORRELATION_ID_VALID_ID_123
         handler.emit(warning_record)
@@ -186,36 +150,23 @@ class TestFlushOnWarningHandlerBuffering:
         records = []
         for index in range(3):
             record = logging.LogRecord(
-                name="test",
-                level=logging.DEBUG,
-                pathname="test.py",
-                lineno=42 + index,
-                msg=f"message {index}",
-                args=(),
-                exc_info=None,
+                name="test", level=logging.DEBUG, pathname="test.py", lineno=42 + index,
+                msg=f"message {index}", args=(), exc_info=None
             )
             record.correlation_id = test_const.CORRELATION_ID_VALID_ID_123
             records.append(record)
             handler.emit(record)
 
         warning_record = logging.LogRecord(
-            name="test",
-            level=logging.WARNING,
-            pathname="test.py",
-            lineno=50,
-            msg="warning",
-            args=(),
-            exc_info=None,
+            name="test", level=logging.WARNING, pathname="test.py", lineno=50,
+            msg="warning", args=(), exc_info=None
         )
         warning_record.correlation_id = test_const.CORRELATION_ID_VALID_ID_123
         handler.emit(warning_record)
 
         assert len(target.records) == 4
         assert [flushed_record.msg for flushed_record in target.records] == [
-            "message 0",
-            "message 1",
-            "message 2",
-            "warning",
+            "message 0", "message 1", "message 2", "warning"
         ]
 
     def test_other_correlations_not_affected_by_flush(self) -> None:
@@ -231,48 +182,24 @@ class TestFlushOnWarningHandlerBuffering:
 
         set_correlation_id(test_const.CORRELATION_ID_VALID_ID_123)
         record_a1 = logging.LogRecord(
-            name="test",
-            level=logging.DEBUG,
-            pathname="test.py",
-            lineno=42,
-            msg="A step 1",
-            args=(),
-            exc_info=None,
+            name="test", level=logging.DEBUG, pathname="test.py", lineno=42, msg="A step 1", args=(), exc_info=None
         )
         handler.emit(record_a1)
 
         record_a2 = logging.LogRecord(
-            name="test",
-            level=logging.DEBUG,
-            pathname="test.py",
-            lineno=43,
-            msg="A step 2",
-            args=(),
-            exc_info=None,
+            name="test", level=logging.DEBUG, pathname="test.py", lineno=43, msg="A step 2", args=(), exc_info=None
         )
         handler.emit(record_a2)
 
         set_correlation_id(test_const.CORRELATION_ID_TRACE)
         record_b1 = logging.LogRecord(
-            name="test",
-            level=logging.DEBUG,
-            pathname="test.py",
-            lineno=44,
-            msg="B step 1",
-            args=(),
-            exc_info=None,
+            name="test", level=logging.DEBUG, pathname="test.py", lineno=44, msg="B step 1", args=(), exc_info=None
         )
         handler.emit(record_b1)
 
         set_correlation_id(test_const.CORRELATION_ID_VALID_ID_123)
         warning_a = logging.LogRecord(
-            name="test",
-            level=logging.WARNING,
-            pathname="test.py",
-            lineno=45,
-            msg="A failed",
-            args=(),
-            exc_info=None,
+            name="test", level=logging.WARNING, pathname="test.py", lineno=45, msg="A failed", args=(), exc_info=None
         )
         handler.emit(warning_a)
 
@@ -280,23 +207,14 @@ class TestFlushOnWarningHandlerBuffering:
         assert target.records[0].getMessage() == "A step 1"
         assert target.records[1].getMessage() == "A step 2"
         assert target.records[2].getMessage() == "A failed"
-        assert all(
-            flushed_record.getMessage() != "B step 1"
-            for flushed_record in target.records
-        )
+        assert all(flushed_record.getMessage() != "B step 1" for flushed_record in target.records)
 
         assert test_const.CORRELATION_ID_TRACE in handler._buffers
         assert len(handler._buffers[test_const.CORRELATION_ID_TRACE]) == 1
 
         set_correlation_id(test_const.CORRELATION_ID_TRACE)
         warning_b = logging.LogRecord(
-            name="test",
-            level=logging.WARNING,
-            pathname="test.py",
-            lineno=46,
-            msg="B timeout",
-            args=(),
-            exc_info=None,
+            name="test", level=logging.WARNING, pathname="test.py", lineno=46, msg="B timeout", args=(), exc_info=None
         )
         handler.emit(warning_b)
 
@@ -319,10 +237,7 @@ class TestFlushOnWarningHandlerTTL:
         Original correlation should be evicted.
         """
         target = _RecordCapturingHandler()
-        config = FlushOnWarningConfig(
-            target_handler=target,
-            ttl_seconds=10,
-        )
+        config = FlushOnWarningConfig(target_handler=target, ttl_seconds=10)
         handler = FlushOnWarningHandler(config)
 
         original_time = time.time
@@ -332,13 +247,7 @@ class TestFlushOnWarningHandlerTTL:
         try:
             set_correlation_id(test_const.CORRELATION_ID_VALID_ID_123)
             record_1 = logging.LogRecord(
-                name="test",
-                level=logging.DEBUG,
-                pathname="test.py",
-                lineno=42,
-                msg="message",
-                args=(),
-                exc_info=None,
+                name="test", level=logging.DEBUG, pathname="test.py", lineno=42, msg="message", args=(), exc_info=None
             )
             record_1.correlation_id = test_const.CORRELATION_ID_VALID_ID_123
             handler.emit(record_1)
@@ -349,13 +258,7 @@ class TestFlushOnWarningHandlerTTL:
 
             set_correlation_id(test_const.CORRELATION_ID_TRACE)
             record_2 = logging.LogRecord(
-                name="test",
-                level=logging.DEBUG,
-                pathname="test.py",
-                lineno=43,
-                msg="message 2",
-                args=(),
-                exc_info=None,
+                name="test", level=logging.DEBUG, pathname="test.py", lineno=43, msg="message 2", args=(), exc_info=None
             )
             record_2.correlation_id = test_const.CORRELATION_ID_TRACE
             handler.emit(record_2)
@@ -378,23 +281,15 @@ class TestFlushOnWarningHandlerCapacity:
         Only last 3 records retained (deque drops oldest when maxlen exceeded).
         """
         target = _RecordCapturingHandler()
-        config = FlushOnWarningConfig(
-            target_handler=target,
-            capacity=3,
-        )
+        config = FlushOnWarningConfig(target_handler=target, capacity=3)
         handler = FlushOnWarningHandler(config)
 
         set_correlation_id(test_const.CORRELATION_ID_VALID_ID_123)
 
         for index in range(5):
             record = logging.LogRecord(
-                name="test",
-                level=logging.DEBUG,
-                pathname="test.py",
-                lineno=42 + index,
-                msg=f"message {index}",
-                args=(),
-                exc_info=None,
+                name="test", level=logging.DEBUG, pathname="test.py", lineno=42 + index,
+                msg=f"message {index}", args=(), exc_info=None
             )
             record.correlation_id = test_const.CORRELATION_ID_VALID_ID_123
             handler.emit(record)
@@ -409,28 +304,17 @@ class TestFlushOnWarningHandlerCapacity:
         Only 2 correlations should remain (oldest evicted).
         """
         target = _RecordCapturingHandler()
-        config = FlushOnWarningConfig(
-            target_handler=target,
-            max_correlations=2,
-        )
+        config = FlushOnWarningConfig(target_handler=target, max_correlations=2)
         handler = FlushOnWarningHandler(config)
 
         correlations = [
-            test_const.CORRELATION_ID_VALID_ID_123,
-            test_const.CORRELATION_ID_TRACE,
-            test_const.CORRELATION_ID_ABC_123,
+            test_const.CORRELATION_ID_VALID_ID_123, test_const.CORRELATION_ID_TRACE, test_const.CORRELATION_ID_ABC_123
         ]
 
         for correlation_id in correlations:
             set_correlation_id(correlation_id)
             record = logging.LogRecord(
-                name="test",
-                level=logging.DEBUG,
-                pathname="test.py",
-                lineno=42,
-                msg="message",
-                args=(),
-                exc_info=None,
+                name="test", level=logging.DEBUG, pathname="test.py", lineno=42, msg="message", args=(), exc_info=None
             )
             record.correlation_id = correlation_id
             handler.emit(record)
@@ -453,13 +337,7 @@ class TestFlushOnWarningHandlerNullCorrelation:
         clear_correlation_id()
 
         record = logging.LogRecord(
-            name="test",
-            level=logging.DEBUG,
-            pathname="test.py",
-            lineno=42,
-            msg="message",
-            args=(),
-            exc_info=None,
+            name="test", level=logging.DEBUG, pathname="test.py", lineno=42, msg="message", args=(), exc_info=None
         )
         record.correlation_id = const.UNSET_CORRELATION_ID
         handler.emit(record)
@@ -479,13 +357,7 @@ class TestFlushOnWarningHandlerThreadSafety:
 
         set_correlation_id(test_const.CORRELATION_ID_VALID_ID_123)
         record = logging.LogRecord(
-            name="test",
-            level=logging.WARNING,
-            pathname="test.py",
-            lineno=42,
-            msg="warning",
-            args=(),
-            exc_info=None,
+            name="test", level=logging.WARNING, pathname="test.py", lineno=42, msg="warning", args=(), exc_info=None
         )
         record.correlation_id = test_const.CORRELATION_ID_VALID_ID_123
 
@@ -499,21 +371,12 @@ class TestFlushOnWarningHandlerEdgeCases:
     def test_evict_oldest_with_empty_correlation_order(self) -> None:
         """Evict oldest handles empty _correlation_order (defensive path)."""
         target = _RecordCapturingHandler()
-        config = FlushOnWarningConfig(
-            target_handler=target,
-            max_correlations=1,
-        )
+        config = FlushOnWarningConfig(target_handler=target, max_correlations=1)
         handler = FlushOnWarningHandler(config)
 
         set_correlation_id(test_const.CORRELATION_ID_VALID_ID_123)
         record = logging.LogRecord(
-            name="test",
-            level=logging.DEBUG,
-            pathname="test.py",
-            lineno=42,
-            msg="message",
-            args=(),
-            exc_info=None,
+            name="test", level=logging.DEBUG, pathname="test.py", lineno=42, msg="message", args=(), exc_info=None
         )
         record.correlation_id = test_const.CORRELATION_ID_VALID_ID_123
         handler.emit(record)
@@ -524,13 +387,7 @@ class TestFlushOnWarningHandlerEdgeCases:
 
         set_correlation_id(test_const.CORRELATION_ID_TRACE)
         record2 = logging.LogRecord(
-            name="test",
-            level=logging.DEBUG,
-            pathname="test.py",
-            lineno=43,
-            msg="message 2",
-            args=(),
-            exc_info=None,
+            name="test", level=logging.DEBUG, pathname="test.py", lineno=43, msg="message 2", args=(), exc_info=None
         )
         record2.correlation_id = test_const.CORRELATION_ID_TRACE
         handler.emit(record2)

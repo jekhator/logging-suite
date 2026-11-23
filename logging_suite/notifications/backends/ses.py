@@ -38,38 +38,25 @@ class SESBackend:
             message = MIMEMultipart()
             message[const.EMAIL_HEADER_SUBJECT] = event.title
             message[const.EMAIL_HEADER_FROM] = self.from_address
-            message[const.EMAIL_HEADER_TO] = const.EMAIL_ADDRESS_SEPARATOR.join(
-                self.to_addresses
-            )
+            message[const.EMAIL_HEADER_TO] = const.EMAIL_ADDRESS_SEPARATOR.join(self.to_addresses)
 
             message.attach(MIMEText(event.body, const.EMAIL_TEXT_SUBTYPE))
 
             for attachment in event.attachments:
-                part = MIMEBase(
-                    const.EMAIL_ATTACHMENT_MAIN_TYPE, const.EMAIL_ATTACHMENT_SUBTYPE
-                )
+                part = MIMEBase(const.EMAIL_ATTACHMENT_MAIN_TYPE, const.EMAIL_ATTACHMENT_SUBTYPE)
                 part.set_payload(attachment.content)
                 encoders.encode_base64(part)
-                disposition = const.EMAIL_ATTACHMENT_DISPOSITION_TEMPLATE.format(
-                    filename=attachment.filename
-                )
+                disposition = const.EMAIL_ATTACHMENT_DISPOSITION_TEMPLATE.format(filename=attachment.filename)
                 part.add_header(const.EMAIL_HEADER_CONTENT_DISPOSITION, disposition)
                 message.attach(part)
 
             raw_data = message.as_string()
-            response = self.ses_client.send_raw_email(
-                RawMessage={const.SES_RAW_MESSAGE_DATA_KEY: raw_data}
-            )
+            response = self.ses_client.send_raw_email(RawMessage={const.SES_RAW_MESSAGE_DATA_KEY: raw_data})
 
-            message_id = response.get(
-                const.AWS_MESSAGE_ID_KEY, const.AWS_MESSAGE_ID_UNKNOWN
-            )
+            message_id = response.get(const.AWS_MESSAGE_ID_KEY, const.AWS_MESSAGE_ID_UNKNOWN)
             detail = const.DETAIL_MESSAGE_ID_TEMPLATE.format(message_id=message_id)
             return objs.DeliveryResult(
-                delivered=True,
-                backend_name=const.BACKEND_NAME_SES,
-                detail=detail,
-                retryable=False,
+                delivered=True, backend_name=const.BACKEND_NAME_SES, detail=detail, retryable=False
             )
         except Exception as error:
             error_response = getattr(error, const.AWS_RESPONSE_ATTR, {})
@@ -81,8 +68,5 @@ class SESBackend:
             detail = const.DETAIL_SES_ERROR_TEMPLATE.format(reason=reason)
 
             return objs.DeliveryResult(
-                delivered=False,
-                backend_name=const.BACKEND_NAME_SES,
-                detail=detail,
-                retryable=is_retryable,
+                delivered=False, backend_name=const.BACKEND_NAME_SES, detail=detail, retryable=is_retryable
             )

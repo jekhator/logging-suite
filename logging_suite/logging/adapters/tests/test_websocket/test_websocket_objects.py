@@ -12,18 +12,14 @@ from logging_suite.logging.common.constants import tests as test_const
 class TestWebSocketCorrelationFromHeaders:
     """Tests for WebSocketCorrelation.from_headers() class method."""
 
-    def test_from_headers_with_header_present(
-        self, websocket_scope_with_correlation
-    ) -> None:
+    def test_from_headers_with_header_present(self, websocket_scope_with_correlation) -> None:
         """from_headers() decodes header and sets extracted=True."""
         headers = websocket_scope_with_correlation["headers"]
         correlation = objs.WebSocketCorrelation.from_headers(headers)
         assert correlation.correlation_id == test_const.CORRELATION_ID_TRACE
         assert correlation.extracted is True
 
-    def test_from_headers_without_header_generates_id(
-        self, basic_websocket_scope
-    ) -> None:
+    def test_from_headers_without_header_generates_id(self, basic_websocket_scope) -> None:
         """from_headers() generates 12-hex correlation ID and sets extracted=False."""
         headers = basic_websocket_scope["headers"]
         correlation = objs.WebSocketCorrelation.from_headers(headers)
@@ -31,18 +27,14 @@ class TestWebSocketCorrelationFromHeaders:
         assert all(char in "0123456789abcdef" for char in correlation.correlation_id)
         assert correlation.extracted is False
 
-    def test_from_headers_case_insensitive_header_match(
-        self, websocket_scope_with_case_insensitive_header
-    ) -> None:
+    def test_from_headers_case_insensitive_header_match(self, websocket_scope_with_case_insensitive_header) -> None:
         """from_headers() matches correlation ID header case-insensitively."""
         headers = websocket_scope_with_case_insensitive_header["headers"]
         correlation = objs.WebSocketCorrelation.from_headers(headers)
         assert correlation.correlation_id == test_const.CORRELATION_ID_CUSTOM
         assert correlation.extracted is True
 
-    def test_from_headers_rejects_carriage_return_in_header(
-        self, websocket_scope_with_carriage_return_header
-    ) -> None:
+    def test_from_headers_rejects_carriage_return_in_header(self, websocket_scope_with_carriage_return_header) -> None:
         """from_headers() rejects header with CR and falls back to generated ID."""
         headers = websocket_scope_with_carriage_return_header["headers"]
         correlation = objs.WebSocketCorrelation.from_headers(headers)
@@ -50,9 +42,7 @@ class TestWebSocketCorrelationFromHeaders:
         assert all(char in "0123456789abcdef" for char in correlation.correlation_id)
         assert correlation.extracted is False
 
-    def test_from_headers_rejects_newline_in_header(
-        self, websocket_scope_with_newline_header
-    ) -> None:
+    def test_from_headers_rejects_newline_in_header(self, websocket_scope_with_newline_header) -> None:
         """from_headers() rejects header with LF and falls back to generated ID."""
         headers = websocket_scope_with_newline_header["headers"]
         correlation = objs.WebSocketCorrelation.from_headers(headers)
@@ -60,9 +50,7 @@ class TestWebSocketCorrelationFromHeaders:
         assert all(char in "0123456789abcdef" for char in correlation.correlation_id)
         assert correlation.extracted is False
 
-    def test_from_headers_rejects_null_byte_in_header(
-        self, websocket_scope_with_null_byte_header
-    ) -> None:
+    def test_from_headers_rejects_null_byte_in_header(self, websocket_scope_with_null_byte_header) -> None:
         """from_headers() rejects header with null byte and falls back to generated ID."""
         headers = websocket_scope_with_null_byte_header["headers"]
         correlation = objs.WebSocketCorrelation.from_headers(headers)
@@ -70,9 +58,7 @@ class TestWebSocketCorrelationFromHeaders:
         assert all(char in "0123456789abcdef" for char in correlation.correlation_id)
         assert correlation.extracted is False
 
-    def test_from_headers_rejects_oversized_header(
-        self, websocket_scope_with_oversized_header
-    ) -> None:
+    def test_from_headers_rejects_oversized_header(self, websocket_scope_with_oversized_header) -> None:
         """from_headers() rejects header exceeding MAX_LENGTH and falls back to generated ID."""
         headers = websocket_scope_with_oversized_header["headers"]
         correlation = objs.WebSocketCorrelation.from_headers(headers)
@@ -84,12 +70,8 @@ class TestWebSocketCorrelationFromHeaders:
         """from_headers() processes only the first correlation ID header and ignores later ones."""
         headers = [
             (b"other-header", b"value1"),
-            (
-                const.CORRELATION_ID_HEADER.encode(),
-                test_const.CORRELATION_ID_TRACE.encode(),
-            ),
-            (b"another-header", b"value2"),
-            (const.CORRELATION_ID_HEADER.encode(), b"should-be-ignored"),
+            (const.CORRELATION_ID_HEADER.encode(), test_const.CORRELATION_ID_TRACE.encode()),
+            (b"another-header", b"value2"), (const.CORRELATION_ID_HEADER.encode(), b"should-be-ignored")
         ]
         correlation = objs.WebSocketCorrelation.from_headers(headers)
         assert correlation.correlation_id == test_const.CORRELATION_ID_TRACE
@@ -105,10 +87,7 @@ class TestWebSocketCorrelationIsSafe:
 
     def test_is_safe_with_valid_value(self) -> None:
         """_is_safe() returns True for clean alphanumeric value."""
-        assert (
-            objs.WebSocketCorrelation._is_safe(test_const.CORRELATION_ID_VALID_ID_123)
-            is True
-        )
+        assert objs.WebSocketCorrelation._is_safe(test_const.CORRELATION_ID_VALID_ID_123) is True
 
     def test_is_safe_with_hex_value(self) -> None:
         """_is_safe() returns True for 12-hex UUID value."""
@@ -157,9 +136,7 @@ class TestWebSocketCorrelationPostInit:
 
     def test_post_init_accepts_safe_string(self) -> None:
         """__post_init__() accepts any safe correlation_id."""
-        correlation = objs.WebSocketCorrelation(
-            correlation_id=test_const.CORRELATION_ID_VALID_ID_123, extracted=True
-        )
+        correlation = objs.WebSocketCorrelation(correlation_id=test_const.CORRELATION_ID_VALID_ID_123, extracted=True)
         assert correlation.correlation_id == test_const.CORRELATION_ID_VALID_ID_123
 
     def test_post_init_raises_on_oversized_correlation_id(self) -> None:

@@ -78,11 +78,9 @@ formatter = logging.Formatter("%(name)s - %(levelname)s - %(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-logger.info("User login attempt", extra={
-    "api_key": "sk_live_abc123xyz789secret",
-    "user_id": "user_123",
-    "action": "login"
-})
+logger.info(
+    "User login attempt", extra={"api_key": "sk_live_abc123xyz789secret", "user_id": "user_123", "action": "login"}
+)
 ```
 
 Output:
@@ -107,11 +105,9 @@ logger.addHandler(handler)
 
 RedactionClient.attach_default(logger)
 
-logger.info("User login attempt", extra={
-    "api_key": "sk_live_abc123xyz789secret",
-    "user_id": "user_123",
-    "action": "login"
-})
+logger.info(
+    "User login attempt", extra={"api_key": "sk_live_abc123xyz789secret", "user_id": "user_123", "action": "login"}
+)
 ```
 
 Output:
@@ -125,12 +121,12 @@ The api_key value is masked; user_id and action remain visible because their fie
 ### Multiple Sensitive Fields
 
 ```python
-logger.info("Request processed", extra={
-    "request_id": "req_abc123",
-    "password": "mySecurePassword123",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
-    "duration_ms": 245
-})
+logger.info(
+    "Request processed", extra={
+        "request_id": "req_abc123", "password": "mySecurePassword123", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+        "duration_ms": 245
+    }
+)
 ```
 
 Output with filter attached:

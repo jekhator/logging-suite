@@ -25,12 +25,8 @@ uv add logging-suite
 from logging_suite.retry import RetryExecutor, RetryPolicy
 
 policy = RetryPolicy(
-    max_attempts=4,
-    backoff_base_seconds=1.0,
-    backoff_multiplier=2.0,
-    backoff_max_seconds=60.0,
-    jitter=True,
-    retry_on=(IOError,),
+    max_attempts=4, backoff_base_seconds=1.0, backoff_multiplier=2.0,
+    backoff_max_seconds=60.0, jitter=True, retry_on=(IOError,)
 )
 
 
@@ -48,12 +44,8 @@ result = fetch_with_retry(123)
 from logging_suite.retry import RetryExecutor, RetryPolicy
 
 policy = RetryPolicy(
-    max_attempts=3,
-    backoff_base_seconds=0.5,
-    backoff_multiplier=2.0,
-    backoff_max_seconds=5.0,
-    jitter=False,
-    should_retry=lambda error: isinstance(error, IOError),
+    max_attempts=3, backoff_base_seconds=0.5, backoff_multiplier=2.0,
+    backoff_max_seconds=5.0, jitter=False, should_retry=lambda error: isinstance(error, IOError)
 )
 
 
@@ -117,12 +109,8 @@ class MyService:
 
 
 policy = RetryPolicy(
-    max_attempts=4,
-    backoff_base_seconds=0.1,
-    backoff_multiplier=2.0,
-    backoff_max_seconds=0.5,
-    jitter=True,
-    retry_on=(IOError,),
+    max_attempts=4, backoff_base_seconds=0.1, backoff_multiplier=2.0,
+    backoff_max_seconds=0.5, jitter=True, retry_on=(IOError,)
 )
 service = MyService()
 fetch = RetryExecutor().wrap(service.fetch_item, policy=policy)
@@ -159,12 +147,8 @@ import asyncio
 from logging_suite.retry import RetryExecutor, RetryPolicy
 
 policy = RetryPolicy(
-    max_attempts=3,
-    backoff_base_seconds=0.1,
-    backoff_multiplier=2.0,
-    backoff_max_seconds=1.0,
-    jitter=True,
-    retry_on=(ConnectionError,),
+    max_attempts=3, backoff_base_seconds=0.1, backoff_multiplier=2.0,
+    backoff_max_seconds=1.0, jitter=True, retry_on=(ConnectionError,)
 )
 
 

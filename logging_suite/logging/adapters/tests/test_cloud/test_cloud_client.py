@@ -29,10 +29,7 @@ class TestCloudSetupSetupCorrelationIdApiGateway:
         """setup_correlation_id() accepts optional context parameter."""
         event = {"headers": {"X-Correlation-ID": "api-gw-with-context"}}
         dummy_context = object()
-        correlation_id = cloud_client.CloudSetup.setup_correlation_id(
-            event,
-            context=dummy_context,
-        )
+        correlation_id = cloud_client.CloudSetup.setup_correlation_id(event, context=dummy_context)
         assert correlation_id == "api-gw-with-context"
         assert get_correlation_id() == "api-gw-with-context"
 
@@ -42,35 +39,16 @@ class TestCloudSetupSetupCorrelationIdSQS:
 
     def test_setup_correlation_id_sqs_returns_extracted_id(self) -> None:
         """setup_correlation_id() returns extracted SQS correlation_id."""
-        event = {
-            "Records": [
-                {
-                    "messageAttributes": {
-                        "X-Correlation-ID": {"stringValue": "sqs-extracted"}
-                    }
-                }
-            ]
-        }
+        event = {"Records": [{"messageAttributes": {"X-Correlation-ID": {"stringValue": "sqs-extracted"}}}]}
         correlation_id = cloud_client.CloudSetup.setup_correlation_id(event)
         assert correlation_id == "sqs-extracted"
         assert get_correlation_id() == "sqs-extracted"
 
     def test_setup_correlation_id_sqs_with_context_param(self) -> None:
         """setup_correlation_id() accepts context param with SQS event."""
-        event = {
-            "Records": [
-                {
-                    "messageAttributes": {
-                        "X-Correlation-ID": {"stringValue": "sqs-with-context"}
-                    }
-                }
-            ]
-        }
+        event = {"Records": [{"messageAttributes": {"X-Correlation-ID": {"stringValue": "sqs-with-context"}}}]}
         dummy_context = object()
-        correlation_id = cloud_client.CloudSetup.setup_correlation_id(
-            event,
-            context=dummy_context,
-        )
+        correlation_id = cloud_client.CloudSetup.setup_correlation_id(event, context=dummy_context)
         assert correlation_id == "sqs-with-context"
         assert get_correlation_id() == "sqs-with-context"
 
@@ -80,39 +58,16 @@ class TestCloudSetupSetupCorrelationIdSNS:
 
     def test_setup_correlation_id_sns_returns_extracted_id(self) -> None:
         """setup_correlation_id() returns extracted SNS correlation_id."""
-        event = {
-            "Records": [
-                {
-                    "Sns": {
-                        "MessageAttributes": {
-                            "X-Correlation-ID": {"Value": "sns-extracted"}
-                        }
-                    }
-                }
-            ]
-        }
+        event = {"Records": [{"Sns": {"MessageAttributes": {"X-Correlation-ID": {"Value": "sns-extracted"}}}}]}
         correlation_id = cloud_client.CloudSetup.setup_correlation_id(event)
         assert correlation_id == "sns-extracted"
         assert get_correlation_id() == "sns-extracted"
 
     def test_setup_correlation_id_sns_with_context_param(self) -> None:
         """setup_correlation_id() accepts context param with SNS event."""
-        event = {
-            "Records": [
-                {
-                    "Sns": {
-                        "MessageAttributes": {
-                            "X-Correlation-ID": {"Value": "sns-with-context"}
-                        }
-                    }
-                }
-            ]
-        }
+        event = {"Records": [{"Sns": {"MessageAttributes": {"X-Correlation-ID": {"Value": "sns-with-context"}}}}]}
         dummy_context = object()
-        correlation_id = cloud_client.CloudSetup.setup_correlation_id(
-            event,
-            context=dummy_context,
-        )
+        correlation_id = cloud_client.CloudSetup.setup_correlation_id(event, context=dummy_context)
         assert correlation_id == "sns-with-context"
         assert get_correlation_id() == "sns-with-context"
 
@@ -131,10 +86,7 @@ class TestCloudSetupSetupCorrelationIdEventBridge:
         """setup_correlation_id() accepts context param with EventBridge event."""
         event = {"detail": {"correlation_id": "eventbridge-with-context"}}
         dummy_context = object()
-        correlation_id = cloud_client.CloudSetup.setup_correlation_id(
-            event,
-            context=dummy_context,
-        )
+        correlation_id = cloud_client.CloudSetup.setup_correlation_id(event, context=dummy_context)
         assert correlation_id == "eventbridge-with-context"
         assert get_correlation_id() == "eventbridge-with-context"
 
@@ -153,10 +105,7 @@ class TestCloudSetupSetupCorrelationIdTopLevel:
         """setup_correlation_id() accepts context param with top-level event."""
         event = {"correlation_id": "toplevel-with-context"}
         dummy_context = object()
-        correlation_id = cloud_client.CloudSetup.setup_correlation_id(
-            event,
-            context=dummy_context,
-        )
+        correlation_id = cloud_client.CloudSetup.setup_correlation_id(event, context=dummy_context)
         assert correlation_id == "toplevel-with-context"
         assert get_correlation_id() == "toplevel-with-context"
 
@@ -184,10 +133,7 @@ class TestCloudSetupSetupCorrelationIdGenerated:
         """setup_correlation_id() generates id and accepts context param."""
         event: dict[str, Any] = {}
         dummy_context = object()
-        correlation_id = cloud_client.CloudSetup.setup_correlation_id(
-            event,
-            context=dummy_context,
-        )
+        correlation_id = cloud_client.CloudSetup.setup_correlation_id(event, context=dummy_context)
         assert isinstance(correlation_id, str)
         assert len(correlation_id) == 12
         assert get_correlation_id() == correlation_id

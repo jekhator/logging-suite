@@ -20,11 +20,5 @@ class TestSuiteVersionConsistency:
         sensitivity_version = logging_suite.sensitivity.__version__
         retry_version = logging_suite.retry.__version__
 
-        assert (
-            latency_version
-            == logging_version
-            == notifications_version
-            == sensitivity_version
-            == retry_version
-        )
+        assert latency_version == logging_version == notifications_version == sensitivity_version == retry_version
         assert logging_version == "0.7.1"

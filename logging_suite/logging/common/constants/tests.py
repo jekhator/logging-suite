@@ -91,9 +91,7 @@ HTTP_EVENT_REQUEST: Final[str] = "http.request"
 
 RAISE_MATCH_BOOM: Final[str] = "boom"
 RAISE_MATCH_TEST_ERROR: Final[str] = "test error"
-RAISE_MATCH_LOGGED_CONTAINER_EVENT_EMPTY: Final[str] = (
-    "LoggedContainer.event must be non-empty"
-)
+RAISE_MATCH_LOGGED_CONTAINER_EVENT_EMPTY: Final[str] = "LoggedContainer.event must be non-empty"
 
 
 """Logger names for testing."""

@@ -5,10 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass
 
-from logging_suite.retry.common.constants import (
-    backoff as backoff_const,
-    errors as const,
-)
+from logging_suite.retry.common.constants import backoff as backoff_const, errors as const
 
 
 @dataclass(frozen=True, slots=True)

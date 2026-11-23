@@ -23,8 +23,7 @@ class TestCorrelationIdInjectorRegistration:
         session = mock.Mock()
         botocore_client.CorrelationIdInjector.register_on_session(session)
         session.register.assert_called_once_with(
-            const.BEFORE_SIGN_EVENT,
-            botocore_client.CorrelationIdInjector.inject_before_sign,
+            const.BEFORE_SIGN_EVENT, botocore_client.CorrelationIdInjector.inject_before_sign
         )
 
     def test_register_on_client_registers_before_sign_handler(self) -> None:
@@ -32,62 +31,41 @@ class TestCorrelationIdInjectorRegistration:
         client = mock.Mock()
         botocore_client.CorrelationIdInjector.register_on_client(client)
         client.meta.events.register.assert_called_once_with(
-            const.BEFORE_SIGN_EVENT,
-            botocore_client.CorrelationIdInjector.inject_before_sign,
+            const.BEFORE_SIGN_EVENT, botocore_client.CorrelationIdInjector.inject_before_sign
         )
 
 
 class TestCorrelationIdInjectorInjectBeforeSign:
     """Tests for CorrelationIdInjector.inject_before_sign() class method."""
 
-    def test_inject_with_set_correlation_writes_header(
-        self,
-        make_request: Callable[..., Any],
-    ) -> None:
+    def test_inject_with_set_correlation_writes_header(self, make_request: Callable[..., Any]) -> None:
         """inject_before_sign() writes X-Correlation-ID header when correlation_id is set."""
         set_correlation_id(test_const.CORRELATION_ID_VALID_ID_123)
         request = make_request()
         botocore_client.CorrelationIdInjector.inject_before_sign(request=request)
-        assert (
-            request.headers[const.CORRELATION_ID_HEADER]
-            == test_const.CORRELATION_ID_VALID_ID_123
-        )
+        assert request.headers[const.CORRELATION_ID_HEADER] == test_const.CORRELATION_ID_VALID_ID_123
 
-    def test_inject_without_context_is_noop(
-        self,
-        make_request: Callable[..., Any],
-    ) -> None:
+    def test_inject_without_context_is_noop(self, make_request: Callable[..., Any]) -> None:
         """inject_before_sign() does nothing when context is not set."""
         request = make_request()
         botocore_client.CorrelationIdInjector.inject_before_sign(request=request)
         assert const.CORRELATION_ID_HEADER not in request.headers
 
-    def test_inject_with_unsafe_context_is_noop(
-        self,
-        make_request: Callable[..., Any],
-    ) -> None:
+    def test_inject_with_unsafe_context_is_noop(self, make_request: Callable[..., Any]) -> None:
         """inject_before_sign() does nothing when context has an unsafe value."""
         set_correlation_id("bad\r\nvalue")
         request = make_request()
         botocore_client.CorrelationIdInjector.inject_before_sign(request=request)
         assert const.CORRELATION_ID_HEADER not in request.headers
 
-    def test_inject_replaces_existing_header_without_duplicating(
-        self,
-        make_request: Callable[..., Any],
-    ) -> None:
+    def test_inject_replaces_existing_header_without_duplicating(self, make_request: Callable[..., Any]) -> None:
         """inject_before_sign() overwrites a pre-existing header rather than appending a duplicate."""
         set_correlation_id(test_const.CORRELATION_ID_VALID_ID_123)
         request = make_request()
         request.headers[const.CORRELATION_ID_HEADER] = "stale-value"
         botocore_client.CorrelationIdInjector.inject_before_sign(request=request)
-        assert (
-            request.headers[const.CORRELATION_ID_HEADER]
-            == test_const.CORRELATION_ID_VALID_ID_123
-        )
-        assert request.headers.get_all(const.CORRELATION_ID_HEADER) == [
-            test_const.CORRELATION_ID_VALID_ID_123,
-        ]
+        assert request.headers[const.CORRELATION_ID_HEADER] == test_const.CORRELATION_ID_VALID_ID_123
+        assert request.headers.get_all(const.CORRELATION_ID_HEADER) == [test_const.CORRELATION_ID_VALID_ID_123]
 
 
 class TestCorrelationIdInjectorRealDispatch:
@@ -98,23 +76,12 @@ class TestCorrelationIdInjectorRealDispatch:
         set_correlation_id(test_const.CORRELATION_ID_VALID_ID_123)
         session = Session()
         client = session.create_client(
-            "s3",
-            region_name="us-east-1",
-            aws_access_key_id="testing",
-            aws_secret_access_key="testing",
+            "s3", region_name="us-east-1", aws_access_key_id="testing", aws_secret_access_key="testing"
         )
         botocore_client.CorrelationIdInjector.register_on_client(client)
         request = AWSRequest(method="GET", url="https://s3.amazonaws.com/", headers={})
         client.meta.events.emit(
-            "before-sign.s3.ListBuckets",
-            request=request,
-            signing_name="s3",
-            region_name="us-east-1",
-            signature_version="s3v4",
-            request_signer=None,
-            operation_name="ListBuckets",
+            "before-sign.s3.ListBuckets", request=request, signing_name="s3", region_name="us-east-1",
+            signature_version="s3v4", request_signer=None, operation_name="ListBuckets"
         )
-        assert (
-            request.headers[const.CORRELATION_ID_HEADER]
-            == test_const.CORRELATION_ID_VALID_ID_123
-        )
+        assert request.headers[const.CORRELATION_ID_HEADER] == test_const.CORRELATION_ID_VALID_ID_123

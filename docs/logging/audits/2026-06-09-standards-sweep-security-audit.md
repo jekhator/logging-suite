@@ -254,16 +254,10 @@ UNSAFE_HEADER_CHARS: Final = frozenset({"\r", "\n", "\0"})
 **Pattern** (ASGI conftest.py):
 ```python
 # Before:
-return {
-    "type": "http",
-    "headers": [...],
-}
+return {"type": "http", "headers": [...]}
 
 # After:
-return {
-    const.TYPE_KEY: "http",
-    const.HEADERS_KEY: [...],
-}
+return {const.TYPE_KEY: "http", const.HEADERS_KEY: [...]}
 ```
 
 **Security impact**: Zero. Fixtures are test data; using extracted constants improves maintainability and prevents typos, but does not change validation logic.

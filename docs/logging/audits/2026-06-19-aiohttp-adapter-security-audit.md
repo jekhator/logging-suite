@@ -189,12 +189,10 @@ No mandatory actions. The adapter is production-ready. The following are optiona
 
    ```python
    async def _inject(
-       session: aiohttp.ClientSession,
-       trace_config_ctx: object,
-       params: aiohttp.TraceRequestStartParams,
+       session: aiohttp.ClientSession, trace_config_ctx: object, params: aiohttp.TraceRequestStartParams
    ) -> None:
        """Inject X-Correlation-ID header into outbound request when context is populated.
-       
+
        If context is unset or contains unsafe characters, this method returns early
        without modifying headers (silent no-op tracing).
        """

@@ -33,9 +33,7 @@ def make_trace_params() -> Callable[..., Any]:
     Used by: TestCorrelationIdInjectorInject.
     """
 
-    def factory(
-        headers: dict[str, str] | None = None,
-    ) -> aiohttp.TraceRequestStartParams:
+    def factory(headers: dict[str, str] | None = None) -> aiohttp.TraceRequestStartParams:
         """Create a minimal aiohttp.TraceRequestStartParams mock for testing."""
         params = mock.MagicMock(spec=aiohttp.TraceRequestStartParams)
         params.headers = headers or {}

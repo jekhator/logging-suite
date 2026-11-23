@@ -26,20 +26,13 @@ class CloudCorrelation:
         """Extract correlation_id from cloud event by AWS-source precedence; generate if none present or unsafe."""
         headers = event.get(const.EVENT_KEY_HEADERS) or {}
         candidate = next(
-            (
-                value
-                for key, value in headers.items()
-                if key.lower() == const.CORRELATION_ID_HEADER.lower()
-            ),
-            None,
+            (value for key, value in headers.items() if key.lower() == const.CORRELATION_ID_HEADER.lower()), None
         )
         if candidate is None:
             records = event.get(const.EVENT_KEY_RECORDS) or []
             if records:
                 attributes = (
-                    records[const.FIRST_RECORD_INDEX].get(
-                        const.EVENT_KEY_MESSAGE_ATTRIBUTES_SQS
-                    )
+                    records[const.FIRST_RECORD_INDEX].get(const.EVENT_KEY_MESSAGE_ATTRIBUTES_SQS)
                     or records[const.FIRST_RECORD_INDEX]
                     .get(const.EVENT_KEY_SNS, {})
                     .get(const.EVENT_KEY_MESSAGE_ATTRIBUTES_SNS)
@@ -50,18 +43,13 @@ class CloudCorrelation:
                     const.MESSAGE_ATTRIBUTE_STRING_VALUE_KEY_SQS
                 ) or entry.get(const.MESSAGE_ATTRIBUTE_VALUE_KEY_SNS)
         if candidate is None:
-            candidate = (event.get(const.EVENT_KEY_DETAIL) or {}).get(
-                const.CORRELATION_ID_KEY,
-            )
+            candidate = (event.get(const.EVENT_KEY_DETAIL) or {}).get(const.CORRELATION_ID_KEY)
         if candidate is None:
             candidate = event.get(const.CORRELATION_ID_KEY)
         if isinstance(candidate, str) and cls._is_safe(candidate):
             return cls(correlation_id=candidate, extracted=True)
         generated_id = uuid4().hex[: const.GENERATED_ID_LENGTH]
-        return cls(
-            correlation_id=generated_id,
-            extracted=False,
-        )
+        return cls(correlation_id=generated_id, extracted=False)
 
     @staticmethod
     def _is_safe(value: str) -> bool:

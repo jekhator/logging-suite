@@ -17,11 +17,7 @@ class WsgiApp:
     app: objs.App
     correlation: objs.WsgiCorrelation
 
-    def __call__(
-        self,
-        environ: objs.Environ,
-        start_response: objs.StartResponse,
-    ) -> Iterable[bytes]:
+    def __call__(self, environ: objs.Environ, start_response: objs.StartResponse) -> Iterable[bytes]:
         """Set correlation context, then delegate to the wrapped WSGI app."""
         set_correlation_id(self.correlation.correlation_id)
         return self.app(environ, start_response)
@@ -33,19 +29,13 @@ class CorrelationIdMiddleware:
 
     app: objs.App
 
-    def __call__(
-        self,
-        environ: objs.Environ,
-        start_response: objs.StartResponse,
-    ) -> Iterable[bytes]:
+    def __call__(self, environ: objs.Environ, start_response: objs.StartResponse) -> Iterable[bytes]:
         """Resolve correlation, wrap start_response to inject header, execute, clear on exit."""
         correlation = objs.WsgiCorrelation.from_environ(environ)
         set_correlation_id(correlation.correlation_id)
 
         def wrapped_start_response(
-            status: str,
-            headers: objs.Headers,
-            exc_info: Optional[objs.ExcInfo] = None,
+            status: str, headers: objs.Headers, exc_info: Optional[objs.ExcInfo] = None
         ) -> Callable[[bytes], None]:
             """Inject correlation ID header before delegating to original start_response."""
             headers.append(correlation.response_header)

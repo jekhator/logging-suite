@@ -26,10 +26,7 @@ class TestAiohttpCorrelationFromContext:
         assert correlation is None
 
     @pytest.mark.parametrize("unsafe_char", ["\r", "\n", "\0"])
-    def test_from_context_with_unsafe_chars_returns_none(
-        self,
-        unsafe_char: str,
-    ) -> None:
+    def test_from_context_with_unsafe_chars_returns_none(self, unsafe_char: str) -> None:
         """from_context() returns None when correlation_id contains unsafe chars."""
         unsafe_id = f"id-with-{unsafe_char}-char"
         set_correlation_id(unsafe_id)
@@ -69,9 +66,7 @@ class TestAiohttpCorrelationHeaderTuple:
 
     def test_header_tuple_returns_canonical_pair(self) -> None:
         """header_tuple returns (header_name, correlation_id) pair."""
-        correlation = objs.AiohttpCorrelation(
-            correlation_id=test_const.HTTPX_CORR_ID_XYZ
-        )
+        correlation = objs.AiohttpCorrelation(correlation_id=test_const.HTTPX_CORR_ID_XYZ)
         name, value = correlation.header_tuple
         assert name == const.CORRELATION_ID_HEADER
         assert value == test_const.HTTPX_CORR_ID_XYZ

@@ -5,9 +5,7 @@ from __future__ import annotations
 import logging
 
 from logging_suite.logging.adapters.constants import stdlib as const
-from logging_suite.logging.context.correlation.correlation_client import (
-    get_correlation_id,
-)
+from logging_suite.logging.context.correlation.correlation_client import get_correlation_id
 
 
 class CorrelationLogFilter(logging.Filter):
@@ -15,11 +13,7 @@ class CorrelationLogFilter(logging.Filter):
 
     def filter(self, record: logging.LogRecord) -> bool:
         """Set record.correlation_id from context (or the unset sentinel); always return True."""
-        setattr(
-            record,
-            const.CORRELATION_RECORD_ATTR,
-            get_correlation_id() or const.UNSET_CORRELATION_ID,
-        )
+        setattr(record, const.CORRELATION_RECORD_ATTR, get_correlation_id() or const.UNSET_CORRELATION_ID)
         return True
 
     @classmethod

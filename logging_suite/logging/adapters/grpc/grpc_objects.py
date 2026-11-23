@@ -30,10 +30,7 @@ class GRPCCorrelation:
         if isinstance(candidate, str) and cls._is_safe(candidate):
             return cls(correlation_id=candidate, extracted=True)
         generated_id = uuid4().hex[: const.GENERATED_ID_LENGTH]
-        return cls(
-            correlation_id=generated_id,
-            extracted=False,
-        )
+        return cls(correlation_id=generated_id, extracted=False)
 
     @staticmethod
     def _is_safe(value: str) -> bool:
