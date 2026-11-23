@@ -53,8 +53,7 @@ def make_environ() -> Callable[[dict[str, str] | None], dict[str, Any]]:
 
 @pytest.fixture
 def start_response_capture() -> tuple[
-    list[tuple[str, list[tuple[str, str]]]],
-    Callable[[str, list[tuple[str, str]], Any], Callable[[bytes], None]],
+    list[tuple[str, list[tuple[str, str]]]], Callable[[str, list[tuple[str, str]], Any], Callable[[bytes], None]]
 ]:
     """
     Capture start_response calls and return (captured list, start_response callable) tuple.
@@ -63,11 +62,7 @@ def start_response_capture() -> tuple[
     """
     captured: list[tuple[str, list[tuple[str, str]]]] = []
 
-    def start_response(
-        status: str,
-        headers: list[tuple[str, str]],
-        exc_info: Any = None,
-    ) -> Callable[[bytes], None]:
+    def start_response(status: str, headers: list[tuple[str, str]], exc_info: Any = None) -> Callable[[bytes], None]:
         captured.append((status, headers))
         return lambda data: None
 
@@ -82,10 +77,7 @@ def mock_app() -> Callable[[dict[str, Any], Any], Any]:
     Used by: no test class yet.
     """
 
-    def app(
-        environ: dict[str, Any],
-        start_response: Any,
-    ) -> Any:
+    def app(environ: dict[str, Any], start_response: Any) -> Any:
         return iter([])
 
     return app
@@ -99,10 +91,7 @@ def mock_app_that_calls_start_response() -> Callable[[dict[str, Any], Any], Any]
     Used by: TestCorrelationIdMiddleware.
     """
 
-    def app(
-        environ: dict[str, Any],
-        start_response: Any,
-    ) -> Any:
+    def app(environ: dict[str, Any], start_response: Any) -> Any:
         start_response(
             test_const.HTTP_STATUS_200_OK,
             [(test_const.HTTP_HEADER_CONTENT_TYPE, test_const.HTTP_MIME_TEXT_PLAIN)],
@@ -113,9 +102,7 @@ def mock_app_that_calls_start_response() -> Callable[[dict[str, Any], Any], Any]
 
 
 @pytest.fixture
-def log_capture(
-    service_class: type[LoggingMixin],
-) -> tuple[LoggingMixin, _RecordCollector]:
+def log_capture(service_class: type[LoggingMixin]) -> tuple[LoggingMixin, _RecordCollector]:
     """
     Service instance + collector handler attached at DEBUG level.
 

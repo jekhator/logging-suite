@@ -105,9 +105,7 @@ class Dispatcher:
         )
 
     def _apply_egress_gate(
-        self,
-        event: event_objs.NotificationEvent,
-        backend: backend_objs.NotificationBackend,
+        self, event: event_objs.NotificationEvent, backend: backend_objs.NotificationBackend
     ) -> event_objs.NotificationEvent:
         """
         Gate sensitive content for external_egress backends.

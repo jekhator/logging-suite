@@ -33,10 +33,7 @@ def make_request() -> Callable[..., Any]:
     Used by: TestCorrelationIdInjectorInjectBeforeSign.
     """
 
-    def factory(
-        method: str = "GET",
-        url: str = "https://example.com/test",
-    ) -> AWSRequest:
+    def factory(method: str = "GET", url: str = "https://example.com/test") -> AWSRequest:
         """Create a minimal botocore AWSRequest for testing."""
         return AWSRequest(method=method, url=url, headers={})
 

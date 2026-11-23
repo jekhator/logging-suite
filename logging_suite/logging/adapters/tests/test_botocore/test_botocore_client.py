@@ -40,10 +40,7 @@ class TestCorrelationIdInjectorRegistration:
 class TestCorrelationIdInjectorInjectBeforeSign:
     """Tests for CorrelationIdInjector.inject_before_sign() class method."""
 
-    def test_inject_with_set_correlation_writes_header(
-        self,
-        make_request: Callable[..., Any],
-    ) -> None:
+    def test_inject_with_set_correlation_writes_header(self, make_request: Callable[..., Any]) -> None:
         """inject_before_sign() writes X-Correlation-ID header when correlation_id is set."""
         set_correlation_id(test_const.CORRELATION_ID_VALID_ID_123)
         request = make_request()
@@ -53,29 +50,20 @@ class TestCorrelationIdInjectorInjectBeforeSign:
             == test_const.CORRELATION_ID_VALID_ID_123
         )
 
-    def test_inject_without_context_is_noop(
-        self,
-        make_request: Callable[..., Any],
-    ) -> None:
+    def test_inject_without_context_is_noop(self, make_request: Callable[..., Any]) -> None:
         """inject_before_sign() does nothing when context is not set."""
         request = make_request()
         botocore_client.CorrelationIdInjector.inject_before_sign(request=request)
         assert const.CORRELATION_ID_HEADER not in request.headers
 
-    def test_inject_with_unsafe_context_is_noop(
-        self,
-        make_request: Callable[..., Any],
-    ) -> None:
+    def test_inject_with_unsafe_context_is_noop(self, make_request: Callable[..., Any]) -> None:
         """inject_before_sign() does nothing when context has an unsafe value."""
         set_correlation_id("bad\r\nvalue")
         request = make_request()
         botocore_client.CorrelationIdInjector.inject_before_sign(request=request)
         assert const.CORRELATION_ID_HEADER not in request.headers
 
-    def test_inject_replaces_existing_header_without_duplicating(
-        self,
-        make_request: Callable[..., Any],
-    ) -> None:
+    def test_inject_replaces_existing_header_without_duplicating(self, make_request: Callable[..., Any]) -> None:
         """inject_before_sign() overwrites a pre-existing header rather than appending a duplicate."""
         set_correlation_id(test_const.CORRELATION_ID_VALID_ID_123)
         request = make_request()

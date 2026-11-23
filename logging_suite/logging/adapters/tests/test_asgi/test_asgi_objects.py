@@ -25,9 +25,7 @@ class TestAsgiCorrelationFromScope:
         assert all(char in "0123456789abcdef" for char in correlation.correlation_id)
         assert correlation.from_header is False
 
-    def test_from_scope_case_insensitive_header_match(
-        self, http_scope_with_case_insensitive_header
-    ) -> None:
+    def test_from_scope_case_insensitive_header_match(self, http_scope_with_case_insensitive_header) -> None:
         """from_scope() matches correlation ID header case-insensitively."""
         correlation = asgi_objs.AsgiCorrelation.from_scope(
             http_scope_with_case_insensitive_header
@@ -35,9 +33,7 @@ class TestAsgiCorrelationFromScope:
         assert correlation.correlation_id == test_const.CORRELATION_ID_CUSTOM
         assert correlation.from_header is True
 
-    def test_from_scope_rejects_carriage_return_in_header(
-        self, http_scope_with_carriage_return_header
-    ) -> None:
+    def test_from_scope_rejects_carriage_return_in_header(self, http_scope_with_carriage_return_header) -> None:
         """from_scope() rejects header with CR and falls back to generated ID."""
         correlation = asgi_objs.AsgiCorrelation.from_scope(
             http_scope_with_carriage_return_header
@@ -46,9 +42,7 @@ class TestAsgiCorrelationFromScope:
         assert all(char in "0123456789abcdef" for char in correlation.correlation_id)
         assert correlation.from_header is False
 
-    def test_from_scope_rejects_newline_in_header(
-        self, http_scope_with_newline_header
-    ) -> None:
+    def test_from_scope_rejects_newline_in_header(self, http_scope_with_newline_header) -> None:
         """from_scope() rejects header with LF and falls back to generated ID."""
         correlation = asgi_objs.AsgiCorrelation.from_scope(
             http_scope_with_newline_header
@@ -57,9 +51,7 @@ class TestAsgiCorrelationFromScope:
         assert all(char in "0123456789abcdef" for char in correlation.correlation_id)
         assert correlation.from_header is False
 
-    def test_from_scope_rejects_null_byte_in_header(
-        self, http_scope_with_null_byte_header
-    ) -> None:
+    def test_from_scope_rejects_null_byte_in_header(self, http_scope_with_null_byte_header) -> None:
         """from_scope() rejects header with null byte and falls back to generated ID."""
         correlation = asgi_objs.AsgiCorrelation.from_scope(
             http_scope_with_null_byte_header
@@ -68,9 +60,7 @@ class TestAsgiCorrelationFromScope:
         assert all(char in "0123456789abcdef" for char in correlation.correlation_id)
         assert correlation.from_header is False
 
-    def test_from_scope_rejects_oversized_header(
-        self, http_scope_with_oversized_header
-    ) -> None:
+    def test_from_scope_rejects_oversized_header(self, http_scope_with_oversized_header) -> None:
         """from_scope() rejects header exceeding MAX_LENGTH and falls back to generated ID."""
         correlation = asgi_objs.AsgiCorrelation.from_scope(
             http_scope_with_oversized_header
@@ -79,9 +69,7 @@ class TestAsgiCorrelationFromScope:
         assert all(char in "0123456789abcdef" for char in correlation.correlation_id)
         assert correlation.from_header is False
 
-    def test_from_scope_rejects_invalid_utf8_header(
-        self, http_scope_with_invalid_utf8_header
-    ) -> None:
+    def test_from_scope_rejects_invalid_utf8_header(self, http_scope_with_invalid_utf8_header) -> None:
         """from_scope() rejects invalid UTF-8 header and falls back to generated ID without exception."""
         correlation = asgi_objs.AsgiCorrelation.from_scope(
             http_scope_with_invalid_utf8_header
@@ -90,9 +78,7 @@ class TestAsgiCorrelationFromScope:
         assert all(char in "0123456789abcdef" for char in correlation.correlation_id)
         assert correlation.from_header is False
 
-    def test_from_scope_rejects_string_header_name(
-        self, http_scope_with_string_header_name
-    ) -> None:
+    def test_from_scope_rejects_string_header_name(self, http_scope_with_string_header_name) -> None:
         """from_scope() skips headers with string (non-bytes) name and falls back to generated ID."""
         correlation = asgi_objs.AsgiCorrelation.from_scope(
             http_scope_with_string_header_name
@@ -101,9 +87,7 @@ class TestAsgiCorrelationFromScope:
         assert all(char in "0123456789abcdef" for char in correlation.correlation_id)
         assert correlation.from_header is False
 
-    def test_from_scope_rejects_string_header_value(
-        self, http_scope_with_string_header_value
-    ) -> None:
+    def test_from_scope_rejects_string_header_value(self, http_scope_with_string_header_value) -> None:
         """from_scope() skips headers with string (non-bytes) value and falls back to generated ID."""
         correlation = asgi_objs.AsgiCorrelation.from_scope(
             http_scope_with_string_header_value

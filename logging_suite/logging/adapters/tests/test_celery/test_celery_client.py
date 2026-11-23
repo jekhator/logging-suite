@@ -144,10 +144,7 @@ class TestCorrelationSignalsConnect:
 class TestCorrelationSignalsRealCeleryIntegration:
     """Integration tests driving celery's real signal machinery end-to-end."""
 
-    def test_real_celery_publish_prerun_postrun_roundtrip(
-        self,
-        celery_app: Any,
-    ) -> None:
+    def test_real_celery_publish_prerun_postrun_roundtrip(self, celery_app: Any) -> None:
         """Real celery app with CorrelationSignals drives correlation_id through publish→prerun→postrun."""
         app = celery_app()
         celery_client.CorrelationSignals.connect()
@@ -163,10 +160,7 @@ class TestCorrelationSignalsRealCeleryIntegration:
         assert context_values[0] == test_const.CORRELATION_ID_VALID_ID_123
         assert get_correlation_id() is None
 
-    def test_real_celery_no_context_on_publish_skips_injection(
-        self,
-        celery_app: Any,
-    ) -> None:
+    def test_real_celery_no_context_on_publish_skips_injection(self, celery_app: Any) -> None:
         """Real celery app with no context does not inject header on publish."""
         app = celery_app()
         celery_client.CorrelationSignals.connect()
@@ -180,10 +174,7 @@ class TestCorrelationSignalsRealCeleryIntegration:
         untracked_task.apply_async()
         assert context_values[0] is None
 
-    def test_real_celery_signal_isolation_between_tests(
-        self,
-        celery_app: Any,
-    ) -> None:
+    def test_real_celery_signal_isolation_between_tests(self, celery_app: Any) -> None:
         """Real celery signals do not leak between test tasks via fresh app."""
         app1 = celery_app()
         celery_client.CorrelationSignals.connect()

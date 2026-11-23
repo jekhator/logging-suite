@@ -50,9 +50,7 @@ class TestSensitivity:
 class TestFromDataclass:
     """Tests for SensitivityProfile.from_dataclass() classmethod."""
 
-    def test_reads_tagged_fields_into_classes_tuple(
-        self, mixed_type: type[Any]
-    ) -> None:
+    def test_reads_tagged_fields_into_classes_tuple(self, mixed_type: type[Any]) -> None:
         """from_dataclass collects sensitivity-tagged fields as (name, Sensitivity) pairs."""
         profile = SensitivityProfile.from_dataclass(mixed_type)
         assert profile.classes == (
@@ -161,9 +159,7 @@ class TestFieldsOf:
         assert profile.fields_of(Sensitivity.PCI) == ("card_token",)
         assert profile.fields_of(Sensitivity.SECRET) == ("api_key",)
 
-    def test_returns_empty_tuple_for_absent_class(
-        self, unclassified_type: type[Any]
-    ) -> None:
+    def test_returns_empty_tuple_for_absent_class(self, unclassified_type: type[Any]) -> None:
         """Returns empty tuple when the given sensitivity class is not present."""
         profile = SensitivityProfile.from_dataclass(unclassified_type)
         assert profile.fields_of(Sensitivity.PHI) == ()
@@ -194,9 +190,7 @@ class TestFrozenProfile:
         profile_set = {profile}
         assert profile in profile_set
 
-    def test_two_profiles_with_same_classes_are_equal(
-        self, mixed_type: type[Any]
-    ) -> None:
+    def test_two_profiles_with_same_classes_are_equal(self, mixed_type: type[Any]) -> None:
         """Two profiles built from identical dataclasses are equal."""
         profile1 = SensitivityProfile.from_dataclass(mixed_type)
         profile2 = SensitivityProfile.from_dataclass(mixed_type)

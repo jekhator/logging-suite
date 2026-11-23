@@ -12,12 +12,8 @@ class NotificationEventClient:
 
     @staticmethod
     def create(
-        category: str,
-        severity: str | objs.Severity,
-        title: str,
-        body: str,
-        fingerprint: str,
-        metadata: tuple[tuple[str, str], ...] = (),
+        category: str, severity: str | objs.Severity, title: str,
+        body: str, fingerprint: str, metadata: tuple[tuple[str, str], ...] = ()
     ) -> objs.NotificationEvent:
         """
         Create a NotificationEvent with auto-captured correlation context.

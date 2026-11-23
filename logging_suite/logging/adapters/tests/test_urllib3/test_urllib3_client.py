@@ -23,12 +23,7 @@ class TestCorrelationIdPoolManagerUrlopen:
 
         captured_kwargs: dict[str, Any] = {}
 
-        def capture_urlopen(
-            self_: Any,
-            method: str,
-            url: str,
-            **kwargs: Any,
-        ) -> urllib3.BaseHTTPResponse:
+        def capture_urlopen(self_: Any, method: str, url: str, **kwargs: Any) -> urllib3.BaseHTTPResponse:
             captured_kwargs.update(kwargs)
             mock_response = Mock(spec=urllib3.BaseHTTPResponse)
             return mock_response
@@ -52,12 +47,7 @@ class TestCorrelationIdPoolManagerUrlopen:
 
         captured_kwargs: dict[str, Any] = {}
 
-        def capture_urlopen(
-            self_: Any,
-            method: str,
-            url: str,
-            **kwargs: Any,
-        ) -> urllib3.BaseHTTPResponse:
+        def capture_urlopen(self_: Any, method: str, url: str, **kwargs: Any) -> urllib3.BaseHTTPResponse:
             captured_kwargs.update(kwargs)
             mock_response = Mock(spec=urllib3.BaseHTTPResponse)
             return mock_response
@@ -80,12 +70,7 @@ class TestCorrelationIdPoolManagerUrlopen:
 
         captured_kwargs: dict[str, Any] = {}
 
-        def capture_urlopen(
-            self_: Any,
-            method: str,
-            url: str,
-            **kwargs: Any,
-        ) -> urllib3.BaseHTTPResponse:
+        def capture_urlopen(self_: Any, method: str, url: str, **kwargs: Any) -> urllib3.BaseHTTPResponse:
             captured_kwargs.update(kwargs)
             mock_response = Mock(spec=urllib3.BaseHTTPResponse)
             return mock_response
@@ -107,12 +92,7 @@ class TestCorrelationIdPoolManagerUrlopen:
 
         captured_kwargs: dict[str, Any] = {}
 
-        def capture_urlopen(
-            self_: Any,
-            method: str,
-            url: str,
-            **kwargs: Any,
-        ) -> urllib3.BaseHTTPResponse:
+        def capture_urlopen(self_: Any, method: str, url: str, **kwargs: Any) -> urllib3.BaseHTTPResponse:
             captured_kwargs.update(kwargs)
             mock_response = Mock(spec=urllib3.BaseHTTPResponse)
             return mock_response
@@ -144,12 +124,7 @@ class TestCorrelationIdPoolManagerUrlopen:
 
         captured_kwargs: dict[str, Any] = {}
 
-        def capture_urlopen(
-            self_: Any,
-            method: str,
-            url: str,
-            **kwargs: Any,
-        ) -> urllib3.BaseHTTPResponse:
+        def capture_urlopen(self_: Any, method: str, url: str, **kwargs: Any) -> urllib3.BaseHTTPResponse:
             captured_kwargs.update(kwargs)
             mock_response = Mock(spec=urllib3.BaseHTTPResponse)
             return mock_response
@@ -177,12 +152,7 @@ class TestCorrelationIdPoolManagerUrlopen:
 
         called_with: dict[str, Any] = {}
 
-        def capture_urlopen(
-            self_: Any,
-            method: str,
-            url: str,
-            **kwargs: Any,
-        ) -> urllib3.BaseHTTPResponse:
+        def capture_urlopen(self_: Any, method: str, url: str, **kwargs: Any) -> urllib3.BaseHTTPResponse:
             called_with["method"] = method
             called_with["url"] = url
             called_with["kwargs"] = kwargs
@@ -205,12 +175,7 @@ class TestCorrelationIdPoolManagerUrlopen:
 
         captured_kwargs: dict[str, Any] = {}
 
-        def capture_urlopen(
-            self_: Any,
-            method: str,
-            url: str,
-            **kwargs: Any,
-        ) -> urllib3.BaseHTTPResponse:
+        def capture_urlopen(self_: Any, method: str, url: str, **kwargs: Any) -> urllib3.BaseHTTPResponse:
             captured_kwargs.update(kwargs)
             mock_response = Mock(spec=urllib3.BaseHTTPResponse)
             return mock_response

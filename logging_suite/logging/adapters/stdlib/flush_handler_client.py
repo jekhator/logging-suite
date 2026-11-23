@@ -75,12 +75,7 @@ class FlushOnWarningHandler(logging.Handler):
         self._buffers.pop(correlation_id, None)
         self._timestamps.pop(correlation_id, None)
 
-    def _buffer_record(
-        self,
-        record: logging.LogRecord,
-        correlation_id: str,
-        current_time: float,
-    ) -> None:
+    def _buffer_record(self, record: logging.LogRecord, correlation_id: str, current_time: float) -> None:
         """Append record to per-correlation buffer; enforce capacity constraint."""
         if correlation_id not in self._buffers:
             self._buffers[correlation_id] = deque(maxlen=self._config.capacity)

@@ -199,11 +199,7 @@ def mock_app() -> Any:
     Used by: TestCorrelationIdMiddlewareCall.
     """
 
-    async def app(
-        scope: dict[str, Any],
-        receive: Any,
-        send: Any,
-    ) -> None:
+    async def app(scope: dict[str, Any], receive: Any, send: Any) -> None:
         return None
 
     return app

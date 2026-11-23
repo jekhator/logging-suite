@@ -21,10 +21,7 @@ class RetryExecutor:
     """Execute functions with exponential backoff retry logic."""
 
     def wrap[OperationReturnType](
-        self,
-        operation: Callable[..., OperationReturnType],
-        /,
-        policy: RetryPolicy,
+        self, operation: Callable[..., OperationReturnType], /, policy: RetryPolicy
     ) -> Callable[..., OperationReturnType]:
         """
         Wrap function with retry logic (rebind once, call many).
@@ -45,11 +42,7 @@ class RetryExecutor:
             return self._wrap_async(operation, policy)
         return self._wrap_sync(operation, policy)
 
-    def _wrap_sync(
-        self,
-        operation: Callable[..., Any],
-        policy: RetryPolicy,
-    ) -> Callable[..., Any]:
+    def _wrap_sync(self, operation: Callable[..., Any], policy: RetryPolicy) -> Callable[..., Any]:
         """Wrap a synchronous function."""
 
         @functools.wraps(operation)
@@ -74,11 +67,7 @@ class RetryExecutor:
 
         return wrapper
 
-    def _wrap_async(
-        self,
-        operation: Callable[..., Any],
-        policy: RetryPolicy,
-    ) -> Callable[..., Any]:
+    def _wrap_async(self, operation: Callable[..., Any], policy: RetryPolicy) -> Callable[..., Any]:
         """Wrap an asynchronous function."""
 
         @functools.wraps(operation)
@@ -104,12 +93,8 @@ class RetryExecutor:
         return wrapper
 
     def call[OperationReturnType](
-        self,
-        operation: Callable[..., OperationReturnType],
-        /,
-        *args: Any,
-        policy: RetryPolicy | None = None,
-        **kwargs: Any,
+        self, operation: Callable[..., OperationReturnType], /, *args: Any, policy: RetryPolicy | None = None,
+        **kwargs: Any
     ) -> OperationReturnType:
         """
         Execute operation with retry (per-call convenience form).
@@ -132,11 +117,7 @@ class RetryExecutor:
         wrapped = self.wrap(operation, policy)
         return wrapped(*args, **kwargs)
 
-    def _should_retry(
-        self,
-        error: BaseException,
-        policy: RetryPolicy,
-    ) -> bool:
+    def _should_retry(self, error: BaseException, policy: RetryPolicy) -> bool:
         """
         Determine if exception is retryable.
 
@@ -149,11 +130,7 @@ class RetryExecutor:
             return isinstance(error, policy.retry_on)
         return False
 
-    def _calculate_backoff(
-        self,
-        attempt: int,
-        policy: RetryPolicy,
-    ) -> float:
+    def _calculate_backoff(self, attempt: int, policy: RetryPolicy) -> float:
         """Calculate backoff delay with optional jitter."""
         backoff = min(
             policy.backoff_base_seconds * (policy.backoff_multiplier**attempt),

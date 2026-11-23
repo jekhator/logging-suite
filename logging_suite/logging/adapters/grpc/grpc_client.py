@@ -14,9 +14,8 @@ class CorrelationInterceptor(grpc.ServerInterceptor):
     """Entry surface for extracting correlation-ID from inbound gRPC metadata."""
 
     def intercept_service(
-        self,
-        continuation: Callable[[grpc.HandlerCallDetails], grpc.RpcMethodHandler | None],
-        handler_call_details: grpc.HandlerCallDetails,
+        self, continuation: Callable[[grpc.HandlerCallDetails], grpc.RpcMethodHandler | None],
+        handler_call_details: grpc.HandlerCallDetails
     ) -> grpc.RpcMethodHandler | None:
         """Extract and set the correlation ID from gRPC invocation metadata."""
         metadata: objs.Metadata = handler_call_details.invocation_metadata

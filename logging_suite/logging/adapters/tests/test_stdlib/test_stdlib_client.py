@@ -24,10 +24,7 @@ class TestCorrelationLogFilterFilter:
             test_const.CORRELATION_ID_ABC_123,
         ],
     )
-    def test_filter_with_set_correlation_stamps_record_attribute(
-        self,
-        correlation_id: str,
-    ) -> None:
+    def test_filter_with_set_correlation_stamps_record_attribute(self, correlation_id: str) -> None:
         """filter() stamps record.correlation_id from context when set."""
         set_correlation_id(correlation_id)
         correlation_filter = stdlib_client.CorrelationLogFilter()

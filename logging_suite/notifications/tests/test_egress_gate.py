@@ -13,10 +13,7 @@ from logging_suite.notifications import (
 class TestEgressGate:
     """Test egress gate functionality."""
 
-    def test_internal_backend_receives_unmasked_content(
-        self,
-        capturing_internal_backend,
-    ) -> None:
+    def test_internal_backend_receives_unmasked_content(self, capturing_internal_backend) -> None:
         """Internal backends receive original content."""
         event = NotificationEvent(
             category="user",
@@ -35,10 +32,7 @@ class TestEgressGate:
         received = capturing_internal_backend.events[0]
         assert "john.doe@example.com" in received.body
 
-    def test_external_backend_receives_masked_content(
-        self,
-        capturing_external_backend,
-    ) -> None:
+    def test_external_backend_receives_masked_content(self, capturing_external_backend) -> None:
         """External backends receive redacted content."""
         event = NotificationEvent(
             category="user",
@@ -58,9 +52,7 @@ class TestEgressGate:
         assert "[content redacted for external delivery]" == received.body
 
     def test_mixed_backends_each_receive_appropriate_content(
-        self,
-        capturing_internal_backend,
-        capturing_external_backend,
+        self, capturing_internal_backend, capturing_external_backend
     ) -> None:
         """Internal receives unmasked, external receives redacted."""
         event = NotificationEvent(
@@ -85,10 +77,7 @@ class TestEgressGate:
         assert "user@example.com" in internal_event.body
         assert "[content redacted for external delivery]" == external_event.body
 
-    def test_external_backend_metadata_reduced_to_counts(
-        self,
-        capturing_external_backend,
-    ) -> None:
+    def test_external_backend_metadata_reduced_to_counts(self, capturing_external_backend) -> None:
         """External backends receive metadata as counts only."""
         event = NotificationEvent(
             category="data",
@@ -110,10 +99,7 @@ class TestEgressGate:
         assert key == "sensitive_count_metadata"
         assert value == "2"
 
-    def test_external_backend_title_derived_from_category_severity(
-        self,
-        capturing_external_backend,
-    ) -> None:
+    def test_external_backend_title_derived_from_category_severity(self, capturing_external_backend) -> None:
         """External backends receive derived title from category+severity, not original."""
         event = NotificationEvent(
             category="payment",
@@ -133,10 +119,7 @@ class TestEgressGate:
         assert "Secret payment gateway down" not in received.title
         assert "PCI-2847" not in received.title
 
-    def test_internal_backend_title_unchanged(
-        self,
-        capturing_internal_backend,
-    ) -> None:
+    def test_internal_backend_title_unchanged(self, capturing_internal_backend) -> None:
         """Internal backends receive original title unchanged."""
         event = NotificationEvent(
             category="payment",
@@ -157,10 +140,7 @@ class TestEgressGate:
             == "Secret payment gateway down - internal issue code PCI-2847"
         )
 
-    def test_egress_category_fingerprint_correlation_id_unchanged(
-        self,
-        capturing_external_backend,
-    ) -> None:
+    def test_egress_category_fingerprint_correlation_id_unchanged(self, capturing_external_backend) -> None:
         """Egress gate does not mask category, fingerprint, or correlation_id."""
         event = NotificationEvent(
             category="budget_audit",
@@ -181,10 +161,7 @@ class TestEgressGate:
         assert received.correlation_id == "trace-12345"
         assert received.occurred_at == "2026-07-21T10:00:00+00:00"
 
-    def test_internal_backend_receives_all_attachments(
-        self,
-        capturing_internal_backend,
-    ) -> None:
+    def test_internal_backend_receives_all_attachments(self, capturing_internal_backend) -> None:
         """Internal backends receive all attachments regardless of egress_safe."""
         event_attachments = (
             Attachment(
@@ -217,10 +194,7 @@ class TestEgressGate:
         received = capturing_internal_backend.events[0]
         assert len(received.attachments) == 2
 
-    def test_external_backend_receives_only_egress_safe_attachments(
-        self,
-        capturing_external_backend,
-    ) -> None:
+    def test_external_backend_receives_only_egress_safe_attachments(self, capturing_external_backend) -> None:
         """External backends receive only attachments with egress_safe=True."""
         event_attachments = (
             Attachment(
@@ -254,10 +228,7 @@ class TestEgressGate:
         assert len(received.attachments) == 1
         assert received.attachments[0].filename == "safe.txt"
 
-    def test_egress_gate_strips_unsafe_with_negative_control(
-        self,
-        capturing_external_backend,
-    ) -> None:
+    def test_egress_gate_strips_unsafe_with_negative_control(self, capturing_external_backend) -> None:
         """Negative control: prove gate fails without egress_safe filtering."""
         event_attachments = (
             Attachment(

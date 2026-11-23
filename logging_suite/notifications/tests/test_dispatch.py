@@ -23,9 +23,7 @@ class TestDispatcher:
         dispatcher = Dispatcher(backends=(null_backend,))
         assert dispatcher.backends == (null_backend,)
 
-    def test_notify_dispatches_to_all_backends(
-        self, test_event: NotificationEvent
-    ) -> None:
+    def test_notify_dispatches_to_all_backends(self, test_event: NotificationEvent) -> None:
         """Dispatcher sends event to all backends."""
         backend1 = CollectingBackend()
         backend2 = CollectingBackend()

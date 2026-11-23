@@ -37,10 +37,7 @@ def make_prepared_request() -> Callable[..., Any]:
     Used by: TestCorrelationHTTPAdapterAddHeaders.
     """
 
-    def factory(
-        method: str = "GET",
-        url: str = "https://example.com/test",
-    ) -> requests_lib.PreparedRequest:
+    def factory(method: str = "GET", url: str = "https://example.com/test") -> requests_lib.PreparedRequest:
         """Create a minimal requests.PreparedRequest for testing."""
         request = requests_lib.Request(method=method, url=url)
         return request.prepare()
@@ -49,9 +46,7 @@ def make_prepared_request() -> Callable[..., Any]:
 
 
 @pytest.fixture
-def http_server_with_header_capture() -> Generator[
-    tuple[str, dict[str, Any]], None, None
-]:
+def http_server_with_header_capture() -> Generator[tuple[str, dict[str, Any]], None, None]:
     """
     Stand up local HTTP server that captures request headers.
 

@@ -260,11 +260,7 @@ def mock_app() -> Any:
     Used by: TestASGIAppCall, TestCorrelationIdMiddlewareCall.
     """
 
-    async def app(
-        scope: dict[str, Any],
-        receive: Any,
-        send: Any,
-    ) -> None:
+    async def app(scope: dict[str, Any], receive: Any, send: Any) -> None:
         return None
 
     return app
@@ -278,11 +274,7 @@ def http_app_that_sends_response() -> Any:
     Used by: TestCorrelationIdMiddlewareCall.
     """
 
-    async def app(
-        scope: dict[str, Any],
-        receive: Any,
-        send: Any,
-    ) -> None:
+    async def app(scope: dict[str, Any], receive: Any, send: Any) -> None:
         await send(
             {
                 const.TYPE_KEY: test_const.HTTP_EVENT_RESPONSE_START,
@@ -295,9 +287,7 @@ def http_app_that_sends_response() -> Any:
 
 
 @pytest.fixture
-def log_capture(
-    service_class: type[LoggingMixin],
-) -> tuple[LoggingMixin, _RecordCollector]:
+def log_capture(service_class: type[LoggingMixin]) -> tuple[LoggingMixin, _RecordCollector]:
     """
     Service instance + collector handler attached at DEBUG level.
 

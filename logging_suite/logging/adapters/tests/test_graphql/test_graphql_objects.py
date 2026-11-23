@@ -35,9 +35,7 @@ class TestGraphQLCorrelationAsContextDict:
         result = correlation.as_context_dict()
         assert result == {const.CONTEXT_KEY: test_const.CORRELATION_ID_HEX}
 
-    def test_as_context_dict_with_unset_correlation_returns_dict_with_none(
-        self,
-    ) -> None:
+    def test_as_context_dict_with_unset_correlation_returns_dict_with_none(self) -> None:
         """as_context_dict() returns dict with None value when correlation_id is unset."""
         correlation = objs.GraphQLCorrelation.from_context()
         result = correlation.as_context_dict()

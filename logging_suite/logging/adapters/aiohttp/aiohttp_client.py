@@ -19,9 +19,7 @@ class CorrelationIdInjector:
 
     @staticmethod
     async def _inject(
-        session: aiohttp.ClientSession,
-        trace_config_ctx: object,
-        params: aiohttp.TraceRequestStartParams,
+        session: aiohttp.ClientSession, trace_config_ctx: object, params: aiohttp.TraceRequestStartParams
     ) -> None:
         """Inject X-Correlation-ID header into outbound request when context is populated."""
         correlation = objs.AiohttpCorrelation.from_context()

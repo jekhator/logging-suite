@@ -17,11 +17,7 @@ from logging_suite.logging.adapters.fastapi import (
 class CorrelationIdMiddleware(BaseHTTPMiddleware):
     """FastAPI middleware for correlation-ID context propagation."""
 
-    async def dispatch(
-        self,
-        request: Request,
-        call_next: Callable[[Request], Awaitable[Response]],
-    ) -> Response:
+    async def dispatch(self, request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
         """Extract correlation ID, set context, execute handler, inject response header, clear context."""
         headers = dict(request.headers)
         correlation = objs.FastApiCorrelation.from_headers(headers)

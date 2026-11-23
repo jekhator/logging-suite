@@ -38,9 +38,7 @@ class TestRedactionClient:
         record = records[0]
         assert record.__dict__.get("api_key") == const.MASK_TOKEN
 
-    def test_filter_preserves_nonsensitive_fields(
-        self, redaction_logger: logging.Logger
-    ) -> None:
+    def test_filter_preserves_nonsensitive_fields(self, redaction_logger: logging.Logger) -> None:
         """Filter preserves fields without sensitive names."""
         records = []
 
@@ -64,9 +62,7 @@ class TestRedactionClient:
         assert record.__dict__.get("user_id") == "12345"
         assert record.__dict__.get("action") == "login"
 
-    def test_filter_masks_password_field(
-        self, redaction_logger: logging.Logger
-    ) -> None:
+    def test_filter_masks_password_field(self, redaction_logger: logging.Logger) -> None:
         """Filter masks password field."""
         records = []
 
@@ -105,9 +101,7 @@ class TestRedactionClient:
         result = redaction_logger.filters[0].filter(record)  # type: ignore[union-attr]
         assert result is True
 
-    def test_filter_handles_non_string_fields(
-        self, redaction_logger: logging.Logger
-    ) -> None:
+    def test_filter_handles_non_string_fields(self, redaction_logger: logging.Logger) -> None:
         """Filter handles numeric and other non-string fields."""
         records = []
 
@@ -131,9 +125,7 @@ class TestRedactionClient:
         assert record.__dict__.get("count") == 42
         assert record.__dict__.get("duration_ms") == 1500
 
-    def test_filter_skips_private_attributes(
-        self, redaction_logger: logging.Logger
-    ) -> None:
+    def test_filter_skips_private_attributes(self, redaction_logger: logging.Logger) -> None:
         """Filter skips attributes starting with underscore."""
         RedactionClient.attach_default(redaction_logger)
         record = logging.LogRecord(
@@ -160,9 +152,7 @@ class TestRedactionFilter:
         assert redaction_filter is not None
         assert len(redaction_filter.sensitive_patterns) > 0
 
-    def test_filter_modifies_record_in_place(
-        self, redaction_filter: RedactionFilter
-    ) -> None:
+    def test_filter_modifies_record_in_place(self, redaction_filter: RedactionFilter) -> None:
         """Filter modifies LogRecord in place."""
         record = logging.LogRecord(
             name="test",
@@ -186,9 +176,7 @@ class TestRedactionFilter:
         """Redaction token has expected value."""
         assert const.MASK_TOKEN == "***REDACTED***"
 
-    def test_case_insensitive_pattern_matching(
-        self, redaction_filter: RedactionFilter
-    ) -> None:
+    def test_case_insensitive_pattern_matching(self, redaction_filter: RedactionFilter) -> None:
         """Pattern matching is case-insensitive."""
         record = logging.LogRecord(
             name="test",
@@ -212,9 +200,7 @@ class TestRedactionFilter:
         assert "api_key" in filter_obj.sensitive_patterns
         assert "token" in filter_obj.sensitive_patterns
 
-    def test_is_sensitive_field_name_multiple_patterns(
-        self, redaction_filter: RedactionFilter
-    ) -> None:
+    def test_is_sensitive_field_name_multiple_patterns(self, redaction_filter: RedactionFilter) -> None:
         """Check field names against multiple patterns."""
         assert redaction_filter._is_sensitive_field_name("api_key") is True
         assert redaction_filter._is_sensitive_field_name("user_secret") is True

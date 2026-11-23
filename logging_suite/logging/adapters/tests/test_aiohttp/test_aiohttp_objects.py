@@ -26,10 +26,7 @@ class TestAiohttpCorrelationFromContext:
         assert correlation is None
 
     @pytest.mark.parametrize("unsafe_char", ["\r", "\n", "\0"])
-    def test_from_context_with_unsafe_chars_returns_none(
-        self,
-        unsafe_char: str,
-    ) -> None:
+    def test_from_context_with_unsafe_chars_returns_none(self, unsafe_char: str) -> None:
         """from_context() returns None when correlation_id contains unsafe chars."""
         unsafe_id = f"id-with-{unsafe_char}-char"
         set_correlation_id(unsafe_id)

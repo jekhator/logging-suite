@@ -12,20 +12,14 @@ from logging_suite.logging.common.constants import tests as test_const
 class TestWsgiCorrelation:
     """Tests for WsgiCorrelation value object."""
 
-    def test_from_header_present_extracts_correlation_id(
-        self,
-        make_environ,
-    ) -> None:
+    def test_from_header_present_extracts_correlation_id(self, make_environ) -> None:
         """from_environ() extracts X-Correlation-ID and sets from_header=True."""
         environ = make_environ({"X-Correlation-ID": test_const.CORRELATION_ID_ABC_123})
         correlation = wsgi_objs.WsgiCorrelation.from_environ(environ)
         assert correlation.correlation_id == test_const.CORRELATION_ID_ABC_123
         assert correlation.from_header is True
 
-    def test_from_header_absent_generates_uuid(
-        self,
-        make_environ,
-    ) -> None:
+    def test_from_header_absent_generates_uuid(self, make_environ) -> None:
         """from_environ() generates uuid4 hex and sets from_header=False when missing."""
         environ = make_environ()
         correlation = wsgi_objs.WsgiCorrelation.from_environ(environ)
@@ -34,11 +28,7 @@ class TestWsgiCorrelation:
         assert all(char in "0123456789abcdef" for char in correlation.correlation_id)
 
     @pytest.mark.parametrize("unsafe_char", ["\r", "\n", "\0"])
-    def test_unsafe_chars_in_header_triggers_silent_regen(
-        self,
-        make_environ,
-        unsafe_char,
-    ) -> None:
+    def test_unsafe_chars_in_header_triggers_silent_regen(self, make_environ, unsafe_char) -> None:
         """from_environ() silently falls back to uuid4 if header contains \\r/\\n/\\0."""
         environ = make_environ({"X-Correlation-ID": f"abc{unsafe_char}xyz"})
         correlation = wsgi_objs.WsgiCorrelation.from_environ(environ)
@@ -47,10 +37,7 @@ class TestWsgiCorrelation:
         assert len(correlation.correlation_id) == 12
         assert all(char in "0123456789abcdef" for char in correlation.correlation_id)
 
-    def test_overlong_header_triggers_silent_regen(
-        self,
-        make_environ,
-    ) -> None:
+    def test_overlong_header_triggers_silent_regen(self, make_environ) -> None:
         """from_environ() silently falls back to uuid4 if header exceeds MAX_LENGTH."""
         overlong = "a" * (const.CORRELATION_ID_MAX_LENGTH + 1)
         environ = make_environ({"X-Correlation-ID": overlong})

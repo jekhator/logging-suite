@@ -87,9 +87,7 @@ class TestLoggingBackend:
         backend = LoggingBackend()
         assert backend.external_egress is False
 
-    def test_send_logs_event(
-        self, test_event: NotificationEvent, caplog: pytest.LogCaptureFixture
-    ) -> None:
+    def test_send_logs_event(self, test_event: NotificationEvent, caplog: pytest.LogCaptureFixture) -> None:
         """LoggingBackend logs the event."""
         import logging
 
@@ -218,9 +216,7 @@ class TestRetryingBackend:
         backend = RetryingBackend(inner=inner, policy=policy, dead_letter=dead_letter)
         assert backend.external_egress is True
 
-    def test_retrying_backend_success_on_first_attempt(
-        self, test_event: NotificationEvent
-    ) -> None:
+    def test_retrying_backend_success_on_first_attempt(self, test_event: NotificationEvent) -> None:
         """RetryingBackend returns success immediately if inner succeeds."""
         inner = CollectingBackend()
         policy = RetryPolicy(
@@ -237,9 +233,7 @@ class TestRetryingBackend:
         assert result.delivered is True
         assert len(inner.events) == 1
 
-    def test_retrying_backend_retry_on_retryable_result(
-        self, test_event: NotificationEvent
-    ) -> None:
+    def test_retrying_backend_retry_on_retryable_result(self, test_event: NotificationEvent) -> None:
         """RetryingBackend retries when inner returns retryable=True."""
 
         attempt_count = 0
@@ -283,9 +277,7 @@ class TestRetryingBackend:
         assert result.delivered is True
         assert attempt_count == 3
 
-    def test_retrying_backend_nonretryable_returns_immediately(
-        self, test_event: NotificationEvent
-    ) -> None:
+    def test_retrying_backend_nonretryable_returns_immediately(self, test_event: NotificationEvent) -> None:
         """RetryingBackend returns immediately on retryable=False."""
 
         attempt_count = 0
@@ -322,9 +314,7 @@ class TestRetryingBackend:
         assert result.delivered is False
         assert attempt_count == 1
 
-    def test_retrying_backend_exhaustion_no_dead_letter(
-        self, test_event: NotificationEvent
-    ) -> None:
+    def test_retrying_backend_exhaustion_no_dead_letter(self, test_event: NotificationEvent) -> None:
         """RetryingBackend returns failure after exhaustion with no dead_letter."""
 
         class AlwaysFailBackend:
@@ -357,9 +347,7 @@ class TestRetryingBackend:
         assert result.delivered is False
         assert "exhausted retries" in result.detail
 
-    def test_retrying_backend_dead_letter_on_exhaustion(
-        self, test_event: NotificationEvent
-    ) -> None:
+    def test_retrying_backend_dead_letter_on_exhaustion(self, test_event: NotificationEvent) -> None:
         """RetryingBackend hands off to dead_letter on exhaustion."""
 
         class AlwaysFailBackend:
@@ -394,9 +382,7 @@ class TestRetryingBackend:
         assert len(dead_letter.events) == 1
         assert "dead_letter" in result.backend_name
 
-    def test_retrying_backend_dead_letter_exception(
-        self, test_event: NotificationEvent
-    ) -> None:
+    def test_retrying_backend_dead_letter_exception(self, test_event: NotificationEvent) -> None:
         """RetryingBackend handles dead-letter exceptions with warning."""
 
         class AlwaysFailBackend:
@@ -438,9 +424,7 @@ class TestRetryingBackend:
         assert result.delivered is False
         assert "dead_letter failed" in result.detail
 
-    def test_retrying_backend_inner_exception_dead_letter_success(
-        self, test_event: NotificationEvent
-    ) -> None:
+    def test_retrying_backend_inner_exception_dead_letter_success(self, test_event: NotificationEvent) -> None:
         """RetryingBackend uses dead-letter on exception from inner."""
 
         class ExceptionRaisingBackend:
@@ -468,9 +452,7 @@ class TestRetryingBackend:
         assert len(dead_letter.events) == 1
         assert "non-retryable exception" in result.detail
 
-    def test_retrying_backend_inner_exception_dead_letter_exception(
-        self, test_event: NotificationEvent
-    ) -> None:
+    def test_retrying_backend_inner_exception_dead_letter_exception(self, test_event: NotificationEvent) -> None:
         """RetryingBackend handles exceptions during exception exhaustion fallback."""
 
         class ExceptionRaisingBackend:
@@ -505,9 +487,7 @@ class TestRetryingBackend:
         assert result.delivered is False
         assert "dead_letter failed" in result.detail
 
-    def test_retrying_backend_inner_exception_no_dead_letter(
-        self, test_event: NotificationEvent
-    ) -> None:
+    def test_retrying_backend_inner_exception_no_dead_letter(self, test_event: NotificationEvent) -> None:
         """RetryingBackend returns failure on inner exception without dead-letter."""
 
         class ExceptionRaisingBackend:
@@ -533,9 +513,7 @@ class TestRetryingBackend:
         assert result.delivered is False
         assert "non-retryable exception" in result.detail
 
-    def test_retrying_backend_raised_exception_with_retry_on_policy(
-        self, test_event: NotificationEvent
-    ) -> None:
+    def test_retrying_backend_raised_exception_with_retry_on_policy(self, test_event: NotificationEvent) -> None:
         """
         RetryingBackend retries raised exceptions matching policy.retry_on.
 
@@ -572,9 +550,7 @@ class TestRetryingBackend:
         assert result.delivered is True
         assert len(dlq.events) == 1
 
-    def test_retrying_backend_raised_exception_with_should_retry_predicate(
-        self, test_event: NotificationEvent
-    ) -> None:
+    def test_retrying_backend_raised_exception_with_should_retry_predicate(self, test_event: NotificationEvent) -> None:
         """
         RetryingBackend retries raised exceptions matching policy.should_retry.
 
@@ -611,9 +587,7 @@ class TestRetryingBackend:
         assert result.delivered is True
         assert len(dlq.events) == 1
 
-    def test_retrying_backend_raised_exception_non_retryable(
-        self, test_event: NotificationEvent
-    ) -> None:
+    def test_retrying_backend_raised_exception_non_retryable(self, test_event: NotificationEvent) -> None:
         """
         RetryingBackend does not retry raised exceptions policy deems non-retryable.
 
@@ -658,9 +632,7 @@ class TestRetryingBackend:
 class TestSNSBackend:
     """Test SNSBackend."""
 
-    def test_sns_backend_metadata_without_topic_arn(
-        self, test_event: NotificationEvent
-    ) -> None:
+    def test_sns_backend_metadata_without_topic_arn(self, test_event: NotificationEvent) -> None:
         """SNSBackend ignores metadata that doesn't include topic_arn."""
 
         class MockSNS:
@@ -705,9 +677,7 @@ class TestSNSBackend:
         )
         assert backend.external_egress is True
 
-    def test_sns_backend_uses_default_topic(
-        self, test_event: NotificationEvent
-    ) -> None:
+    def test_sns_backend_uses_default_topic(self, test_event: NotificationEvent) -> None:
         """SNSBackend publishes to default topic when not overridden."""
 
         class MockSNS:
@@ -733,9 +703,7 @@ class TestSNSBackend:
             == "arn:aws:sns:us-east-1:123456789012:test"
         )
 
-    def test_sns_backend_metadata_topic_override(
-        self, test_event: NotificationEvent
-    ) -> None:
+    def test_sns_backend_metadata_topic_override(self, test_event: NotificationEvent) -> None:
         """SNSBackend uses metadata topic_arn override."""
 
         class MockSNS:
@@ -771,9 +739,7 @@ class TestSNSBackend:
             == "arn:aws:sns:us-east-1:123456789012:override"
         )
 
-    def test_sns_backend_retryable_error_code(
-        self, test_event: NotificationEvent
-    ) -> None:
+    def test_sns_backend_retryable_error_code(self, test_event: NotificationEvent) -> None:
         """SNSBackend marks Throttling as retryable."""
 
         class MockException(Exception):
@@ -795,9 +761,7 @@ class TestSNSBackend:
         assert result.delivered is False
         assert result.retryable is True
 
-    def test_sns_backend_non_retryable_error_code(
-        self, test_event: NotificationEvent
-    ) -> None:
+    def test_sns_backend_non_retryable_error_code(self, test_event: NotificationEvent) -> None:
         """SNSBackend marks InvalidParameter as non-retryable."""
 
         class MockException(Exception):
@@ -832,9 +796,7 @@ class TestSESBackend:
         )
         assert backend.external_egress is True
 
-    def test_ses_backend_send_without_attachments(
-        self, test_event: NotificationEvent
-    ) -> None:
+    def test_ses_backend_send_without_attachments(self, test_event: NotificationEvent) -> None:
         """SESBackend sends email without attachments."""
 
         class MockSES:
@@ -858,9 +820,7 @@ class TestSESBackend:
         assert "test-msg-id" in result.detail
         assert len(mock_client.sent_emails) == 1
 
-    def test_ses_backend_send_with_attachments(
-        self, test_event: NotificationEvent
-    ) -> None:
+    def test_ses_backend_send_with_attachments(self, test_event: NotificationEvent) -> None:
         """SESBackend includes attachments in email."""
 
         class MockSES:

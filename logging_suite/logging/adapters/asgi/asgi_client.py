@@ -16,12 +16,7 @@ class ASGIApp:
     app: objs.App
     correlation: objs.AsgiCorrelation
 
-    async def __call__(
-        self,
-        scope: objs.Scope,
-        receive: objs.Receive,
-        send: objs.Send,
-    ) -> None:
+    async def __call__(self, scope: objs.Scope, receive: objs.Receive, send: objs.Send) -> None:
         """Set correlation context, then delegate to the wrapped app."""
         set_correlation_id(self.correlation.correlation_id)
         await self.app(scope, receive, send)
@@ -33,12 +28,7 @@ class CorrelationIdMiddleware:
 
     app: objs.App
 
-    async def __call__(
-        self,
-        scope: objs.Scope,
-        receive: objs.Receive,
-        send: objs.Send,
-    ) -> None:
+    async def __call__(self, scope: objs.Scope, receive: objs.Receive, send: objs.Send) -> None:
         """Resolve, wrap send, execute via ASGIApp, clear on exit."""
         if scope[const.TYPE_KEY] != const.HTTP_SCOPE_TYPE:
             await self.app(scope, receive, send)

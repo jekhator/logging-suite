@@ -40,9 +40,7 @@ def service_class() -> type[LoggingMixin]:
 
 
 @pytest.fixture
-def log_capture(
-    service_class: type[LoggingMixin],
-) -> tuple[LoggingMixin, _RecordCollector]:
+def log_capture(service_class: type[LoggingMixin]) -> tuple[LoggingMixin, _RecordCollector]:
     """
     Service instance + collector handler attached at DEBUG level.
 

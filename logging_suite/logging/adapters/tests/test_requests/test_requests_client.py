@@ -16,10 +16,7 @@ from logging_suite.logging.common.constants import tests as test_const
 class TestCorrelationHTTPAdapterAddHeaders:
     """Tests for CorrelationHTTPAdapter.add_headers() method."""
 
-    def test_add_headers_with_set_correlation_injects_header(
-        self,
-        make_prepared_request: Callable[..., Any],
-    ) -> None:
+    def test_add_headers_with_set_correlation_injects_header(self, make_prepared_request: Callable[..., Any]) -> None:
         """add_headers() injects X-Correlation-ID when correlation_id is set."""
         set_correlation_id(test_const.HTTPX_CORR_ID_TEST)
         adapter = requests_client.CorrelationHTTPAdapter()
@@ -30,20 +27,14 @@ class TestCorrelationHTTPAdapterAddHeaders:
             == test_const.HTTPX_CORR_ID_TEST
         )
 
-    def test_add_headers_without_context_is_noop(
-        self,
-        make_prepared_request: Callable[..., Any],
-    ) -> None:
+    def test_add_headers_without_context_is_noop(self, make_prepared_request: Callable[..., Any]) -> None:
         """add_headers() does nothing when context is not set."""
         adapter = requests_client.CorrelationHTTPAdapter()
         prepared_request = make_prepared_request()
         adapter.add_headers(prepared_request)
         assert const.CORRELATION_ID_HEADER not in prepared_request.headers
 
-    def test_add_headers_with_unsafe_context_is_noop(
-        self,
-        make_prepared_request: Callable[..., Any],
-    ) -> None:
+    def test_add_headers_with_unsafe_context_is_noop(self, make_prepared_request: Callable[..., Any]) -> None:
         """add_headers() does nothing when context has unsafe value."""
         unsafe_id = "bad\r\nvalue"
         set_correlation_id(unsafe_id)
@@ -88,8 +79,7 @@ class TestCorrelationHTTPAdapterRealRequestsIntegration:
     """Tests for real requests.Session transport with CorrelationHTTPAdapter."""
 
     def test_real_session_injects_correlation_header_on_send(
-        self,
-        http_server_with_header_capture: tuple[str, dict[str, Any]],
+        self, http_server_with_header_capture: tuple[str, dict[str, Any]]
     ) -> None:
         """Real requests.Session via correlation_session() injects header on actual send."""
         server_url, captured_headers = http_server_with_header_capture
@@ -104,8 +94,7 @@ class TestCorrelationHTTPAdapterRealRequestsIntegration:
         )
 
     def test_real_session_omits_header_when_context_unset(
-        self,
-        http_server_with_header_capture: tuple[str, dict[str, Any]],
+        self, http_server_with_header_capture: tuple[str, dict[str, Any]]
     ) -> None:
         """Real requests.Session omits header when correlation_id context is unset."""
         server_url, captured_headers = http_server_with_header_capture

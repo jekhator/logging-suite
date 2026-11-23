@@ -13,9 +13,7 @@ class TestCorrelationIdMiddleware:
     """Tests for CorrelationIdMiddleware dispatch behavior."""
 
     def test_middleware_extracts_correlation_id_from_request_header(
-        self,
-        fastapi_client: TestClient,
-        correlation_id_abc: str,
+        self, fastapi_client: TestClient, correlation_id_abc: str
     ) -> None:
         """Middleware extracts correlation ID from x-correlation-id request header."""
         response = fastapi_client.get(
@@ -25,10 +23,7 @@ class TestCorrelationIdMiddleware:
         data = response.json()
         assert data["correlation_id"] == correlation_id_abc
 
-    def test_middleware_generates_correlation_id_when_header_missing(
-        self,
-        fastapi_client: TestClient,
-    ) -> None:
+    def test_middleware_generates_correlation_id_when_header_missing(self, fastapi_client: TestClient) -> None:
         """Middleware generates correlation ID when x-correlation-id header is missing."""
         response = fastapi_client.get("/test")
         assert response.status_code == 200
@@ -37,9 +32,7 @@ class TestCorrelationIdMiddleware:
         assert len(data["correlation_id"]) == 12
 
     def test_middleware_injects_correlation_id_into_response_header(
-        self,
-        fastapi_client: TestClient,
-        correlation_id_custom: str,
+        self, fastapi_client: TestClient, correlation_id_custom: str
     ) -> None:
         """Middleware injects correlation ID into x-correlation-id response header."""
         response = fastapi_client.get(
@@ -48,10 +41,7 @@ class TestCorrelationIdMiddleware:
         assert response.status_code == 200
         assert response.headers.get("x-correlation-id") == correlation_id_custom
 
-    def test_middleware_injects_generated_correlation_id_into_response_header(
-        self,
-        fastapi_client: TestClient,
-    ) -> None:
+    def test_middleware_injects_generated_correlation_id_into_response_header(self, fastapi_client: TestClient) -> None:
         """Middleware injects generated correlation ID into response header."""
         response = fastapi_client.get("/test")
         assert response.status_code == 200
@@ -60,9 +50,7 @@ class TestCorrelationIdMiddleware:
         assert len(correlation_id) == 12
 
     def test_middleware_clears_context_after_request(
-        self,
-        fastapi_client: TestClient,
-        correlation_id_some: str,
+        self, fastapi_client: TestClient, correlation_id_some: str
     ) -> None:
         """Middleware clears correlation ID from context after request handling."""
         clear_correlation_id()
@@ -73,9 +61,7 @@ class TestCorrelationIdMiddleware:
         assert get_correlation_id() is None
 
     def test_middleware_propagates_correlation_id_to_handler(
-        self,
-        fastapi_client: TestClient,
-        correlation_id_abc: str,
+        self, fastapi_client: TestClient, correlation_id_abc: str
     ) -> None:
         """Middleware makes correlation ID available to request handler."""
         response = fastapi_client.get(
@@ -87,10 +73,7 @@ class TestCorrelationIdMiddleware:
         assert data["correlation_id"] == correlation_id_abc
         assert data["header_value"] == correlation_id_abc
 
-    def test_middleware_rejects_unsafe_correlation_id(
-        self,
-        fastapi_client: TestClient,
-    ) -> None:
+    def test_middleware_rejects_unsafe_correlation_id(self, fastapi_client: TestClient) -> None:
         """Middleware rejects correlation ID with unsafe characters and generates new one."""
         unsafe_id = "abc\r\ndef"
         response = fastapi_client.get("/test", headers={"x-correlation-id": unsafe_id})
@@ -99,10 +82,7 @@ class TestCorrelationIdMiddleware:
         assert data["correlation_id"] != unsafe_id
         assert len(data["correlation_id"]) == 12
 
-    def test_middleware_rejects_oversized_correlation_id(
-        self,
-        fastapi_client: TestClient,
-    ) -> None:
+    def test_middleware_rejects_oversized_correlation_id(self, fastapi_client: TestClient) -> None:
         """Middleware rejects oversized correlation ID and generates new one."""
         from logging_suite.logging.adapters.constants import fastapi as const
 
@@ -120,10 +100,7 @@ class TestGetCorrelationIdDependency:
     """Tests for get_correlation_id_dependency() FastAPI dependency."""
 
     @pytest.mark.asyncio
-    async def test_dependency_returns_correlation_id_when_set(
-        self,
-        correlation_id_abc: str,
-    ) -> None:
+    async def test_dependency_returns_correlation_id_when_set(self, correlation_id_abc: str) -> None:
         """get_correlation_id_dependency() returns correlation ID when set in context."""
         from logging_suite.logging import set_correlation_id
         from logging_suite.logging.adapters.fastapi import get_correlation_id_dependency

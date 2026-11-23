@@ -35,10 +35,7 @@ class TestCorrelationIdInjectorEventHooks:
 class TestCorrelationIdInjectorSync:
     """Tests for CorrelationIdInjector.inject_sync() class method."""
 
-    def test_inject_sync_with_set_correlation_writes_header(
-        self,
-        make_request: Callable[..., Any],
-    ) -> None:
+    def test_inject_sync_with_set_correlation_writes_header(self, make_request: Callable[..., Any]) -> None:
         """inject_sync() writes X-Correlation-ID header when correlation_id is set."""
         set_correlation_id(test_const.HTTPX_CORR_ID_TEST)
         request = make_request()
@@ -48,19 +45,13 @@ class TestCorrelationIdInjectorSync:
             == test_const.HTTPX_CORR_ID_TEST
         )
 
-    def test_inject_sync_without_context_is_noop(
-        self,
-        make_request: Callable[..., Any],
-    ) -> None:
+    def test_inject_sync_without_context_is_noop(self, make_request: Callable[..., Any]) -> None:
         """inject_sync() does nothing when context is not set."""
         request = make_request()
         httpx_client.CorrelationIdInjector.inject_sync(request)
         assert const.CORRELATION_ID_HEADER not in request.headers
 
-    def test_inject_sync_with_unsafe_context_is_noop(
-        self,
-        make_request: Callable[..., Any],
-    ) -> None:
+    def test_inject_sync_with_unsafe_context_is_noop(self, make_request: Callable[..., Any]) -> None:
         """inject_sync() does nothing when context has unsafe value."""
         unsafe_id = "bad\r\nvalue"
         set_correlation_id(unsafe_id)
@@ -73,10 +64,7 @@ class TestCorrelationIdInjectorAsync:
     """Tests for CorrelationIdInjector.inject_async() async class method."""
 
     @pytest.mark.asyncio
-    async def test_inject_async_with_set_correlation_writes_header(
-        self,
-        make_request: Callable[..., Any],
-    ) -> None:
+    async def test_inject_async_with_set_correlation_writes_header(self, make_request: Callable[..., Any]) -> None:
         """inject_async() writes X-Correlation-ID header when correlation_id is set."""
         set_correlation_id(test_const.HTTPX_CORR_ID_ASYNC)
         request = make_request()
@@ -87,20 +75,14 @@ class TestCorrelationIdInjectorAsync:
         )
 
     @pytest.mark.asyncio
-    async def test_inject_async_without_context_is_noop(
-        self,
-        make_request: Callable[..., Any],
-    ) -> None:
+    async def test_inject_async_without_context_is_noop(self, make_request: Callable[..., Any]) -> None:
         """inject_async() does nothing when context is not set."""
         request = make_request()
         await httpx_client.CorrelationIdInjector.inject_async(request)
         assert const.CORRELATION_ID_HEADER not in request.headers
 
     @pytest.mark.asyncio
-    async def test_inject_async_delegates_to_sync_implementation(
-        self,
-        make_request: Callable[..., Any],
-    ) -> None:
+    async def test_inject_async_delegates_to_sync_implementation(self, make_request: Callable[..., Any]) -> None:
         """inject_async() delegates to inject_sync."""
         set_correlation_id(test_const.HTTPX_CORR_ID_SAFE)
         request = make_request()

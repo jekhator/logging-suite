@@ -14,10 +14,7 @@ class TestCorrelationIdMiddleware:
     """Tests for CorrelationIdMiddleware WSGI middleware."""
 
     def test_happy_path_correlation_extracted_and_response_header_set(
-        self,
-        make_environ,
-        start_response_capture,
-        mock_app_that_calls_start_response,
+        self, make_environ, start_response_capture, mock_app_that_calls_start_response
     ) -> None:
         """CorrelationIdMiddleware extracts header and injects response header."""
         captured, start_response = start_response_capture
@@ -36,10 +33,7 @@ class TestCorrelationIdMiddleware:
         )
 
     def test_absent_header_generates_and_sets_response_header(
-        self,
-        make_environ,
-        start_response_capture,
-        mock_app_that_calls_start_response,
+        self, make_environ, start_response_capture, mock_app_that_calls_start_response
     ) -> None:
         """CorrelationIdMiddleware generates uuid4 and injects response header when absent."""
         captured, start_response = start_response_capture
@@ -58,10 +52,7 @@ class TestCorrelationIdMiddleware:
         assert all(char in "0123456789abcdef" for char in generated_id)
 
     def test_correlation_cleared_after_response_iteration_completes(
-        self,
-        make_environ,
-        start_response_capture,
-        mock_app_that_calls_start_response,
+        self, make_environ, start_response_capture, mock_app_that_calls_start_response
     ) -> None:
         """CorrelationIdMiddleware clears context after wrapped app iteration finishes."""
         captured, start_response = start_response_capture
@@ -73,11 +64,7 @@ class TestCorrelationIdMiddleware:
         list(iterable)
         assert get_correlation_id() is None
 
-    def test_correlation_cleared_even_if_wrapped_app_raises(
-        self,
-        make_environ,
-        start_response_capture,
-    ) -> None:
+    def test_correlation_cleared_even_if_wrapped_app_raises(self, make_environ, start_response_capture) -> None:
         """CorrelationIdMiddleware clears context even if wrapped app raises exception."""
 
         def failing_app(environ, start_response):
@@ -92,9 +79,7 @@ class TestCorrelationIdMiddleware:
         assert get_correlation_id() is None
 
     def test_wrapped_app_called_with_correct_environ_and_start_response(
-        self,
-        make_environ,
-        start_response_capture,
+        self, make_environ, start_response_capture
     ) -> None:
         """CorrelationIdMiddleware passes environ and start_response to wrapped app."""
         captured_args = {}
@@ -118,9 +103,7 @@ class TestWsgiApp:
     """Tests for WsgiApp WSGI app wrapper."""
 
     def test_sets_correlation_id_into_context_before_calling_wrapped_app(
-        self,
-        make_environ,
-        start_response_capture,
+        self, make_environ, start_response_capture
     ) -> None:
         """WsgiApp sets preset correlation ID into context before calling wrapped app."""
         captured_correlation_ids = []
@@ -144,9 +127,7 @@ class TestWsgiApp:
         assert captured_correlation_ids[0] == test_const.CORRELATION_ID_PRESET_ID_123
 
     def test_delegates_to_wrapped_app_with_correct_environ_and_start_response(
-        self,
-        make_environ,
-        start_response_capture,
+        self, make_environ, start_response_capture
     ) -> None:
         """WsgiApp passes environ and start_response to wrapped app."""
         captured_args = {}
